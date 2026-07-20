@@ -1,0 +1,205 @@
+@import 'tailwindcss';
+@import '@fontsource/geist-sans/400.css';
+@import '@fontsource/geist-sans/500.css';
+@import '@fontsource/geist-sans/600.css';
+@import '@fontsource/geist-sans/700.css';
+@import '@fontsource/geist-mono/400.css';
+@import '@fontsource/geist-mono/500.css';
+@import '@fontsource/geist-mono/600.css';
+
+/* Cloned from blipton.com's "spec label" language (near-black under a whisper
+   of film grain, monospaced technical labels, generous negative space) but
+   re-themed for Urban Prospects: dark mode is a true near-black tuned faintly
+   toward the brand purple (not blip's neutral black); light mode is pure
+   white with no cream/beige undertone. Purple + teal are reserved for
+   highlights only — CTAs, stat numbers, active states — never page fill. */
+@theme {
+	--font-sans:
+		'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--font-mono:
+		'Geist Mono', ui-monospace, 'SF Mono', 'SFMono-Regular', Menlo, 'Roboto Mono', monospace;
+
+	/* brand — constant across themes, highlight-only usage */
+	--color-brand-purple: #5c2687;
+	--color-brand-purple-600: #4a1d70;
+	--color-brand-purple-700: #3a1758;
+	--color-brand-teal: #5ee8ad;
+	--color-brand-teal-600: #35c98d;
+
+	/* theme-default (dark) surface tokens; overridden under [data-theme=light] */
+	--color-line: #241c30;
+	--color-subtle: #140d1f;
+	--color-muted: #948aa8;
+}
+
+/* Dark is the default (no data-theme, or data-theme="dark"): a near-black
+   tuned faintly toward the brand purple rather than a neutral black. Both
+   themes are pure token swaps via Tailwind v4 colour utilities resolving to
+   var(--color-*) — no markup changes. A pre-paint script in app.html sets
+   data-theme before first paint (no FOUC). */
+:root {
+	color-scheme: dark;
+	--bg: #0a0710;
+	--fg: #f2eef8;
+	--color-white: #f6f4fa;
+	--color-neutral-300: #c2b9d3;
+	--color-neutral-400: #a196b8;
+	--color-neutral-500: #877ba0;
+	--color-neutral-600: #665a7d;
+	/* teal used as running text/stat-number colour needs the raw mint on dark */
+	--accent-teal-text: var(--color-brand-teal);
+}
+
+:root[data-theme='light'] {
+	color-scheme: light;
+	--bg: #ffffff;
+	--fg: #16121f;
+	/* Swap the anchor: "white" text → ink (buttons/cards sitting on the
+	   constant brand-purple fill use a literal hex instead, since that fill
+	   doesn't swap — see button.svelte's default variant). */
+	--color-white: #16121f;
+	--color-line: #e7e3ee;
+	--color-subtle: #f6f4fa;
+	/* Invert the neutral ramp so the dark→light dimming hierarchy is preserved. */
+	--color-neutral-300: #40364c;
+	--color-neutral-400: #584c68;
+	--color-neutral-500: #726485;
+	--color-neutral-600: #9990a8;
+	/* explicit brand value for light-mode teal text — note this is ~1.9:1
+	   against white, below WCAG AA's 4.5:1 for body text; button fills stay
+	   the raw --color-brand-teal in both themes (dark text on top). */
+	--accent-teal-text: #3bd1a0;
+}
+
+html {
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+body {
+	font-family: var(--font-sans);
+	background: var(--bg);
+	color: var(--fg);
+	letter-spacing: -0.011em;
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease;
+}
+
+/* Film grain over the whole page — kept faint enough that the black still
+   reads black. Fixed, pointer-transparent, above content like a print finish. */
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 80;
+	pointer-events: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	mix-blend-mode: screen;
+	opacity: 0.03;
+}
+:root[data-theme='light'] body::after {
+	mix-blend-mode: multiply;
+	opacity: 0.035;
+}
+
+/* Technical spec label — monospaced, uppercase, tracked out. Doubles as the
+   Figma design's eyebrow labels (PLANNING INTELLIGENCE FOR NSW, CASE STUDIES, …). */
+.spec {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	line-height: 1.6;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Liquid glass (Apple WWDC-25 style) — translucent tint + backdrop frost +
+   rim light + specular sheen. Chromium additionally gets true refraction via
+   the SVG displacement filter #liquid-glass-warp (defined once in
+   +layout.svelte); backdrop-filter:url() is Chromium-only and the @supports
+   gate evaluates false elsewhere, leaving Safari/Firefox on plain frost. */
+.glass {
+	position: relative;
+	isolation: isolate;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	backdrop-filter: blur(4px) saturate(150%) brightness(1.05);
+	-webkit-backdrop-filter: blur(4px) saturate(150%) brightness(1.05);
+	box-shadow:
+		0 12px 40px rgba(0, 0, 0, 0.35),
+		inset 0 1px 1px rgba(255, 255, 255, 0.22),
+		inset 0 -1px 1px rgba(255, 255, 255, 0.08),
+		inset 1px 0 1px rgba(255, 255, 255, 0.06),
+		inset -1px 0 1px rgba(255, 255, 255, 0.06);
+}
+/* Specular sheen sweeping from the top-left, like a lit pane. */
+.glass::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.08),
+		rgba(255, 255, 255, 0.02) 30%,
+		transparent 60%
+	);
+	mix-blend-mode: screen;
+}
+@supports (backdrop-filter: url(#liquid-glass-warp)) {
+	.glass {
+		backdrop-filter: url(#liquid-glass-warp) blur(3px) saturate(150%) brightness(1.05);
+	}
+}
+a.glass:hover,
+button.glass:hover {
+	background: rgba(255, 255, 255, 0.11);
+}
+:root[data-theme='light'] .glass {
+	background: rgba(255, 255, 255, 0.35);
+	border-color: rgba(22, 18, 31, 0.1);
+	box-shadow:
+		0 12px 32px rgba(22, 18, 31, 0.08),
+		inset 0 1px 1px rgba(255, 255, 255, 0.9),
+		inset 0 -1px 1px rgba(255, 255, 255, 0.45);
+}
+:root[data-theme='light'] .glass::after {
+	mix-blend-mode: normal;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.55),
+		rgba(255, 255, 255, 0.16) 30%,
+		transparent 60%
+	);
+}
+:root[data-theme='light'] a.glass:hover,
+:root[data-theme='light'] button.glass:hover {
+	background: rgba(255, 255, 255, 0.55);
+}
+
+::selection {
+	background: var(--color-brand-purple);
+	color: #ffffff;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 1000px var(--color-subtle) inset;
+	-webkit-text-fill-color: var(--fg);
+	caret-color: var(--fg);
+	transition: background-color 9999999s ease-out;
+}
+input:autofill {
+	box-shadow: 0 0 0 1000px var(--color-subtle) inset;
+}

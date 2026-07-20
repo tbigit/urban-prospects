@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+web/build/
+web/.svelte-kit/
+web/node_modules/
+
+.claude/settings.local.json
