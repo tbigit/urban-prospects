@@ -154,6 +154,40 @@ Run from `web/`:
 - `npm run build` — prerenders every route (adapter-static)
 - `npm run check` — `svelte-kit sync && svelte-check`
 
+## Deployment
+
+Public repo `github.com/tbigit/urban-prospects`, deployed via GitHub Pages:
+
+- `.github/workflows/deploy.yml` builds (`npm ci && npm run build` in `web/`) and deploys on every push
+  to `main` (or manually via `gh workflow run deploy.yml`), using the official
+  `actions/{checkout,setup-node,configure-pages,upload-pages-artifact,deploy-pages}` actions. Pages is
+  configured for `build_type: workflow` (`gh api -X POST repos/tbigit/urban-prospects/pages -f
+  build_type=workflow`), not the legacy branch-based source.
+- **No `BASE_PATH` needed for the subpath.** `adapter-static` emits fully relative (`./...`) links and
+  asset URLs on every prerendered route regardless of `paths.base`, so the exact same build works
+  whether it's served from the domain root or a `/urban-prospects/` subpath — verified by checking a
+  non-root route's (`/signup`) asset/link URLs resolve correctly. `svelte.config.js`'s `paths.base:
+  process.env.BASE_PATH ?? ''` is kept as a safety net, not because it's load-bearing here. Every
+  internal `href`/`src` that used to be a hardcoded root-absolute string (`/signup`, the two logo PNG
+  `src`s, etc.) now goes through `base` from `$app/paths` — needed for `web/static`-referenced assets
+  like the logo PNGs (SvelteKit's prerender crawler rejects a root-absolute asset reference that isn't
+  routed through `base`), and kept consistent on the page-navigation `href`s too even though those
+  happened to work either way.
+- **Custom domain**: `preview.urbanprospects.com.au`, set via `web/static/CNAME` (copied verbatim into
+  every build's output root by SvelteKit's static-file handling — GitHub Pages clears the custom-domain
+  setting on any deploy whose artifact lacks this file, so it has to ship with the build, not just be
+  set once via the API) plus `gh api -X PUT repos/tbigit/urban-prospects/pages -f
+  cname=preview.urbanprospects.com.au`. The actual DNS record (a `CNAME` for `preview` → `tbigit.github.io`)
+  has to be added wherever `urbanprospects.com.au`'s DNS is managed — outside what's controllable from
+  this repo. `https_enforced` stays `false` until GitHub verifies the domain and issues a certificate,
+  which only happens after that DNS record resolves.
+- The Mapbox token embedded in `MapboxHero.svelte` triggered GitHub's secret-scanning push protection on
+  the very first push (flagged generically as a "Mapbox Secret Access Token") — it's Mapbox's own
+  `pk.`-prefixed **public** token convention (not `sk.`, the actual secret kind), confirmed still
+  reused intentionally from the same upapp project it was lifted from; push protection needed an
+  explicit one-time "allow this secret" click through GitHub's UI (not scriptable) before the push
+  would go through.
+
 ## Known gaps / next steps
 
 - No real product screenshot or demo video assets — hero stat strip and both video sections use
@@ -162,4 +196,6 @@ Run from `web/`:
   later, the header/footer link targets need updating alongside new route content.
 - Stub routes (`/login`, `/signup`, `/demo`, `/report`, `/developers`) are `mailto:` placeholders —
   no auth/billing backend exists yet (Urban Prospects' own SaaS backend is a separate project).
-- No deploy script wired up yet — Urban Prospects' hosting target isn't set up in this repo.
+- `preview.urbanprospects.com.au` is a **preview** subdomain, not the production `urbanprospects.com.au`
+  — getting the real domain live needs the same DNS access this repo doesn't have, applied to the root
+  domain instead of a subdomain.
