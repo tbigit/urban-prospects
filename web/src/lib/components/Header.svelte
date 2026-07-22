@@ -5,18 +5,21 @@
 	// backdrop-frost + rim-light treatment as the rest of the site.
 	import Button from './ui/button.svelte';
 	import Logo from './Logo.svelte';
+	import { base } from '$app/paths';
 
 	let mobileOpen = $state(false);
 	let toggleBtn: HTMLButtonElement;
 
 	// Absolute (/#id, not bare #id) so these resolve correctly when rendered
 	// via the shared layout on other routes (e.g. /demo), not just on "/".
+	// Prefixed with `base` since GitHub Pages project sites serve from a
+	// subpath, not the domain root (empty string for any root-served host).
 	const nav = [
-		{ href: '/#platform', label: 'Platform' },
-		{ href: '/#services', label: 'Services' },
-		{ href: '/#data-apis', label: 'Data APIs' },
-		{ href: '/#about', label: 'About' },
-		{ href: '/#insights', label: 'Insights' }
+		{ href: `${base}/#platform`, label: 'Platform' },
+		{ href: `${base}/#services`, label: 'Services' },
+		{ href: `${base}/#data-apis`, label: 'Data APIs' },
+		{ href: `${base}/#about`, label: 'About' },
+		{ href: `${base}/#insights`, label: 'Insights' }
 	];
 
 	function closeMobile() {
@@ -39,7 +42,7 @@
 	<div
 		class="glass flex w-full max-w-[900px] items-center justify-between gap-1 rounded-full py-2 pr-2 pl-4 sm:pl-5"
 	>
-		<a href="/" class="flex shrink-0 items-center" onclick={closeMobile}>
+		<a href={base || '/'} class="flex shrink-0 items-center" onclick={closeMobile}>
 			<Logo height={26} />
 		</a>
 
@@ -56,12 +59,12 @@
 
 		<div class="hidden items-center gap-1 sm:flex">
 			<a
-				href="/login"
+				href="{base}/login"
 				class="rounded-full px-3 py-1.5 text-[13px] text-[var(--color-neutral-400)] transition-colors hover:text-[var(--fg)]"
 			>
 				Log In
 			</a>
-			<Button href="/signup" variant="teal" size="sm" class="rounded-full">Start Free Trial</Button>
+			<Button href="{base}/signup" variant="teal" size="sm" class="rounded-full">Start Free Trial</Button>
 		</div>
 
 		<button
@@ -94,11 +97,15 @@
 				{/each}
 			</nav>
 			<div class="mt-2 flex items-center gap-2 border-t border-[var(--color-line)] pt-3">
-				<Button href="/login" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
+				<Button href="{base}/login" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
 					>Log In</Button
 				>
-				<Button href="/signup" variant="teal" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
-					>Start Free Trial</Button
+				<Button
+					href="{base}/signup"
+					variant="teal"
+					size="sm"
+					class="flex-1 rounded-full"
+					onclick={closeMobile}>Start Free Trial</Button
 				>
 			</div>
 		</div>

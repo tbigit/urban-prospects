@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from './ui/button.svelte';
+	import { base } from '$app/paths';
 
 	let {
 		eyebrow,
@@ -32,6 +33,6 @@
 	</p>
 	<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
 		<Button href={mailto} size="lg">Email Us</Button>
-		<Button href="/" size="lg" variant="outline" class="glass">Back to Home</Button>
+		<Button href={base || '/'} size="lg" variant="outline" class="glass">Back to Home</Button>
 	</div>
 </section>

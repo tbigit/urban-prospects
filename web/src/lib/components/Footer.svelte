@@ -1,21 +1,24 @@
 <script lang="ts">
 	import Logo from './Logo.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
+	import { base } from '$app/paths';
 
 	// Absolute (/#id, not bare #id) so these resolve correctly when rendered
 	// via the shared layout on other routes (e.g. /demo), not just on "/".
+	// Prefixed with `base` since GitHub Pages project sites serve from a
+	// subpath, not the domain root (empty string for any root-served host).
 	const platform = [
-		{ href: '/#platform', label: 'Site Search' },
-		{ href: '/#platform', label: 'Yield Analysis' },
-		{ href: '/#platform', label: 'Pattern Book Designs' },
-		{ href: '/#platform', label: 'Residual Land Value' },
-		{ href: '/#platform', label: 'Reports' }
+		{ href: `${base}/#platform`, label: 'Site Search' },
+		{ href: `${base}/#platform`, label: 'Yield Analysis' },
+		{ href: `${base}/#platform`, label: 'Pattern Book Designs' },
+		{ href: `${base}/#platform`, label: 'Residual Land Value' },
+		{ href: `${base}/#platform`, label: 'Reports' }
 	];
 	const services = [
-		{ href: '/report', label: 'Due Diligence Reports' },
-		{ href: '/signup', label: 'Platform Subscription' },
-		{ href: '/#data-apis', label: 'Planning Data APIs' },
-		{ href: '/demo', label: 'Book a Demo' }
+		{ href: `${base}/report`, label: 'Due Diligence Reports' },
+		{ href: `${base}/signup`, label: 'Platform Subscription' },
+		{ href: `${base}/#data-apis`, label: 'Planning Data APIs' },
+		{ href: `${base}/demo`, label: 'Book a Demo' }
 	];
 </script>
 

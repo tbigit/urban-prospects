@@ -5,6 +5,7 @@
 	import DotField from '$lib/components/DotField.svelte';
 	import MagnetLines from '$lib/components/MagnetLines.svelte';
 	import { onMount } from 'svelte';
+	import { base } from '$app/paths';
 
 	// DotField's gradientFrom/gradientTo/glowColor are read fresh every
 	// animation frame (Svelte 5 $props() destructuring compiles to live
@@ -206,7 +207,7 @@
 
 		<Reveal delay={220}>
 			<div class="mt-8 flex flex-wrap items-center gap-3">
-				<Button href="/signup" size="lg">Search for a Site Now</Button>
+				<Button href="{base}/signup" size="lg">Search for a Site Now</Button>
 				<Button href="#demo" size="lg" variant="outline" class="glass">
 					<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" aria-hidden="true"
 						><polygon points="6 3 20 12 6 21 6 3" /></svg
@@ -445,7 +446,7 @@
 					<p class="mt-4 text-[13.5px] font-medium text-[var(--color-neutral-400)]">
 						Ideal for real estate agents, home buyers and buyers' agents.
 					</p>
-					<Button href="/report" size="lg" class="mt-7">Buy a One-Off Report</Button>
+					<Button href="{base}/report" size="lg" class="mt-7">Buy a One-Off Report</Button>
 				</div>
 			</Reveal>
 			<Reveal delay={160}>
@@ -465,7 +466,7 @@
 					<p class="mt-4 text-[13.5px] font-medium text-[#f6f4fa]/70">
 						Ideal for developers, buyers' agents, architects and property consultants.
 					</p>
-					<Button href="/signup" variant="teal" size="lg" class="mt-7">Start Your Free Trial</Button>
+					<Button href="{base}/signup" variant="teal" size="lg" class="mt-7">Start Your Free Trial</Button>
 				</div>
 			</Reveal>
 		</div>
@@ -500,7 +501,7 @@
 					integrate it into your own systems. Built for proptech companies, data brokers,
 					researchers and developers with bespoke platforms.
 				</p>
-				<Button href="/developers" size="lg" class="mt-7">Explore the Data APIs</Button>
+				<Button href="{base}/developers" size="lg" class="mt-7">Explore the Data APIs</Button>
 			</Reveal>
 			<Reveal delay={100}>
 				<ul class="space-y-4">
@@ -558,13 +559,13 @@
 		</Reveal>
 		<Reveal delay={160}>
 			<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-				<Button href="/signup" variant="teal" size="lg">Start Your 7-Day Free Trial</Button>
-				<Button href="/demo" size="lg" variant="outline" class="glass">Team of 10+? Book a Demo</Button>
+				<Button href="{base}/signup" variant="teal" size="lg">Start Your 7-Day Free Trial</Button>
+				<Button href="{base}/demo" size="lg" variant="outline" class="glass">Team of 10+? Book a Demo</Button>
 			</div>
 		</Reveal>
 		<Reveal delay={200}>
 			<p class="mt-5 text-[13px] text-[var(--color-neutral-500)]">
-				Prefer a one-off report? <a href="/report" class="underline underline-offset-2 hover:text-[var(--fg)]">Get a Due Diligence Report for $55.</a>
+				Prefer a one-off report? <a href="{base}/report" class="underline underline-offset-2 hover:text-[var(--fg)]">Get a Due Diligence Report for $55.</a>
 			</p>
 		</Reveal>
 	</div>
