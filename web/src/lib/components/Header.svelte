@@ -94,7 +94,7 @@
 				{/each}
 			</nav>
 			<div class="mt-2 flex items-center gap-2 border-t border-[var(--color-line)] pt-3">
-				<Button href="/login" variant="outline" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
+				<Button href="/login" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
 					>Log In</Button
 				>
 				<Button href="/signup" variant="teal" size="sm" class="flex-1 rounded-full" onclick={closeMobile}

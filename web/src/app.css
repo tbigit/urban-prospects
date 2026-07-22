@@ -155,7 +155,14 @@ body::after {
 	);
 	mix-blend-mode: screen;
 }
-@supports (backdrop-filter: url(#liquid-glass-warp)) {
+/* Chromium-only gate for the SVG-warp refraction. Deliberately NOT
+   `@supports (backdrop-filter: url(...))` — Safari's parser accepts url()
+   as syntactically valid there (so that query can return true) even though
+   it doesn't render an SVG-referenced filter, leaving Safari with a broken
+   backdrop instead of falling back to the plain blur above. CSS Houdini's
+   paint() is unimplemented in Safari and Firefox but fully supported in
+   Chromium, so it reliably selects Chromium only. */
+@supports (background: paint(x)) {
 	.glass {
 		backdrop-filter: url(#liquid-glass-warp) blur(3px) saturate(150%) brightness(1.05);
 	}

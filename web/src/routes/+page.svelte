@@ -3,6 +3,7 @@
 	import Reveal from '$lib/components/Reveal.svelte';
 	import MapboxHero from '$lib/components/MapboxHero.svelte';
 	import DotField from '$lib/components/DotField.svelte';
+	import MagnetLines from '$lib/components/MagnetLines.svelte';
 	import { onMount } from 'svelte';
 
 	// DotField's gradientFrom/gradientTo/glowColor are read fresh every
@@ -33,7 +34,7 @@
 
 	const heroStats = [
 		{ n: '4.9 mil', l: 'Viable Sites' },
-		{ n: '9 mins', l: 'To Shortlist' },
+		{ n: '1 min', l: 'To Shortlist' },
 		{ n: '34+', l: 'Filters Applied' }
 	];
 
@@ -383,14 +384,23 @@
 		<div class="grid items-center gap-10 md:grid-cols-2">
 			<Reveal>
 				<div
-					class="aspect-[4/3] w-full rounded-2xl"
-					style="background: linear-gradient(160deg, var(--color-brand-purple), var(--color-brand-purple-700));"
-				></div>
+					class="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--bg)]"
+				>
+					<MagnetLines
+						rows={10}
+						columns={13}
+						containerSize="100%"
+						lineColor="var(--color-brand-teal)"
+						lineWidth="2px"
+						lineHeight="18px"
+						baseAngle={15}
+					/>
+				</div>
 			</Reveal>
 			<Reveal delay={100}>
 				<div class="spec text-[var(--accent-teal-text)]">Built by Planners, Not Just Data People</div>
 				<h2 class="mt-3 text-[24px] leading-tight font-semibold tracking-tight text-[var(--fg)]">
-					Planner-grade judgement, built into every search result.
+					High-grade judgement, built into every search result.
 				</h2>
 				<p class="mt-5 text-[15px] leading-relaxed text-[var(--color-neutral-300)]">
 					Urban Prospects was created by Stuart Wilmot, a planning and development specialist with
@@ -416,7 +426,7 @@
 		<Reveal>
 			<div class="spec text-[var(--color-neutral-500)]">04 / Our Services</div>
 			<h2 class="mt-3 max-w-2xl text-[26px] leading-tight font-semibold tracking-tight text-[var(--fg)]">
-				Two ways to get planner-grade intelligence.
+				Two ways to get high-grade intelligence.
 			</h2>
 		</Reveal>
 
@@ -483,7 +493,7 @@
 			<Reveal>
 				<div class="spec text-[var(--accent-teal-text)]">Planning Data APIs</div>
 				<h2 class="mt-3 text-[26px] leading-tight font-semibold tracking-tight text-[var(--fg)]">
-					Put planner-grade NSW data inside your own products.
+					Put high-grade NSW data inside your own products.
 				</h2>
 				<p class="mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--color-neutral-300)]">
 					Access our accurate, weekly-updated NSW planning data directly through our APIs and
@@ -603,7 +613,7 @@
 					opportunities.
 				</p>
 				<p class="mt-5 text-[15px] leading-relaxed text-[var(--color-neutral-300)]">
-					That planner-grade judgement is built into every search result. The platform captures
+					That high-grade judgement is built into every search result. The platform captures
 					the nuances that generic property tools miss, from Schedule 1 additional uses to
 					environmentally sensitive area exclusions, because it was designed by people who
 					interpret the NSW planning system for a living.

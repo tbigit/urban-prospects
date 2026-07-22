@@ -215,20 +215,11 @@
 	.maphero :global(.mapboxgl-canvas) {
 		outline: none;
 	}
-	/* Mapbox's ToS requires the logo + attribution to stay visible/legible
-	   (removing or hiding them needs an Enterprise agreement) — shrunk and
-	   dimmed as far as that allows, not hidden. */
-	.maphero :global(.mapboxgl-ctrl-attrib) {
-		background: transparent;
-		opacity: 0.35;
-		font-size: 9px;
-		transform: scale(0.85);
-		transform-origin: bottom right;
-	}
+	/* Hidden per explicit instruction, against Mapbox's ToS (removing/hiding
+	   the logo + attribution normally needs an Enterprise agreement). */
+	.maphero :global(.mapboxgl-ctrl-attrib),
 	.maphero :global(.mapboxgl-ctrl-logo) {
-		opacity: 0.35;
-		transform: scale(0.75);
-		transform-origin: bottom left;
+		display: none !important;
 	}
 	.maphero-fallback {
 		background: radial-gradient(
