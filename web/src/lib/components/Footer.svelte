@@ -15,7 +15,7 @@
 		{ href: `${base}/platform/`, label: 'Reports' }
 	];
 	const services = [
-		{ href: `${base}/report/`, label: 'Due Diligence Reports' },
+		{ href: `${base}/report/`, label: 'Property Intelligence Report' },
 		{ href: `${base}/pricing/`, label: 'Pricing' },
 		{ href: `${base}/data-apis/`, label: 'Planning Data APIs' },
 		{ href: `${base}/demo/`, label: 'Book a Demo' },

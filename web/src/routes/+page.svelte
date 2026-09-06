@@ -335,10 +335,10 @@
 		<div class="mt-10 grid gap-5 md:grid-cols-2">
 			<Reveal delay={80}>
 				<div class="h-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-subtle)] p-8">
-					<div class="spec text-[var(--color-neutral-500)]">Planning Intelligence Report</div>
+					<div class="spec text-[var(--color-neutral-500)]">Property Intelligence Report</div>
 					<div class="mt-4 flex items-baseline gap-2">
-						<span class="text-[40px] font-bold tracking-tight text-[var(--fg)]">$55</span>
-						<span class="text-[15px] text-[var(--color-neutral-400)]">one-off</span>
+						<span class="text-[40px] font-bold tracking-tight text-[var(--fg)]">$250</span>
+						<span class="text-[15px] text-[var(--color-neutral-400)]">per site</span>
 					</div>
 					<p class="mt-5 text-[15px] leading-relaxed text-[var(--color-neutral-300)]">
 						Already have a site in mind? Get property-specific and planning-specific intelligence
@@ -347,7 +347,7 @@
 					<p class="mt-4 text-[13.5px] font-medium text-[var(--color-neutral-400)]">
 						Ideal for real estate agents, home buyers and buyers' agents.
 					</p>
-					<Button href="{base}/report/" size="lg" class="mt-7">Buy a One-Off Report</Button>
+					<Button href="{base}/report/" size="lg" class="mt-7">Order a Report</Button>
 				</div>
 			</Reveal>
 			<Reveal delay={160}>

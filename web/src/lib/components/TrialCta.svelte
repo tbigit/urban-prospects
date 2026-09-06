@@ -85,7 +85,7 @@
 				Prefer a one-off report? <a
 					href="{base}/report/"
 					class="underline underline-offset-2 hover:text-[var(--fg)]"
-					>Get a Due Diligence Report for $55.</a
+					>Order a Property Intelligence Report for $250.</a
 				>
 			</p>
 		</Reveal>

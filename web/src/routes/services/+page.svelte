@@ -47,7 +47,7 @@
 					<h2 class="text-[24px] leading-tight font-semibold tracking-tight text-[var(--fg)]">
 						Property Intelligence Report
 					</h2>
-					<p class="mt-2 text-[14px] text-[var(--color-neutral-500)]">One-off, per site</p>
+					<p class="mt-2 text-[14px] text-[var(--color-neutral-500)]">$250 per site, one-off</p>
 					<p class="mt-5 text-[15px] leading-relaxed text-[var(--color-neutral-300)]">
 						Already have a site in mind? Get property-specific and planning-specific intelligence
 						in one place: a clear, defensible view of a site's potential before you commit.
