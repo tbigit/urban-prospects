@@ -405,6 +405,15 @@ Decided 2026-09-06: members are never emailed or linked. `web/src/lib/server/ren
 that, `npm run build` (from any session) makes the dev server issue dozens of full page
 reloads and the app never reaches `is-ready` — it looked like a blank/broken page.
 
+The `/q` dev proxy strips `cookie`/`set-cookie` (`vite.config.ts`). The current upstream is
+WordPress-fronted and sets `PHPSESSID`; with that cookie stored for the dev origin, PHP's
+session lock serialises every `/q` call behind the slowest one (an uncached region-filtered
+`/q/zone/search` runs 15–65s), so `/q/fav`, `/q/usersearch`, `/q/template` waited 25–75s and
+`/app/` sat blank in dev. Production nginx proxies `/q` straight to Express, no PHP session, so
+it never saw this. Also: several stale `vite dev` processes on the same `web/` dir each rewrite
+`.svelte-kit/generated/**` on start and trigger full page reloads in the others — kill old ones
+(`lsof -nP -iTCP -sTCP:LISTEN | grep node`) rather than chasing phantom reload storms.
+
 ## The property app, merged (`/app/`)
 
 `upapp` (the SvelteKit 1 / Svelte 4 property search app from `~/Downloads/upapp`) was copied
