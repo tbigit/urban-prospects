@@ -4,6 +4,7 @@
 	import MapboxHero from '$lib/components/MapboxHero.svelte';
 	import MagnetLines from '$lib/components/MagnetLines.svelte';
 	import VimeoEmbed from '$lib/components/VimeoEmbed.svelte';
+	import DemoPlayer from '$lib/components/DemoPlayer.svelte';
 	import TrialCta from '$lib/components/TrialCta.svelte';
 	import { posts } from '$lib/content';
 	import { advantageStats, capabilities, caseStudies, apiChecklist, whoUses } from '$lib/content/site';
@@ -133,20 +134,9 @@
 			<p class="mt-4 text-[16px] text-[var(--color-neutral-400)]">Watch how Urban Prospects works.</p>
 		</Reveal>
 		<Reveal delay={140}>
-			<button
-				type="button"
-				aria-label="Play product demo video"
-				class="group relative mt-10 flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl border border-[var(--color-line)]"
-				style="background: linear-gradient(135deg, var(--color-brand-purple-700), var(--color-brand-purple));"
-			>
-				<span
-					class="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-[var(--color-brand-teal)] text-[#0a0710] transition-transform group-hover:scale-105"
-				>
-					<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none" aria-hidden="true"
-						><polygon points="6 3 20 12 6 21 6 3" /></svg
-					>
-				</span>
-			</button>
+			<div class="mt-10 text-left">
+				<DemoPlayer />
+			</div>
 		</Reveal>
 	</div>
 </section>

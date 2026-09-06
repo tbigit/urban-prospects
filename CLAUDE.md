@@ -30,7 +30,8 @@ scrolling frame) rendered to PNG via `pdftoppm` and read in slices. Section orde
    inline dashboard mockup, which the Mapbox hero replaces).
 2. **Every advantage, measured** — 6 stat cards (4.5 million properties / 100% visibility / 34 data
    sources / Permissible uses / 17 Pattern Book designs / Weekly updates).
-3. **From site search to feasibility in minutes** — demo video placeholder (no real video asset yet).
+3. **From site search to feasibility in minutes** — the product demo film (`DemoPlayer.svelte`, see
+   "Demo video" below): muted autoplay loop, click for sound.
 4. **What you can do** (`#platform`) — 8 capability cards (search, off-market, yield, 3D, RLV,
    negotiate, shortlist, reports), each with its own Lucide icon.
 5. **Case studies** — 3 testimonials (Sarah/agent, Alex/developer, Maya/architect) with outcome tags.
@@ -109,6 +110,18 @@ compiles to reactive getters — no internal changes needed. It's mounted inside
 component's root hardcodes `relative` ahead of that prop with plain string concatenation (no
 `tailwind-merge`), so which of `relative`/`absolute` wins is decided by Tailwind's utility generation
 order, not HTML class order — wrapping sidesteps the conflict entirely.
+
+## Demo video: HLS ladder + vidstack player
+
+`web/src/lib/components/DemoPlayer.svelte` is a port of address-agent's `FilmPlayer.svelte`
+(xyref.com/video): vidstack elements with a bar composed from the primitives, hls.js for the
+ladder, skinned in this site's tokens. It autoplays muted in a loop while on screen (paused off
+screen, never under `prefers-reduced-motion` or Save-Data); the teal badge restarts it with sound.
+The film is cut with `~/.claude/skills/film-ladder` from `~/Downloads/upapp-video/up-1min.mov`
+(4K60, 76s) into `web/static/media/demo/` (five HLS rungs + 1080p faststart mp4 + poster, ~105MB).
+That directory is git-ignored and deployed on its own by `web/deploy/deploy-media.sh`; a re-cut
+goes in a new directory and `web/src/lib/video.ts` (`MEDIA_BASE`) moves with it, because
+segments are served immutable.
 
 ## Founder video: Vimeo click-to-play facade
 
@@ -221,8 +234,7 @@ rsync -avz --delete build/ root@143.42.46.116:/opt/www/upweb/
 
 ## Known gaps / next steps
 
-- No real product screenshot or demo video assets — the hero stat strip and the mid-page demo video
-  section still use placeholders (per Figma, which also placeholders the founder photo: "Photo:
+- No real product screenshot assets — the hero stat strip still uses placeholders (per Figma, which also placeholders the founder photo: "Photo:
   Stuart Wilmot"). The founder's-story video is now a real Vimeo embed (see below), but the source
   render is a subpar 720p — accepted for now, swap for a better master when one exists.
 - `Platform`/`Services`/`Data APIs`/`About`/`Insights` are in-page anchors; if these become full routes
@@ -319,3 +331,112 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
 - Still to wire after the move: upapp's `api_domain` is `https://www.urbanprospects.com.au/q`,
   which WordPress proxied to `api.js`; the nginx vhost has a commented `/q/` block for it. The
   `/pricing` and `/property?pid=` WordPress URLs upapp links to need routes or redirects.
+- `users.is_test` (added by `004_users_is_test.sql`) and `wp_import_subscriptions.is_test` flag the
+  11 non-customer accounts Danny identified on 2026-09-06: urbanperspectives.com.au staff (Stuart,
+  Mary, Tony, Wassef), the imtg dev-agency accounts, kheradmandi.m@gmail.com, and mitch@partridgebuilding.com (has a Pin token but confirmed test). They keep login access;
+  exclude them from customer counts and billing. That leaves 10 real paying members, 1 monthly.
+
+## Admin console (`/admin/`)
+
+Server-rendered, DB-backed, gated in `web/src/routes/admin/+layout.server.ts` to `users.role =
+'administrator'` (non-admins get 403, anonymous users bounce to `/login/?next=`). Queries live in
+`web/src/lib/server/admin.ts`; display helpers in `web/src/lib/admin-format.ts`. Layout follows the
+address-match console (left rail, stat tiles, filterable paginated tables) restyled with this
+site's tokens (`.spec`, `--color-line`, brand purple/teal) via `.adm-*` classes in the layout.
+
+- `/admin/` — tiles (paying members, active subs, annualised revenue, ending in 30 days, trialing,
+  users) + next-60-days period ends + recent logins.
+- `/admin/users/` — search/filter/paginate, create user (temp password); `/admin/users/[id]/` —
+  edit details/role/status/test flag/Stripe customer id, set temp password (ends sessions),
+  sign out everywhere, subscriptions on that email, add a subscription, read-only WordPress import record.
+- `/admin/subscriptions/` — filter by status/cycle/plan/test; `/admin/subscriptions/[id]/` — edit
+  status, plan, cycle, price, period end, regions, lookups, note; delete (for duplicates).
+- Renaming a user's email cascades to `user_subscriptions` because the app keys on email.
+- Administrators land on `/admin/` after login (and when visiting `/login/` already signed in)
+  unless a `next` was given; everyone else lands on `/account/`. The root layout drops the
+  marketing Header/Footer on `/admin*` — the console has its own rail. Wording is "Log out"
+  everywhere (site and admin), never "Sign out".
+- Saving a subscription's period end through the date input stores midnight UTC of the chosen
+  day; imported timestamps carry a time of day, so a save truncates it. Harmless for entitlement.
+- Migration `005_subscription_period_end.sql` added `current_period_end`, `updated_at`,
+  `admin_note` to `user_subscriptions` (additive; upapp inserts by column list).
+- Admin account `admin@urbanprospects.com.au` (users.id 22, `is_test`, argon2id) was created
+  2026-09-06 with the temporary password Danny specified; change it after first login via
+  `/account/`. `passwordProblem` enforces ≥10 chars on new passwords only, so the short temp one
+  logs in fine.
+- Local dev against the real DB: `ssh -f -N -L 5433:192.168.146.115:5432 root@172.105.183.89`
+  then `web/.env` with `DATABASE_URL=postgres://postgres:<pw>@127.0.0.1:5433/UrbanPortalDBP`
+  and `COOKIE_SECURE=0`. The password is the one in `~/.pgpass` on the updb host.
+
+## Renewal pathway for imported members (no outreach)
+
+Decided 2026-09-06: members are never emailed or linked. `web/src/lib/server/renewal.ts`:
+
+- **Login redirect**: after login, an imported (non-Stripe) `Active` row whose `current_period_end`
+  is within 7 days (`RENEW_WINDOW_DAYS`) or already past sends the member to `/renew/` instead of
+  `/account/`. `/account/` also redirects when overdue and shows a banner when merely due.
+- **`/renew/`** prefills plan, regions and cycle from that row (or, for a cancelled/expired
+  member, their most recent row; default 1 region yearly otherwise) and starts a Stripe Checkout
+  with **no trial**, email locked to the account, metadata `renewal_of` + `user_id`.
+  `/renew/success/` fetches the session (expanded subscription) and writes the Stripe row itself
+  (`ON CONFLICT (payment_subscription_id)`, so the upapp webhook landing first is harmless),
+  sets `users.stripe_customer_id`, marks the imported row `Expired`, and sets
+  `wp_import_subscriptions.woo_cancel_due_at` so the admin knows to cancel the WooCommerce
+  subscription (Pin keeps billing until someone does — never bulk-cancel Woo at cutover).
+- **Cancelled members keep login and search.** `/auth/check` (nginx gate for `/app/`) passes
+  anyone logged in. `/auth/me` now returns `has_access` (Active/Trialing row; imported rows only
+  while not past period end; admins always true) and `renew_url`. **upapp must gate the property
+  details panel on `has_access === false` and render `renew_url` there** — that change lives in
+  the upapp repo and is not done yet.
+- **Admin cancel** (`/admin/subscriptions/[id]/`): "Cancel at period end" (Stripe
+  `cancel_at_period_end=true`, mirrored in `user_subscriptions.cancel_at_period_end`) and
+  "Cancel now" (Stripe `DELETE /v1/subscriptions/:id`, row -> `Canceled`, `canceled_at`). Stripe is
+  called first; the row changes only on success. Imported rows have no Stripe call — they are
+  marked and the Woo cancel queue is set. Dashboard shows the queue; the sub page has "Mark
+  cancelled in WooCommerce". Migrations 006 (queue columns) and 007 (cancel columns) applied.
+- Stripe env (`STRIPE_SECRET_KEY`, `STRIPE_PRICE_REGION_*`) is not in the local `.env`; `/renew/`
+  shows a "not switched on yet" notice and disables the button until it is.
+- First live case: jai@definedplumbingcivil.com.au, monthly, Pin renews 9 Sep 2026 — bump his
+  `current_period_end` to 9 Oct after confirming that charge; he becomes the first Stripe renewal.
+
+## The property app, merged (`/app/`)
+
+`upapp` (the SvelteKit 1 / Svelte 4 property search app from `~/Downloads/upapp`) was copied
+into this project on 2026-09-06 so one node server, one session cookie and one deploy cover
+site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in legacy mode.
+
+- `web/src/routes/app/{+page,map,house,trial}` ← upapp `src/routes/*`; `web/src/lib/app/*` ←
+  upapp `src/lib/*` (imports rewritten `$lib/` → `$lib/app/`); `web/static/app/` ← upapp
+  `static/app/` (its stylesheets, images, lucide icon font). Every copied file carries
+  `@ts-nocheck` — the app is untyped JS and `svelte-check` would otherwise report ~1,000
+  strictness errors that are not bugs. `.backup` files, `yield.html`, `test.html` and
+  `custom_backup.css` were not carried over.
+- `web/src/routes/app/+layout.ts`: `ssr=false`, `prerender=false` (browser-only SPA).
+  `+layout.server.ts`: requires `locals.user` (else `/login/?next=`), returns `has_access`.
+  `+layout.svelte`: loads `/app/css/global.css` + lucide, forces a white light page, and maps
+  `--font-family` to the site's `--font-sans` (Geist). Root layout hides Header/Footer on `/app*`.
+- Identity: the page's existing `/auth/me` branch is used (no query string). `/auth/me` now
+  also returns `has_access` + `renew_url`; `+page.svelte` passes `has_access` into
+  `Property.svelte`, which renders a `.subscribe-gate` (link to `/renew/`) instead of the
+  details when false. Search, favourites list and map all keep working for cancelled members.
+  A member with no plan row is no longer bounced to `/pricing`; they get the gate.
+- `api_domain` is now relative `/q` (nginx proxies to the Express API in production;
+  `vite.config.ts` proxies it to www.urbanprospects.com.au in dev). `website_domain_with_http`
+  is unchanged.
+- Fonts: Poppins/Montserrat/Space Mono (Typekit + Google Fonts) were replaced with
+  `var(--font-sans)` / `var(--font-mono)` across the copied CSS and component styles; the
+  Typekit and Google Fonts `<link>`s are gone. Headings 600, body 400. Stripe Elements gets a
+  literal Geist stack (its iframe cannot read our variables).
+- Svelte 5 compile fixes applied to the copy: `<div>` inside `<p>` in `Design.svelte`
+  (tooltip now a `<span>`), `;;` in three `<style>` blocks. The rest compiles as-is; the 186
+  remaining `svelte-check` warnings are a11y/unused-CSS in the app and are pre-existing.
+- Debug shortcut kept from upapp: Ctrl+Shift+P opens property 1645912 directly — handy for
+  testing the panel without a search.
+- nginx: `deploy/nginx-site.conf` no longer aliases `/app/` to `/opt/www/upapp` or uses
+  `auth_request`; `/app/` is just another node route. `/opt/www/upapp` and upapp's
+  `npm run build` SFTP deploy are obsolete — **do not run upapp's build any more**; deploying
+  this project deploys the app.
+- **Not themed**: the app's stylesheets carry ~1,580 hard-coded colours (311 distinct) and no
+  dark palette, so it does not follow the site's dark/light toggle; the layout pins it light.
+  Theming and any shadcn/Tailwind move belong to UP-031/UP-032 (a 9.4k-line page with 2,300
+  class usages of the `incremental.css` grid/spacing utilities — a rewrite, not a swap).
