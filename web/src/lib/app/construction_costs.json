@@ -1,0 +1,1762 @@
+{
+  "Sydney": [
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 10-25 storeys",
+      "low": 5100,
+      "high": 6100,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 25-40 storeys",
+      "low": 6000,
+      "high": 7200,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 40-55 storeys",
+      "low": 6600,
+      "high": 7800,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD ≤10 storeys",
+      "low": 3900,
+      "high": 4550,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 10-25 storeys",
+      "low": 4500,
+      "high": 5200,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 25-40 storeys",
+      "low": 4600,
+      "high": 5800,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD low-rise",
+      "low": 3150,
+      "high": 3800,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD ≤10 storeys",
+      "low": 3350,
+      "high": 4350,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD 10-25 storeys",
+      "low": 3900,
+      "high": 5000,
+      "unit": null
+    },
+    {
+      "type": "Hotel",
+      "name": "5 Star",
+      "low": 6400,
+      "high": 8700,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "4 Star",
+      "low": 5300,
+      "high": 7800,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "3 Star",
+      "low": 4500,
+      "high": 6000,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Carparking",
+      "name": "Open deck",
+      "low": 1760,
+      "high": 2750,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement CBD",
+      "low": 1600,
+      "high": 2750,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement non-CBD",
+      "low": 1580,
+      "high": 2450,
+      "unit": "car"
+    },
+    {
+      "type": "Industrial",
+      "name": "Metal cladding",
+      "low": 1060,
+      "high": 1340,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Precast concrete",
+      "low": 1160,
+      "high": 1740,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (200m²)",
+      "low": 3250,
+      "high": 3900,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (400m²)",
+      "low": 3500,
+      "high": 4100,
+      "unit": null
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Aged care",
+      "low": 3900,
+      "high": 5100,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (45-60 m²/bed)",
+      "low": 4050,
+      "high": 5300,
+      "unit": "Bed"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (with OT)",
+      "low": 5100,
+      "high": 7200,
+      "unit": "Bed"
+    },
+    {
+      "type": "Cinemas",
+      "name": "Cinema complex",
+      "low": 4600,
+      "high": 6900,
+      "unit": "Seat"
+    },
+    {
+      "type": "Retail",
+      "name": "Department store",
+      "low": 2150,
+      "high": 3300,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Supermarket",
+      "low": 2100,
+      "high": 4200,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Discount store",
+      "low": 1820,
+      "high": 2400,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Malls",
+      "low": 2900,
+      "high": 6200,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Specialty shops",
+      "low": 2450,
+      "high": 3900,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Small shops/showrooms",
+      "low": 2150,
+      "high": 3000,
+      "unit": null
+    },
+    {
+      "type": "Residential",
+      "name": "Houses",
+      "low": 2500,
+      "high": 7600,
+      "unit": "House"
+    },
+    {
+      "type": "Residential",
+      "name": "Townhouses (90-120m²)",
+      "low": 4048,
+      "high": 7381,
+      "unit": "Townhouse"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤2 storeys without lift (85-120m²)",
+      "low": 3415,
+      "high": 6585,
+      "unit": "Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (60-70m²)",
+      "low": 4200,
+      "high": 5700,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (90-120m²)",
+      "low": 4000,
+      "high": 5800,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (60-70m²)",
+      "low": 4700,
+      "high": 6200,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (90-120m²)",
+      "low": 4500,
+      "high": 6300,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (60-70m²)",
+      "low": 5200,
+      "high": 6700,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (90-120m²)",
+      "low": 5000,
+      "high": 6800,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (60-70m²)",
+      "low": 5700,
+      "high": 7200,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (90-120m²)",
+      "low": 5500,
+      "high": 7800,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Demolition",
+      "name": "Single storey timber framed house (timber cladding, tiled roof)",
+      "low": 170,
+      "high": 245,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Single / double storey brick house (tiled roof)",
+      "low": 175,
+      "high": 280,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - metal clad",
+      "low": 175,
+      "high": 220,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - brick clad",
+      "low": 210,
+      "high": 240,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Two storey office (RC frame, masonry cladding, metal roof)",
+      "low": 220,
+      "high": 280,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - reinforced concrete",
+      "low": 380,
+      "high": 550,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - structural steel",
+      "low": 400,
+      "high": 500,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤25 storeys) - steel frame",
+      "low": 400,
+      "high": 580,
+      "unit": null
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Residential Estate",
+      "low": 1820,
+      "high": 3100,
+      "unit": "Linear metre"
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Industrial Estate",
+      "low": 2800,
+      "high": 4450,
+      "unit": "Linear metre"
+    }
+  ],
+  "Western": [
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 10-25 storeys",
+      "low": 5406,
+      "high": 6466,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 25-40 storeys",
+      "low": 6360,
+      "high": 7632,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 40-55 storeys",
+      "low": 6996,
+      "high": 8268,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD ≤10 storeys",
+      "low": 4134,
+      "high": 4823,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 10-25 storeys",
+      "low": 4770,
+      "high": 5512,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 25-40 storeys",
+      "low": 4876,
+      "high": 6148,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD low-rise",
+      "low": 3339,
+      "high": 4028,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD ≤10 storeys",
+      "low": 3551,
+      "high": 4611,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD 10-25 storeys",
+      "low": 4134,
+      "high": 5300,
+      "unit": null
+    },
+    {
+      "type": "Hotel",
+      "name": "5 Star",
+      "low": 6784,
+      "high": 9222,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "4 Star",
+      "low": 5618,
+      "high": 8268,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "3 Star",
+      "low": 4770,
+      "high": 6360,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Carparking",
+      "name": "Open deck",
+      "low": 1866,
+      "high": 2915,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement CBD",
+      "low": 1696,
+      "high": 2915,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement non-CBD",
+      "low": 1675,
+      "high": 2597,
+      "unit": "car"
+    },
+    {
+      "type": "Industrial",
+      "name": "Metal cladding",
+      "low": 1124,
+      "high": 1420,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Precast concrete",
+      "low": 1230,
+      "high": 1844,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (200m²)",
+      "low": 3445,
+      "high": 4134,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (400m²)",
+      "low": 3710,
+      "high": 4346,
+      "unit": null
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Aged care",
+      "low": 4134,
+      "high": 5406,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (45-60 m²/bed)",
+      "low": 4293,
+      "high": 5618,
+      "unit": "Bed"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (with OT)",
+      "low": 5406,
+      "high": 7632,
+      "unit": "Bed"
+    },
+    {
+      "type": "Cinemas",
+      "name": "Cinema complex",
+      "low": 4876,
+      "high": 7314,
+      "unit": "Seat"
+    },
+    {
+      "type": "Retail",
+      "name": "Department store",
+      "low": 2279,
+      "high": 3498,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Supermarket",
+      "low": 2226,
+      "high": 4452,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Discount store",
+      "low": 1929,
+      "high": 2544,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Malls",
+      "low": 3074,
+      "high": 6572,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Specialty shops",
+      "low": 2597,
+      "high": 4134,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Small shops/showrooms",
+      "low": 2279,
+      "high": 3180,
+      "unit": null
+    },
+    {
+      "type": "Residential",
+      "name": "Houses",
+      "low": 2650,
+      "high": 8056,
+      "unit": "House"
+    },
+    {
+      "type": "Residential",
+      "name": "Townhouses (90-120m²)",
+      "low": 4290,
+      "high": 7824,
+      "unit": "Townhouse"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤2 storeys without lift (85-120m²)",
+      "low": 3620,
+      "high": 6980,
+      "unit": "Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (60-70m²)",
+      "low": 4452,
+      "high": 6042,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (90-120m²)",
+      "low": 4240,
+      "high": 6148,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (60-70m²)",
+      "low": 4982,
+      "high": 6572,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (90-120m²)",
+      "low": 4770,
+      "high": 6678,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (60-70m²)",
+      "low": 5512,
+      "high": 7102,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (90-120m²)",
+      "low": 5300,
+      "high": 7208,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (60-70m²)",
+      "low": 6042,
+      "high": 7632,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (90-120m²)",
+      "low": 5830,
+      "high": 8268,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Demolition",
+      "name": "Single storey timber framed house (timber cladding, tiled roof)",
+      "low": 180,
+      "high": 260,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Single / double storey brick house (tiled roof)",
+      "low": 186,
+      "high": 297,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - metal clad",
+      "low": 186,
+      "high": 233,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - brick clad",
+      "low": 223,
+      "high": 254,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Two storey office (RC frame, masonry cladding, metal roof)",
+      "low": 233,
+      "high": 297,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - reinforced concrete",
+      "low": 403,
+      "high": 583,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - structural steel",
+      "low": 424,
+      "high": 530,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤25 storeys) - steel frame",
+      "low": 424,
+      "high": 615,
+      "unit": null
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Residential Estate",
+      "low": 1929,
+      "high": 3286,
+      "unit": "Linear metre"
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Industrial Estate",
+      "low": 2968,
+      "high": 4717,
+      "unit": "Linear metre"
+    }
+  ],
+  "Southern": [
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 10-25 storeys",
+      "low": 5406,
+      "high": 6466,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 25-40 storeys",
+      "low": 6360,
+      "high": 7632,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 40-55 storeys",
+      "low": 6996,
+      "high": 8268,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD ≤10 storeys",
+      "low": 4134,
+      "high": 4823,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 10-25 storeys",
+      "low": 4770,
+      "high": 5512,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 25-40 storeys",
+      "low": 4876,
+      "high": 6148,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD low-rise",
+      "low": 3339,
+      "high": 4028,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD ≤10 storeys",
+      "low": 3551,
+      "high": 4611,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD 10-25 storeys",
+      "low": 4134,
+      "high": 5300,
+      "unit": null
+    },
+    {
+      "type": "Hotel",
+      "name": "5 Star",
+      "low": 6784,
+      "high": 9222,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "4 Star",
+      "low": 5618,
+      "high": 8268,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "3 Star",
+      "low": 4770,
+      "high": 6360,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Carparking",
+      "name": "Open deck",
+      "low": 1866,
+      "high": 2915,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement CBD",
+      "low": 1696,
+      "high": 2915,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement non-CBD",
+      "low": 1675,
+      "high": 2597,
+      "unit": "car"
+    },
+    {
+      "type": "Industrial",
+      "name": "Metal cladding",
+      "low": 1124,
+      "high": 1420,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Precast concrete",
+      "low": 1230,
+      "high": 1844,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (200m²)",
+      "low": 3445,
+      "high": 4134,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (400m²)",
+      "low": 3710,
+      "high": 4346,
+      "unit": null
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Aged care",
+      "low": 4134,
+      "high": 5406,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (45-60 m²/bed)",
+      "low": 4293,
+      "high": 5618,
+      "unit": "Bed"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (with OT)",
+      "low": 5406,
+      "high": 7632,
+      "unit": "Bed"
+    },
+    {
+      "type": "Cinemas",
+      "name": "Cinema complex",
+      "low": 4876,
+      "high": 7314,
+      "unit": "Seat"
+    },
+    {
+      "type": "Retail",
+      "name": "Department store",
+      "low": 2279,
+      "high": 3498,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Supermarket",
+      "low": 2226,
+      "high": 4452,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Discount store",
+      "low": 1929,
+      "high": 2544,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Malls",
+      "low": 3074,
+      "high": 6572,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Specialty shops",
+      "low": 2597,
+      "high": 4134,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Small shops/showrooms",
+      "low": 2279,
+      "high": 3180,
+      "unit": null
+    },
+    {
+      "type": "Residential",
+      "name": "Houses",
+      "low": 2650,
+      "high": 8056,
+      "unit": "House"
+    },
+    {
+      "type": "Residential",
+      "name": "Townhouses (90-120m²)",
+      "low": 4290,
+      "high": 7824,
+      "unit": "Townhouse"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤2 storeys without lift (85-120m²)",
+      "low": 3620,
+      "high": 6980,
+      "unit": "Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (60-70m²)",
+      "low": 4452,
+      "high": 6042,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (90-120m²)",
+      "low": 4240,
+      "high": 6148,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (60-70m²)",
+      "low": 4982,
+      "high": 6572,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (90-120m²)",
+      "low": 4770,
+      "high": 6678,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (60-70m²)",
+      "low": 5512,
+      "high": 7102,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (90-120m²)",
+      "low": 5300,
+      "high": 7208,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (60-70m²)",
+      "low": 6042,
+      "high": 7632,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (90-120m²)",
+      "low": 5830,
+      "high": 8268,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Demolition",
+      "name": "Single storey timber framed house (timber cladding, tiled roof)",
+      "low": 180,
+      "high": 260,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Single / double storey brick house (tiled roof)",
+      "low": 186,
+      "high": 297,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - metal clad",
+      "low": 186,
+      "high": 233,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - brick clad",
+      "low": 223,
+      "high": 254,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Two storey office (RC frame, masonry cladding, metal roof)",
+      "low": 233,
+      "high": 297,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - reinforced concrete",
+      "low": 403,
+      "high": 583,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - structural steel",
+      "low": 424,
+      "high": 530,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤25 storeys) - steel frame",
+      "low": 424,
+      "high": 615,
+      "unit": null
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Residential Estate",
+      "low": 1929,
+      "high": 3286,
+      "unit": "Linear metre"
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Industrial Estate",
+      "low": 2968,
+      "high": 4717,
+      "unit": "Linear metre"
+    }
+  ],
+  "Northern": [
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 10-25 storeys",
+      "low": 5355,
+      "high": 6405,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 25-40 storeys",
+      "low": 6300,
+      "high": 7560,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 40-55 storeys",
+      "low": 6930,
+      "high": 8190,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD ≤10 storeys",
+      "low": 4095,
+      "high": 4778,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 10-25 storeys",
+      "low": 4725,
+      "high": 5460,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 25-40 storeys",
+      "low": 4830,
+      "high": 6090,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD low-rise",
+      "low": 3308,
+      "high": 3990,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD ≤10 storeys",
+      "low": 3518,
+      "high": 4568,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD 10-25 storeys",
+      "low": 4095,
+      "high": 5250,
+      "unit": null
+    },
+    {
+      "type": "Hotel",
+      "name": "5 Star",
+      "low": 6720,
+      "high": 9135,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "4 Star",
+      "low": 5565,
+      "high": 8190,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "3 Star",
+      "low": 4725,
+      "high": 6300,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Carparking",
+      "name": "Open deck",
+      "low": 1848,
+      "high": 2888,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement CBD",
+      "low": 1680,
+      "high": 2888,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement non-CBD",
+      "low": 1659,
+      "high": 2573,
+      "unit": "car"
+    },
+    {
+      "type": "Industrial",
+      "name": "Metal cladding",
+      "low": 1113,
+      "high": 1407,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Precast concrete",
+      "low": 1218,
+      "high": 1827,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (200m²)",
+      "low": 3413,
+      "high": 4095,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (400m²)",
+      "low": 3675,
+      "high": 4305,
+      "unit": null
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Aged care",
+      "low": 4095,
+      "high": 5355,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (45-60 m²/bed)",
+      "low": 4253,
+      "high": 5565,
+      "unit": "Bed"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (with OT)",
+      "low": 5355,
+      "high": 7560,
+      "unit": "Bed"
+    },
+    {
+      "type": "Cinemas",
+      "name": "Cinema complex",
+      "low": 4830,
+      "high": 7245,
+      "unit": "Seat"
+    },
+    {
+      "type": "Retail",
+      "name": "Department store",
+      "low": 2258,
+      "high": 3465,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Supermarket",
+      "low": 2205,
+      "high": 4410,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Discount store",
+      "low": 1911,
+      "high": 2520,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Malls",
+      "low": 3045,
+      "high": 6510,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Specialty shops",
+      "low": 2573,
+      "high": 4095,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Small shops/showrooms",
+      "low": 2258,
+      "high": 3150,
+      "unit": null
+    },
+    {
+      "type": "Residential",
+      "name": "Houses",
+      "low": 2625,
+      "high": 7980,
+      "unit": "House"
+    },
+    {
+      "type": "Residential",
+      "name": "Townhouses (90-120m²)",
+      "low": 4250,
+      "high": 7750,
+      "unit": "Townhouse"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤2 storeys without lift (85-120m²)",
+      "low": 3585,
+      "high": 6915,
+      "unit": "Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (60-70m²)",
+      "low": 4410,
+      "high": 5985,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (90-120m²)",
+      "low": 4200,
+      "high": 6090,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (60-70m²)",
+      "low": 4935,
+      "high": 6510,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (90-120m²)",
+      "low": 4725,
+      "high": 6615,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (60-70m²)",
+      "low": 5460,
+      "high": 7035,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (90-120m²)",
+      "low": 5250,
+      "high": 7140,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (60-70m²)",
+      "low": 5985,
+      "high": 7560,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (90-120m²)",
+      "low": 5775,
+      "high": 8190,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Demolition",
+      "name": "Single storey timber framed house (timber cladding, tiled roof)",
+      "low": 179,
+      "high": 257,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Single / double storey brick house (tiled roof)",
+      "low": 184,
+      "high": 294,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - metal clad",
+      "low": 184,
+      "high": 231,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - brick clad",
+      "low": 221,
+      "high": 252,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Two storey office (RC frame, masonry cladding, metal roof)",
+      "low": 231,
+      "high": 294,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - reinforced concrete",
+      "low": 399,
+      "high": 578,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - structural steel",
+      "low": 420,
+      "high": 525,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤25 storeys) - steel frame",
+      "low": 420,
+      "high": 609,
+      "unit": null
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Residential Estate",
+      "low": 1911,
+      "high": 3255,
+      "unit": "Linear metre"
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Industrial Estate",
+      "low": 2940,
+      "high": 4673,
+      "unit": "Linear metre"
+    }
+  ],
+  "Central and Hunter": [
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 10-25 storeys",
+      "low": 5049,
+      "high": 6039,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 25-40 storeys",
+      "low": 5940,
+      "high": 7128,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Prestige CBD 40-55 storeys",
+      "low": 6534,
+      "high": 7722,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD ≤10 storeys",
+      "low": 3861,
+      "high": 4505,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 10-25 storeys",
+      "low": 4455,
+      "high": 5148,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment CBD 25-40 storeys",
+      "low": 4554,
+      "high": 5742,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD low-rise",
+      "low": 3119,
+      "high": 3762,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD ≤10 storeys",
+      "low": 3317,
+      "high": 4307,
+      "unit": null
+    },
+    {
+      "type": "Office Buildings",
+      "name": "Investment non-CBD 10-25 storeys",
+      "low": 3861,
+      "high": 4950,
+      "unit": null
+    },
+    {
+      "type": "Hotel",
+      "name": "5 Star",
+      "low": 6336,
+      "high": 8613,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "4 Star",
+      "low": 5247,
+      "high": 7722,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Hotel",
+      "name": "3 Star",
+      "low": 4455,
+      "high": 5940,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Carparking",
+      "name": "Open deck",
+      "low": 1742,
+      "high": 2723,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement CBD",
+      "low": 1584,
+      "high": 2723,
+      "unit": "car"
+    },
+    {
+      "type": "Carparking",
+      "name": "Basement non-CBD",
+      "low": 1564,
+      "high": 2426,
+      "unit": "car"
+    },
+    {
+      "type": "Industrial",
+      "name": "Metal cladding",
+      "low": 1049,
+      "high": 1327,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Precast concrete",
+      "low": 1148,
+      "high": 1723,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (200m²)",
+      "low": 3218,
+      "high": 3861,
+      "unit": null
+    },
+    {
+      "type": "Industrial",
+      "name": "Office (400m²)",
+      "low": 3465,
+      "high": 4059,
+      "unit": null
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Aged care",
+      "low": 3861,
+      "high": 5049,
+      "unit": "Bedrooms"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (45-60 m²/bed)",
+      "low": 4010,
+      "high": 5247,
+      "unit": "Bed"
+    },
+    {
+      "type": "Health & Aged Care",
+      "name": "Hospital (with OT)",
+      "low": 5049,
+      "high": 7128,
+      "unit": "Bed"
+    },
+    {
+      "type": "Cinemas",
+      "name": "Cinema complex",
+      "low": 4554,
+      "high": 6831,
+      "unit": "Seat"
+    },
+    {
+      "type": "Retail",
+      "name": "Department store",
+      "low": 2129,
+      "high": 3267,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Supermarket",
+      "low": 2079,
+      "high": 4158,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Discount store",
+      "low": 1802,
+      "high": 2376,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Malls",
+      "low": 2871,
+      "high": 6138,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Specialty shops",
+      "low": 2426,
+      "high": 3861,
+      "unit": null
+    },
+    {
+      "type": "Retail",
+      "name": "Small shops/showrooms",
+      "low": 2129,
+      "high": 2970,
+      "unit": null
+    },
+    {
+      "type": "Residential",
+      "name": "Houses",
+      "low": 2475,
+      "high": 7524,
+      "unit": "House"
+    },
+    {
+      "type": "Residential",
+      "name": "Townhouses (90-120m²)",
+      "low": 4007,
+      "high": 7307,
+      "unit": "Townhouse"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤2 storeys without lift (85-120m²)",
+      "low": 3380,
+      "high": 6520,
+      "unit": "Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (60-70m²)",
+      "low": 4158,
+      "high": 5643,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "≤10 storeys (90-120m²)",
+      "low": 3960,
+      "high": 5742,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (60-70m²)",
+      "low": 4653,
+      "high": 6138,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "10-20 storeys (90-120m²)",
+      "low": 4455,
+      "high": 6237,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (60-70m²)",
+      "low": 5148,
+      "high": 6633,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "20-40 storeys (90-120m²)",
+      "low": 4950,
+      "high": 6732,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (60-70m²)",
+      "low": 5643,
+      "high": 7128,
+      "unit": "2 bedroom Unit"
+    },
+    {
+      "type": "Apartments",
+      "name": "40-80 storeys (90-120m²)",
+      "low": 5445,
+      "high": 7722,
+      "unit": "3 bedroom Unit"
+    },
+    {
+      "type": "Demolition",
+      "name": "Single storey timber framed house (timber cladding, tiled roof)",
+      "low": 168,
+      "high": 243,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Single / double storey brick house (tiled roof)",
+      "low": 173,
+      "high": 277,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - metal clad",
+      "low": 173,
+      "high": 218,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Factory / warehouse - brick clad",
+      "low": 208,
+      "high": 238,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Two storey office (RC frame, masonry cladding, metal roof)",
+      "low": 218,
+      "high": 277,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - reinforced concrete",
+      "low": 376,
+      "high": 545,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤15 floors) - structural steel",
+      "low": 396,
+      "high": 495,
+      "unit": null
+    },
+    {
+      "type": "Demolition",
+      "name": "Multi-storey office (≤25 storeys) - steel frame",
+      "low": 396,
+      "high": 574,
+      "unit": null
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Residential Estate",
+      "low": 1802,
+      "high": 3069,
+      "unit": "Linear metre"
+    },
+    {
+      "type": "Subdivisions",
+      "name": "Industrial Estate",
+      "low": 2772,
+      "high": 4406,
+      "unit": "Linear metre"
+    }
+  ]
+}

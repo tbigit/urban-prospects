@@ -1,0 +1,80 @@
+// @ts-nocheck
+// Mapping of dataset keys to readable labels
+export const labelMap = {
+  "suburbname": "Suburb Name",
+  "postcode": "Postcode",
+  "male_population": "Male Population",
+  "female_population": "Female Population",
+  "total_population": "Total Population",
+  "median_age": "Median Age",
+  "age_0_4_years": "Age 0 to 4 Years",
+  "age_5_9_years": "Age 5 to 9 Years",
+  "age_10_14_years": "Age 10 to 14 Years",
+  "age_15_19_years": "Age 15 to 19 Years",
+  "age_20_24_years": "Age 20 to 24 Years",
+  "age_25_29_years": "Age 25 to 29 Years",
+  "age_30_34_years": "Age 30 to 34 Years",
+  "age_35_39_years": "Age 35 to 39 Years",
+  "age_40_44_years": "Age 40 to 44 Years",
+  "age_45_49_years": "Age 45 to 49 Years",
+  "age_50_54_years": "Age 50 to 54 Years",
+  "age_55_59_years": "Age 55 to 59 Years",
+  "age_60_64_years": "Age 60 to 64 Years",
+  "age_65_69_years": "Age 65 to 69 Years",
+  "age_70_74_years": "Age 70 to 74 Years",
+  "age_75_79_years": "Age 75 to 79 Years",
+  "age_80_84_years": "Age 80 to 84 Years",
+  "age_85_plus": "Age 85+",
+  "median_weekly_personal_income": "Median Weekly Personal Income",
+  "median_weekly_family_income": "Median Weekly Family Income",
+  "median_weekly_household_income": "Median Weekly Household Income",
+  "occupied_private_dwellings": "Occupied Private Dwellings",
+  "unoccupied_private_dwellings": "Unoccupied Private Dwellings",
+  "family_households": "Family Households",
+  "single_households": "Single Households",
+  "group_households": "Group Households",
+  "tenure_owned_outright": "Owned Outright",
+  "tenure_owned_with_mortgage": "Owned with Mortgage",
+  "tenure_rented": "Rented",
+  "tenure_other_tenure_type": "Other Type",
+  "tenure_tenure_type_unstated": "Unstated",
+  "median_weekly_rent": "Median Weekly Rent",
+  "renter_pay_le30_income": "Rent ≤ 30% Income",
+  "renter_pay_gt30_income": "Rent > 30% Income",
+  "renter_unable_to_determine": "Unable to determine",
+  "median_mortgage_repayments": "Median Monthly Repayments",
+  "mortgage_pay_le30_income": "Repayments ≤ 30% Income",
+  "mortgage_pay_gt30_income": "Repayments > 30% Income",
+  "mortgage_unable_to_determine": "Unable to determine",
+
+  // Country/ancestry demographic labels (selected)
+  "ancestry_english": "English",
+  "ancestry_australian": "Australian",
+  "ancestry_irish": "Irish",
+  "ancestry_scottish": "Scottish",
+  "ancestry_chinese": "Chinese",
+  "ancestry_australian_aboriginal": "Australian Aboriginal",
+  "ancestry_indian": "Indian",
+  "ancestry_italian": "Italian",
+  "ancestry_lebanese": "Lebanese",
+  "ancestry_vietnamese": "Vietnamese",
+  "country_of_birth_australia": "Australia",
+  "country_of_birth_china": "China",
+  "country_of_birth_england": "England",
+  "country_of_birth_india": "India",
+  "country_of_birth_new_zealand": "New Zealand",
+  "country_of_birth_philippines": "Philippines",
+  "country_of_birth_vietnam": "Vietnam",
+  "country_of_birth_nepal": "Nepal",
+  "country_of_birth_iraq": "Iraq",
+  "country_of_birth_lebanon": "Lebanon",
+};
+
+// Utility function to transform raw dataset info into labels and data arrays
+export function processChartVariables(dataSet, filterLogic) {
+  const parsedData = Object.entries(dataSet).filter(filterLogic);
+  const labels = parsedData.map(([key]) => labelMap[key] || key);
+  const data = parsedData.map(([, value]) => value);
+
+  return { labels, data };
+}

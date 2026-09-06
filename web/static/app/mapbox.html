@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Mapbox GL JS Red Overlay Example</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    
+        .buttons {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="buttons">
+    <button id="toggle-sydney">Toggle Sydney Polygon</button>
+    <button id="toggle-circle">Toggle Circle</button>
+    <button id="toggle-diamond">Toggle Diamond</button>
+</div>
+<script>
+    // Your Mapbox access token
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZGFubnlsIiwiYSI6ImNseGJta3lhMzA3ZHEya3ExY3huOXdvaHUifQ.tWLLIKUxBJ_JBKH5o2XHTQ';
+
+    // Create the map
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11', // Map style
+        center: [151.2093, -33.8688], // Sydney's coordinates
+        zoom: 10
+    });
+
+    map.on('load', function() {
+        // Add a GeoJSON source with Sydney's polygon
+        map.addSource('sydney', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [[
+                        [151.131, -33.9205], // Southwest point
+                        [151.275, -33.9205], // Southeast point
+                        [151.275, -33.813], // Northeast point
+                        [151.131, -33.813], // Northwest point
+                        [151.131, -33.9205] // Back to Southwest point
+                    ]]
+                }
+            }
+        });
+
+        // Add a layer to use the GeoJSON source
+        map.addLayer({
+            'id': 'sydney-layer',
+            'type': 'fill',
+            'source': 'sydney',
+            'layout': {},
+            'paint': {
+                'fill-color': 'red',
+                'fill-opacity': 0.5
+            }
+        });
+
+        // Add a black outline around the polygon
+        map.addLayer({
+            'id': 'sydney-outline',
+            'type': 'line',
+            'source': 'sydney',
+            'layout': {},
+            'paint': {
+                'line-color': 'black',
+                'line-width': 2
+            }
+        });
+
+        // Add a GeoJSON source for the yellow circle
+        map.addSource('circle', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [151.2093, -33.8688] // Center of the circle
+                }
+            }
+        });
+
+        // Add a layer to use the GeoJSON source for the yellow circle
+        map.addLayer({
+            'id': 'circle-layer',
+            'type': 'circle',
+            'source': 'circle',
+            'paint': {
+                'circle-radius': 1000, // Radius in meters
+                'circle-color': 'yellow',
+                'circle-opacity': 0.5
+            }
+        });
+
+        // Add a GeoJSON source for the blue diamond
+        map.addSource('diamond', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [[
+                        [151.17, -33.85], // Top point
+                        [151.21, -33.89], // Right point
+                        [151.25, -33.85], // Bottom point
+                        [151.21, -33.81], // Left point
+                        [151.17, -33.85] // Back to top point
+                    ]]
+                }
+            }
+        });
+
+        // Add a layer to use the GeoJSON source for the blue diamond
+        map.addLayer({
+            'id': 'diamond-layer',
+            'type': 'fill',
+            'source': 'diamond',
+            'layout': {},
+            'paint': {
+                'fill-color': 'blue',
+                'fill-opacity': 0.5
+            }
+        });
+
+        // Add a black outline around the blue diamond
+        map.addLayer({
+            'id': 'diamond-outline',
+            'type': 'line',
+            'source': 'diamond',
+            'layout': {},
+            'paint': {
+                'line-color': 'black',
+                'line-width': 2
+            }
+        });
+
+        map.setLayoutProperty('sydney-layer', 'visibility', 'none');
+        map.setLayoutProperty('sydney-outline', 'visibility', 'none');
+        map.setLayoutProperty('diamond-layer', 'visibility', 'none');
+        map.setLayoutProperty('diamond-outline', 'visibility', 'none');
+        map.setLayoutProperty('circle-layer', 'visibility', 'none');
+
+
+        // Add event listeners for the buttons to toggle layers
+        document.getElementById('toggle-sydney').addEventListener('click', function () {
+            var visibility = map.getLayoutProperty('sydney-layer', 'visibility');
+            if (visibility === 'visible') {
+                map.setLayoutProperty('sydney-layer', 'visibility', 'none');
+                map.setLayoutProperty('sydney-outline', 'visibility', 'none');
+            } else {
+                map.setLayoutProperty('sydney-layer', 'visibility', 'visible');
+                map.setLayoutProperty('sydney-outline', 'visibility', 'visible');
+            }
+        });
+
+        document.getElementById('toggle-circle').addEventListener('click', function () {
+            var visibility = map.getLayoutProperty('circle-layer', 'visibility');
+            if (visibility === 'visible') {
+                map.setLayoutProperty('circle-layer', 'visibility', 'none');
+            } else {
+                map.setLayoutProperty('circle-layer', 'visibility', 'visible');
+            }
+        });
+
+        document.getElementById('toggle-diamond').addEventListener('click', function () {
+            var visibility = map.getLayoutProperty('diamond-layer', 'visibility');
+            if (visibility === 'visible') {
+                map.setLayoutProperty('diamond-layer', 'visibility', 'none');
+                map.setLayoutProperty('diamond-outline', 'visibility', 'none');
+            } else {
+                map.setLayoutProperty('diamond-layer', 'visibility', 'visible');
+                map.setLayoutProperty('diamond-outline', 'visibility', 'visible');
+            }
+        });
+        
+    });
+</script>
+</body>
+</html>

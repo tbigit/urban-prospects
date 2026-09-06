@@ -265,3 +265,25 @@
 }
 /* full-width groups: segments size by label so a long one is not clipped by equal thirds */
 .up-app .btn-group.width-100 .btn { flex: 1 1 auto !important; }
+
+/* ---- property panel: header actions ---------------------------------------
+   In map view the header keeps the list-view 60/40 split, so the four action
+   buttons and the "purchases paused" notice were squeezed into a 40% column
+   (buttons ~100px wide, the notice a 126px tall sliver). Let both columns span
+   the panel; the notice becomes a quiet full-width note under the buttons. */
+.up-app .app.mapview.viewing-property .property-details-container .three-fifth.padding-top.padding-mobile,
+.up-app .app.mapview.viewing-property .property-details-container .padding-top.two-fifth { width: 100% !important; max-width: 100% !important; flex-basis: 100% !important; }
+.up-app .property-details-container .title-search-disable-container {
+	width: 100% !important; max-width: 100% !important; float: none !important;
+	margin: .6rem 0 0 !important; padding: .55rem .75rem !important; text-align: left !important;
+	background: color-mix(in srgb, var(--fg) 5%, transparent) !important;
+	border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent) !important;
+	border-radius: .6rem !important; box-shadow: none !important;
+}
+.up-app .property-details-container .title-search-disable-container p { font-size: 12px !important; line-height: 1.45 !important; color: var(--color-neutral-300) !important; margin: 0 !important; }
+.up-app .property-details-container .title-search-disable-container .popup-triangle { display: none !important; }
+/* active Yield / Design / 3D-segment buttons: pastel-on-pastel made the label vanish */
+.up-app .property-details-container .btn.active,
+.up-app .map-view-detail .btn.active,
+.up-app .design-controls .btn.active { background: var(--color-brand-purple) !important; color: #fff !important; border-color: var(--color-brand-purple) !important; }
+.up-app .property-details-container .btn.unclickable { opacity: .45; }

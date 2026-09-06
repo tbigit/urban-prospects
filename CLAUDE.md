@@ -399,6 +399,12 @@ Decided 2026-09-06: members are never emailed or linked. `web/src/lib/server/ren
 - First live case: jai@definedplumbingcivil.com.au, monthly, Pin renews 9 Sep 2026 — bump his
   `current_period_end` to 9 Oct after confirming that charge; he becomes the first Stripe renewal.
 
+## Dev server note
+
+`vite.config.ts` ignores `build/**` and `.svelte-kit/output/**` in the file watcher. Without
+that, `npm run build` (from any session) makes the dev server issue dozens of full page
+reloads and the app never reaches `is-ready` — it looked like a blank/broken page.
+
 ## The property app, merged (`/app/`)
 
 `upapp` (the SvelteKit 1 / Svelte 4 property search app from `~/Downloads/upapp`) was copied
@@ -436,6 +442,28 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
   `auth_request`; `/app/` is just another node route. `/opt/www/upapp` and upapp's
   `npm run build` SFTP deploy are obsolete — **do not run upapp's build any more**; deploying
   this project deploys the app.
+- **Skin**: `web/static/app/css/skin.css` (loaded after theme.css) restyles the app's main
+  surfaces to match the site and /admin without touching its markup: frosted-glass search
+  panel, tool rail and property panel (`color-mix` on `--bg`/`--fg` + backdrop blur, so it
+  works in both themes), mono `.spec`-style section labels, pill segment groups, brand-purple
+  primary button, `.auth-field`-style inputs and svelte-select variables, neutral chip
+  borders. Rules are scoped to `.up-app` and use `!important` on purpose — the app's own
+  scoped styles and tokenised inline `style=""` attrs would otherwise win. Extend this file,
+  not the app's markup, for further visual alignment.
+- **Behaviour tweaks made during the restyle** (in `web/src/routes/app/+page.svelte`): every
+  `<Select>` gets `floatingConfig={select_floating}` (fixed strategy + floating-ui
+  offset/flip/shift/size) so dropdown lists escape the scrolling panel and stay inside the
+  viewport at any height. The glass blur on the panel lives on a `::before` pseudo-element,
+  not the panel itself — a `backdrop-filter` on the panel would make it the containing block
+  for those fixed lists and they would be clipped by `.filter-container`'s scroll again;
+  `_clean_options()` filters empty/whitespace/duplicate rows out of the LGA, suburb and zone
+  lists (the API returned two blank LGAs); the "All" region chip was removed (a member whose
+  plan covers all five regions simply starts with all five selected; `region_all` is still
+  derived reactively for the legacy code paths). `_regions_filter_value()` omits the
+  `regions` filter from LGA/suburb/zone/permissible-use calls when every region is selected:
+  the API answers `{}` in <1s but an explicit five-region list on `suburbname/search` takes
+  >25s (server-side, worth an index on the API box). The 30rem-wide panel applies to map
+  view only — in list view `.listing-container` also holds the results grid.
 - **Dark/light**: the app follows the site's theme (data-theme on `<html>`, else system).
   `web/scripts/app-theme.py` replaced all 1,580 colour literals in the app's CSS contexts
   (.css files, `<style>` blocks, literal `style=""` attrs — never JS/Chart.js/Mapbox paint)
