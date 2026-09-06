@@ -373,7 +373,7 @@
 /* Clear All / PDF / Save + Total Results row: wraps on narrow panels instead of overflowing */
 .up-app .map-search-btn-container > .flex { flex-wrap: wrap; gap: .25rem 0; }
 .up-app .map-search-btn-container > .flex > .full { flex: 1 1 auto !important; width: auto !important; min-width: 0; }
-.up-app .map-search-btn-container #btn-calculate-total { min-width: 0 !important; white-space: nowrap; padding-left: .6rem !important; padding-right: .6rem !important; }
+.up-app .map-search-btn-container #btn-calculate-total { width: auto !important; min-width: 0 !important; white-space: nowrap; padding-left: .6rem !important; padding-right: .6rem !important; }
 
 /* map-layers header: the Legend / recentre buttons become quiet round icon buttons
    (not the app's square purple-outlined .btn) and the empty spacer row collapses */
@@ -387,3 +387,10 @@
 /* theme toggle (bottom-right map control): keep the component's own pressed state — the
    generic .custom-control button reset above would otherwise flatten it */
 .up-app .custom-control button[aria-pressed="true"] { background: color-mix(in srgb, var(--fg) 10%, transparent) !important; color: var(--fg) !important; }
+
+/* range-value chips ("Any", "300+ sqm", the LGA/suburb "Selected:" readouts): the box hugs the
+   text — 2px above and below — instead of inheriting the 24px body line-height */
+.up-app .container-thinner.light-overlay { display: inline-flex !important; align-items: center; padding: 2px 6px !important; line-height: 1 !important; border-radius: .35rem !important; }
+.up-app .container-thinner.light-overlay code { line-height: 1.2 !important; display: inline-block; }
+/* the toggle's track matches its segments' .55rem corners (plus the 2px inset) rather than a full pill */
+.up-app .custom-control.custom-control-bottom > .rounded-full { border-radius: .7rem !important; }
