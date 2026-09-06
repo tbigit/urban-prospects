@@ -9,3 +9,4 @@ web/.svelte-kit/
 web/node_modules/
 
 .claude/settings.local.json
+wp-credentials.md
