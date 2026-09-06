@@ -7,15 +7,15 @@ After=network.target
 [Service]
 Type=simple
 User=www-data
-WorkingDirectory=/opt/www/upweb
-EnvironmentFile=/opt/www/upweb/.env
+WorkingDirectory=/opt/www/upweb-node
+EnvironmentFile=/opt/www/upweb-node/.env
 Environment=NODE_ENV=production
 # adapter-node reads ORIGIN/PORT from the environment (.env above) and
 # trusts X-Forwarded-* from nginx via these.
 Environment=ADDRESS_HEADER=X-Forwarded-For
 Environment=PROTOCOL_HEADER=X-Forwarded-Proto
 Environment=HOST_HEADER=X-Forwarded-Host
-ExecStart=/usr/bin/node /opt/www/upweb/index.js
+ExecStart=/usr/bin/node /opt/www/upweb-node/index.js
 Restart=on-failure
 RestartSec=3
 

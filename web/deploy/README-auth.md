@@ -6,10 +6,10 @@ Marketing pages are still prerendered; only the auth routes run at request time.
 
 ## One-time server setup (143.42.46.116)
 
-1. Node 22 on the box; `mkdir -p /opt/www/upweb /opt/www/upapp`.
+1. Node 22 on the box; `mkdir -p /opt/www/upweb-node /opt/www/upapp`. The Node build lives in `upweb-node`; the old static site stays in `/opt/www/upweb` until nginx is switched over.
 2. Apply the schema to UrbanPortalDBP (via the `updb` hop, see CLAUDE.md):
    `001_users.sql` (the migration session owns filling it), then `002_sessions.sql`.
-3. `/opt/www/upweb/.env` from `web/.env.example` — DATABASE_URL, ORIGIN, SMTP.
+3. `/opt/www/upweb-node/.env` from `web/.env.example` — DATABASE_URL, ORIGIN, SMTP.
    The web server must be able to reach the DB host (192.168.146.115 is on a
    private network; if 143.42.46.116 is not on it, tunnel or move the DB).
 4. `deploy/upweb.service` → `/etc/systemd/system/`, `deploy/nginx-site.conf` →
@@ -19,14 +19,12 @@ Marketing pages are still prerendered; only the auth routes run at request time.
 
 ```sh
 cd web && npm ci && npm run build
-rsync -avz --delete --exclude .env build/ root@143.42.46.116:/opt/www/upweb/
-rsync -avz package.json package-lock.json root@143.42.46.116:/opt/www/upweb/
+rsync -avz --delete --exclude .env build/ root@143.42.46.116:/opt/www/upweb-node/
+rsync -avz package.json package-lock.json root@143.42.46.116:/opt/www/upweb-node/
 ssh root@143.42.46.116 'cd /opt/www/upweb && npm ci --omit=dev && systemctl restart upweb'
 
-# the app, namespaced under /app (do NOT use `npm run build` there: its postbuild
-# hook sftp-deploys to the root of /opt/www/upapp on its own)
-cd ~/Downloads/upapp && BASE_PATH=/app npx vite build
-rsync -avz --delete build/ root@143.42.46.116:/opt/www/upapp/
+# The property app ships inside this build (web/src/routes/app) since 2026-09-06.
+# Do not run upapp's own build/deploy any more; /opt/www/upapp is obsolete.
 ```
 
 ## How the pieces fit
