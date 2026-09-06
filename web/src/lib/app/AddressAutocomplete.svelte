@@ -130,9 +130,29 @@
   export function blur() {
     inputEl?.blur();
   }
+
+  // The list is position:fixed so it escapes the search panel's scroll/overflow
+  // clipping (it used to be cut off behind the Search button). It is placed under
+  // the input from the wrapper's viewport rect, and re-placed on any scroll/resize.
+  let wrapperEl;
+  let popStyle = '';
+  function placePopup() {
+    if (!wrapperEl) return;
+    const r = wrapperEl.getBoundingClientRect();
+    const maxH = Math.max(120, Math.min(220, window.innerHeight - r.bottom - 12));
+    popStyle = `position:fixed;left:${r.left}px;top:${r.bottom + 2}px;width:${r.width}px;max-height:${maxH}px;`;
+  }
+  $: if (showSuggestions && suggestions.length > 0 && wrapperEl) placePopup();
+  import { onMount } from 'svelte';
+  onMount(() => {
+    const onMove = () => { if (showSuggestions) placePopup(); };
+    window.addEventListener('scroll', onMove, true);
+    window.addEventListener('resize', onMove);
+    return () => { window.removeEventListener('scroll', onMove, true); window.removeEventListener('resize', onMove); };
+  });
 </script>
 
-<div class="address-autocomplete-wrapper">
+<div class="address-autocomplete-wrapper" bind:this={wrapperEl}>
   <div class="address-input-container">
     <input
       bind:this={inputEl}
@@ -157,7 +177,7 @@
   </div>
 
   {#if showSuggestions && suggestions.length > 0}
-    <ul class="suggestions-popup" style="transform: translateZ(1px);">
+    <ul class="suggestions-popup" style={popStyle}>
       {#each suggestions as suggestion}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -239,9 +259,9 @@
     border-radius: 0.4em;
     max-height: 200px;
     overflow-y: auto;
-    z-index: 10;
+    z-index: 6000;
     display: block;
-    margin-top: 1px;
+    margin: 0;
     width: 100%;
     left: 0;
     list-style: none;

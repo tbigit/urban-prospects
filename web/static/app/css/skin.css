@@ -47,19 +47,15 @@
 .up-app .btn-group .btn.active { background: var(--color-brand-purple) !important; color: #fff !important; }
 .up-app .btn-group .btn:not(.active):hover { color: var(--fg) !important; }
 
-.up-app .btn.btn-search { background: var(--color-brand-purple) !important; color: #fff !important; border: 0 !important; border-radius: .6rem !important; font-weight: 600 !important; letter-spacing: .02em; height: 2.6rem; line-height: 2.6rem; box-shadow: 0 6px 20px color-mix(in srgb, var(--color-brand-purple) 35%, transparent) !important; }
+.up-app .btn.btn-search { background: var(--color-brand-purple) !important; color: #fff !important; border: 0 !important; border-radius: .6rem !important; font-weight: 600 !important; letter-spacing: .02em; height: 2.6rem; line-height: 2.6rem; box-shadow: none !important; }
 .up-app .btn.btn-search:hover { filter: brightness(1.1); }
 .up-app .btn.btn-search.unclickable, .up-app .btn.btn-search[disabled] { opacity: .45; box-shadow: none !important; }
-.up-app .btn-reset-search { color: var(--accent-teal-text) !important; font-size: 12px; font-weight: 500; }
+/* Clear All: same box as the PDF / Save buttons (metrics mirror the page's .btn-save-search), teal text */
+.up-app .btn-reset-search { color: var(--accent-teal-text) !important; font-size: 0.5685rem !important; font-weight: 400 !important; line-height: 1.5 !important; padding: calc(0.35 * var(--padding-unit)) calc(0.3 * var(--padding-unit)) !important; width: 65px !important; text-align: center !important; display: inline-block !important; border: 1px solid color-mix(in srgb, var(--accent-teal-text) 45%, transparent) !important; border-radius: .5rem !important; background: transparent !important; text-decoration: none !important; }
+.up-app .btn-reset-search:hover { background: color-mix(in srgb, var(--accent-teal-text) 10%, transparent) !important; }
 .up-app .btn.btn-save-search, .up-app #btn-calculate-total { border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: .5rem !important; background: transparent !important; color: var(--color-neutral-300) !important; }
 
-/* region + option chips */
-.up-app #regions-filter-container .checkbox-container,
 .up-app .checkbox-container.chip { border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: 999px !important; background: transparent !important; color: var(--color-neutral-300) !important; font-size: 12.5px; }
-.up-app #regions-filter-container .checkbox-container.checked,
-.up-app #regions-filter-container .checkbox-container.active,
-.up-app #regions-filter-container .checkbox-container:has(input:checked) { border-color: var(--color-brand-purple) !important; background: color-mix(in srgb, var(--color-brand-purple) 22%, transparent) !important; color: var(--fg) !important; }
-.up-app #regions-filter-container .checkbox-container.unclickable { opacity: .45; }
 
 /* text inputs + svelte-select, matching the site's .auth-field */
 .up-app .search-form input[type='text'], .up-app .search-form input[type='number'], .up-app .search-form input[type='search'],
@@ -68,10 +64,10 @@
 	color: var(--fg) !important; font-family: var(--font-sans) !important; font-size: 13px !important; height: 2.4rem; padding: 0 .75rem !important;
 }
 .up-app .search-form input::placeholder { color: var(--color-neutral-500); font-family: var(--font-sans); }
-.up-app .search-form input:focus { outline: none !important; border-color: var(--color-brand-purple) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-purple) 30%, transparent) !important; }
+.up-app .search-form input:focus { outline: none !important; border-color: var(--color-neutral-500) !important; box-shadow: none !important; }
 .up-app .themed .svelte-select, .up-app .svelte-select {
 	--background: color-mix(in srgb, var(--bg) 60%, transparent); --list-background: var(--color-subtle);
-	--border: 1px solid var(--color-line); --border-hover: 1px solid var(--color-neutral-600); --border-focused: 1px solid var(--color-brand-purple);
+	--border: 1px solid var(--color-line); --border-hover: 1px solid var(--color-neutral-600); --border-focused: 1px solid var(--color-neutral-500);
 	--border-radius: .5rem; --list-border-radius: .6rem; --font-size: 13px; --height: 2.4rem;
 	--placeholder-color: var(--color-neutral-500); --item-color: var(--fg); --item-hover-bg: color-mix(in srgb, var(--fg) 8%, transparent);
 	--item-is-active-bg: var(--color-brand-purple); --multi-item-bg: color-mix(in srgb, var(--color-brand-purple) 22%, transparent);
@@ -97,16 +93,10 @@
 /* neutral resting borders: the app's own purple outlines on chips and selects
    are set inline (tokenised), so custom properties need !important to win */
 .up-app .themed .svelte-select, .up-app .svelte-select { --border: 1px solid var(--color-line) !important; --border-hover: 1px solid var(--color-neutral-600) !important; --background: color-mix(in srgb, var(--bg) 60%, transparent) !important; }
-.up-app #regions-filter-container .checkbox-container:not(:has(input:checked)) label,
-.up-app #regions-filter-container .checkbox-container:not(:has(input:checked)) { border-color: color-mix(in srgb, var(--fg) 14%, transparent) !important; color: var(--color-neutral-300) !important; background: transparent !important; }
-.up-app #regions-filter-container .checkbox-container:has(input:checked) label { color: var(--fg) !important; }
 
 /* checked chip keeps a readable label; selects get a real (not variable) border */
-.up-app #regions-filter-container .checkbox-container:has(input:checked),
-.up-app #regions-filter-container .checkbox-container:has(input:checked) * { color: var(--fg) !important; }
-.up-app #regions-filter-container .checkbox-container.unclickable:has(input:checked) { opacity: .7; }
 .up-app .themed .svelte-select, .up-app .svelte-select { border: 1px solid var(--color-line) !important; box-shadow: none !important; }
-.up-app .themed .svelte-select.focused, .up-app .svelte-select.focused { border-color: var(--color-brand-purple) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-purple) 30%, transparent) !important; }
+.up-app .themed .svelte-select.focused, .up-app .svelte-select.focused { border-color: var(--color-neutral-500) !important; box-shadow: none !important; }
 
 /* ---- corrections after review ------------------------------------------- */
 /* svelte-select's inner search input must not look like a field of its own */
@@ -114,14 +104,6 @@
 .up-app .svelte-select .value-container { padding: .35rem 0 !important; }
 .up-app .svelte-select { min-height: 2.5rem; }
 .up-app .filter-container { box-shadow: none !important; }
-
-/* region chips: one outline only — on the label, which carries the padding */
-.up-app #regions-filter-container .checkbox-container,
-.up-app #regions-filter-container .checkbox-container:not(:has(input:checked)),
-.up-app #regions-filter-container .checkbox-container:has(input:checked) { border: 0 !important; background: transparent !important; padding: 0 !important; margin: 0 .35rem .35rem 0 !important; }
-.up-app #regions-filter-container .checkbox-container label { display: inline-block; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: 999px !important; padding: .35rem .8rem !important; background: transparent !important; color: var(--color-neutral-300) !important; font-size: 12.5px; line-height: 1.3; cursor: pointer; }
-.up-app #regions-filter-container .checkbox-container:has(input:checked) label { border-color: var(--color-brand-purple) !important; background: color-mix(in srgb, var(--color-brand-purple) 22%, transparent) !important; color: var(--fg) !important; }
-.up-app #regions-filter-container .checkbox-container.unclickable label { opacity: .5; cursor: default; }
 
 /* segment groups hug their content; full-width ones split evenly */
 .up-app .btn-group { width: auto !important; flex: 0 0 auto; align-self: flex-start; }
@@ -141,28 +123,12 @@
 .up-app .custom-control.custom-control-bottom { top: auto !important; bottom: .75rem !important; right: .75rem !important; }
 :root[data-theme='light'] .up-app .custom-control.custom-control-bottom { box-shadow: none !important; }
 
-/* region chips on a single line */
-.up-app #regions-filter-container { flex-wrap: nowrap !important; gap: .25rem; overflow-x: auto; scrollbar-width: none; }
-.up-app #regions-filter-container::-webkit-scrollbar { display: none; }
-.up-app #regions-filter-container .checkbox-container { margin: 0 !important; flex: 0 0 auto; }
-.up-app #regions-filter-container .checkbox-container label { padding: .25rem .55rem !important; font-size: 11.5px; white-space: nowrap; letter-spacing: -0.01em; }
-
-/* regions as ONE segmented group (same look as Map/List); "All" is just a segment */
-.up-app #regions-filter-container { display: inline-flex !important; width: auto; max-width: 100%; gap: 2px !important; padding: 3px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--fg) 4%, transparent); }
-.up-app #regions-filter-container .checkbox-container label { border: 0 !important; background: transparent !important; color: var(--color-neutral-300) !important; padding: .3rem .65rem !important; font-size: 12px; font-weight: 500; }
-.up-app #regions-filter-container .checkbox-container:not(.unclickable) label:hover { color: var(--fg) !important; }
-.up-app #regions-filter-container .checkbox-container:has(input:checked) label { background: var(--color-brand-purple) !important; color: #fff !important; border: 0 !important; }
-.up-app #regions-filter-container .checkbox-container.unclickable label { opacity: .45; }
-.up-app #regions-filter-container .checkbox-container.unclickable:has(input:checked) label { opacity: .8; }
-
 /* segment labels never wrap; full-width groups shrink type slightly to fit */
 .up-app .btn-group .btn { white-space: nowrap !important; line-height: 1.3 !important; }
 .up-app .btn-group.width-100 .btn { font-size: 12px !important; padding: .35rem .5rem !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 /* wider search panel on desktop so the region group and long segment labels sit on one line */
 @media (min-width: 1200px) { .up-app .app.mapview .listing-container .one-third.border-rounder.border-primary { width: 30rem !important; max-width: calc(100vw - 6rem); flex-basis: 30rem !important; } }
-.up-app #regions-filter-container .checkbox-container label { font-size: 11.5px; padding: .28rem .55rem !important; }
-.up-app #regions-filter-container { gap: 1px !important; }
 .up-app .btn-group.width-100 .btn { font-size: 11.5px !important; padding: .35rem .4rem !important; }
 
 /* multi-select tags: compact pills, not blocks */
@@ -175,20 +141,14 @@
 @media (min-width: 1200px) { .up-app .app.mapview .listing-container { width: 32rem !important; max-width: 32rem !important; } .up-app .app.mapview .listing-container .one-third.border-rounder.border-primary { width: 30rem !important; flex-basis: 30rem !important; } }
 
 /* hover: quiet tint, never the active purple; active segment stays purple/white */
-.up-app #regions-filter-container .checkbox-container:not(.unclickable) label:hover,
 .up-app .btn-group .btn:not(.active):hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; color: var(--fg) !important; }
-.up-app #regions-filter-container .checkbox-container:has(input:checked) label:hover,
 .up-app .btn-group .btn.active:hover { background: var(--color-brand-purple-600, #4a1d70) !important; color: #fff !important; }
 
 /* primary button: flex-centred label, no inherited padding pushing it down */
 .up-app .btn.btn-search { display: flex !important; align-items: center; justify-content: center; height: 2.75rem !important; line-height: 1 !important; padding: 0 1rem !important; }
 .up-app .map-search-btn-container .checkbox-group label { white-space: nowrap; }
 
-/* final fit: region segments and the three-way site-type group on one line at 30rem */
-.up-app #regions-filter-container .checkbox-container label { font-size: 11px; padding: .28rem .45rem !important; }
 .up-app .btn-group.width-100 .btn { font-size: 11px !important; padding: .35rem .25rem !important; letter-spacing: -0.01em; }
-.up-app #regions-filter-container .checkbox-container label { padding: .28rem .36rem !important; }
-.up-app #regions-filter-container { gap: 0 !important; padding: 2px; }
 
 /* Map/List (and any non-full-width group) hugs its segments exactly */
 .up-app .btn-group:not(.width-100) { width: max-content !important; min-width: 0 !important; }
@@ -251,14 +211,8 @@
 :root[data-theme='light'] .up-app .property-details-container::before { background: rgba(255,255,255,.42); backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); }
 @media (prefers-color-scheme: light) { :root:not([data-theme='dark']) .up-app .listing-container .one-third.border-rounder.border-primary::before { background: rgba(255,255,255,.42); backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); } }
 
-/* list view keeps the narrower panel: let the region group wrap instead of clipping */
-.up-app .app.listview #regions-filter-container { flex-wrap: wrap !important; border-radius: 1.25rem; row-gap: 2px !important; }
-
 /* region group: no trailing margins on segments (even 2px inset both sides), and the
    search panel hugs the group — 24.5rem panel / 26.5rem wrapper instead of 30/32 */
-.up-app #regions-filter-container .checkbox-container,
-.up-app #regions-filter-container .checkbox-container:has(input:checked),
-.up-app #regions-filter-container .checkbox-container label { margin: 0 !important; }
 @media (min-width: 1200px) {
   .up-app .app.mapview .listing-container { width: 26.5rem !important; max-width: 26.5rem !important; }
   .up-app .app.mapview .listing-container .one-third.border-rounder.border-primary { width: 24.5rem !important; flex-basis: 24.5rem !important; }
@@ -287,3 +241,71 @@
 .up-app .map-view-detail .btn.active,
 .up-app .design-controls .btn.active { background: var(--color-brand-purple) !important; color: #fff !important; border-color: var(--color-brand-purple) !important; }
 .up-app .property-details-container .btn.unclickable { opacity: .45; }
+
+/* ---- regions: one segmented group, definitive rules ----------------------
+   Five equal-height pills in a single pill-shaped track, 3px apart, never
+   wrapping. Unchecked pills keep the exact same box as checked ones (only the
+   fill changes) so toggling never shifts anything. At least one region must
+   stay selected (enforced in +page.svelte). */
+.up-app .search-panel-container { padding-left: .75rem !important; padding-right: .75rem !important; }
+.up-app .search-panel-container .filter-container { padding-left: 0 !important; padding-right: 0 !important; }
+.up-app #regions-filter-container { display: flex !important; flex-wrap: nowrap !important; width: 100%; max-width: 100%; gap: 3px !important; padding: 3px !important; margin: 0 !important; box-sizing: border-box; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--fg) 4%, transparent); overflow: hidden; }
+.up-app #regions-filter-container .checkbox-container { display: flex !important; flex: 1 1 auto; min-width: 0; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; opacity: 1 !important; }
+.up-app #regions-filter-container .checkbox-container label { display: block !important; flex: 1 1 auto; min-width: 0; margin: 0 !important; padding: .3rem .4rem !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; color: var(--color-neutral-300) !important; font-size: 11px; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.up-app #regions-filter-container .checkbox-container:not(.unclickable) label:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; color: var(--fg) !important; }
+.up-app #regions-filter-container .checkbox-container:has(input:checked) label,
+.up-app #regions-filter-container .checkbox-container:has(input:checked) label:hover { background: var(--color-brand-purple) !important; color: #fff !important; }
+.up-app #regions-filter-container .checkbox-container.unclickable label { opacity: .45; cursor: default; }
+.up-app #regions-filter-container .checkbox-container.unclickable:has(input:checked) label { opacity: .8; }
+
+/* ---- collapsible section toggle: centre the +/- glyph vertically -------- */
+.up-app .collapsible-container .collapsible-title::after {
+	top: 0 !important; bottom: 0 !important; height: auto !important;
+	display: flex !important; align-items: center !important; justify-content: flex-end !important;
+	line-height: 1 !important; color: var(--color-neutral-400);
+}
+
+/* ---- search toolbar: Clear All / PDF / Save / Search within Radius share one button box ---- */
+.up-app .map-search-btn-container .btn.btn-save-search,
+.up-app .map-search-btn-container .btn-reset-search,
+.up-app .map-search-btn-container label[for="searchradius_checkbox"] {
+	display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: .35em;
+	height: 24px !important; box-sizing: border-box !important; padding-top: 0 !important; padding-bottom: 0 !important;
+	vertical-align: middle !important; line-height: 1 !important; white-space: nowrap;
+}
+.up-app .map-search-btn-container label[for="searchradius_checkbox"] {
+	width: auto !important; float: right; margin: 0 !important; position: relative;
+	padding: 0 calc(0.3 * var(--padding-unit)) 0 calc(0.45 * var(--padding-unit)) !important; text-align: center !important;
+	font-size: 0.5685rem !important; font-weight: 400 !important; cursor: pointer;
+	border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: .5rem !important;
+	background: transparent !important; color: var(--color-neutral-300) !important;
+}
+.up-app .map-search-btn-container label[for="searchradius_checkbox"]::before {
+	position: static !important; margin: 0 !important; padding: 0 !important; top: auto !important; right: auto !important;
+	font-size: .95rem !important; flex: none;
+}
+.up-app .map-search-btn-container input#searchradius_checkbox:checked + label {
+	border-color: color-mix(in srgb, var(--color-brand-purple) 50%, transparent) !important; color: var(--fg) !important;
+}
+.up-app .map-search-btn-container .btn-reset-search { margin-right: 0 !important; }
+.up-app .map-search-btn-container .checkbox-group:has(#searchradius_checkbox) > div { justify-content: flex-end !important; padding-top: 0 !important; }
+.up-app .map-search-btn-container .full:has(#searchradius_checkbox) { padding-top: 0 !important; }
+.up-app .map-search-btn-container .full:has(> .btn-reset-search) { display: flex; align-items: center; gap: .35rem; }
+.up-app .map-search-btn-container .flex:has(> .full > .btn-reset-search) { align-items: center; }
+.up-app .map-search-btn-container .flex:has(> .full > .btn-reset-search) > .full,
+.up-app .map-search-btn-container .checkbox-group:has(#searchradius_checkbox),
+.up-app .map-search-btn-container .checkbox-group:has(#searchradius_checkbox) > div { padding: 0 !important; height: auto !important; min-height: 0 !important; }
+
+/* ---- dropdown lists: one style for svelte-select lists and the address list ----
+   Compact 12.5px rows, thin border, no drop shadow (the panel clipped it anyway),
+   same surface in both themes. */
+.up-app .svelte-select { --list-shadow: none; --list-border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent); --list-border-radius: .6rem; --item-height: 2rem; --item-line-height: 2rem; --item-padding: 0 .75rem; --item-first-border-radius: .6rem .6rem 0 0; --list-max-height: 14rem; }
+.up-app .svelte-select-list { box-shadow: none !important; font-size: 12.5px !important; font-family: var(--font-sans) !important; }
+.up-app .svelte-select-list .item { font-size: 12.5px !important; }
+.up-app .suggestions-popup { background: var(--color-subtle) !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: .6rem !important; box-shadow: none !important; font-family: var(--font-sans); }
+:root[data-theme='light'] .up-app .suggestions-popup { background: #ffffff !important; }
+.up-app .suggestions-popup li { font-size: 12.5px !important; line-height: 1.3 !important; padding: .45rem .75rem !important; color: var(--fg) !important; }
+.up-app .suggestions-popup li:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; }
+
+/* no purple focus ring on any field in the app: a quiet border change only */
+.up-app input:focus, .up-app textarea:focus, .up-app select:focus, .up-app .address-input:focus, .up-app .svelte-select.focused, .up-app .svelte-select:focus-within { outline: none !important; box-shadow: none !important; border-color: var(--color-neutral-500) !important; }

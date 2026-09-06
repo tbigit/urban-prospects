@@ -3347,10 +3347,12 @@ async function _send_mail_property(property_selected) {
 
     is_search_within_radius = false;
 
-    regions_selected = [];
+    // Clear All restores the member's full entitlement: every region on their
+    // plan selected (at least one region must always be selected).
+    regions_selected = Array.isArray(user_regions) && user_regions.length ? [...user_regions] : [...regions];
     var checkboxes = document.querySelectorAll('input[name="region"]');
     checkboxes.forEach(function(checkbox) {
-      checkbox.checked = false;
+      checkbox.checked = regions_selected.includes(checkbox.value);
     });
 
     lga_names_selected = [];
@@ -3634,6 +3636,7 @@ async function _send_mail_property(property_selected) {
 
   async function _handle_reset_search(event) {
     _reset_filter();
+    _fetch_data_by_regions();
   }
 
   async function _handle_save_search(event) {
@@ -4868,6 +4871,12 @@ async function _send_mail_property(property_selected) {
   async function _handle_change_region(event) {
     let value = event.target.value;
     let is_checked = event.target.checked;
+
+    // At least one region must stay selected: refuse to uncheck the last one.
+    if (!is_checked && regions_selected.length <= 1) {
+      event.preventDefault();
+      return;
+    }
 
     if (is_checked) {
       if (!regions_selected.includes(value)) {
