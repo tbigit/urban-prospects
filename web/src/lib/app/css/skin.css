@@ -394,3 +394,6 @@
 .up-app .container-thinner.light-overlay code { line-height: 1.2 !important; display: inline-block; }
 /* the toggle's track matches its segments' .55rem corners (plus the 2px inset) rather than a full pill */
 .up-app .custom-control.custom-control-bottom > .rounded-full { border-radius: .7rem !important; }
+/* debug readouts ("Selected: ...") stay hidden unless Ctrl+Shift+D turns .debug on — the chip
+   rule above sets display !important and must not resurrect them */
+.up-app .debug-container:not(.debug), .up-app .test-container:not(.debug) { display: none !important; }
