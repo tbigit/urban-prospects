@@ -15,7 +15,9 @@ Environment=NODE_ENV=production
 Environment=ADDRESS_HEADER=X-Forwarded-For
 Environment=PROTOCOL_HEADER=X-Forwarded-Proto
 Environment=HOST_HEADER=X-Forwarded-Host
-ExecStart=/usr/bin/node /opt/www/upweb-node/index.js
+# /usr/bin/node on this box is v16 (no global Request → every SSR route answers 400).
+# Node 22 is copied from root's nvm to /usr/local/bin/node22 (README-auth.md).
+ExecStart=/usr/local/bin/node22 /opt/www/upweb-node/index.js
 Restart=on-failure
 RestartSec=3
 
