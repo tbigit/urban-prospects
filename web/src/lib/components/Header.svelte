@@ -19,7 +19,10 @@
 		{ href: `${base}/#services`, label: 'Services' },
 		{ href: `${base}/#data-apis`, label: 'Data APIs' },
 		{ href: `${base}/#about`, label: 'About' },
-		{ href: `${base}/#insights`, label: 'Insights' }
+		// The index lives at /insights (its old /blog address 301s there); each
+		// article keeps its indexed root-level /<slug>/ path.
+		{ href: `${base}/insights/`, label: 'Insights' },
+		{ href: `${base}/nsw-regions/`, label: 'Regions' }
 	];
 
 	function closeMobile() {
@@ -46,11 +49,11 @@
 			<Logo height={26} />
 		</a>
 
-		<nav class="hidden items-center gap-0.5 text-[13px] md:flex" aria-label="Primary">
+		<nav class="hidden items-center gap-0.5 text-[14px] font-medium md:flex" aria-label="Primary">
 			{#each nav as n (n.href)}
 				<a
 					href={n.href}
-					class="rounded-full px-3 py-1.5 text-[var(--color-neutral-400)] transition-colors hover:text-[var(--fg)]"
+					class="rounded-full px-3 py-1.5 whitespace-nowrap text-[var(--color-neutral-400)] transition-colors hover:text-[var(--fg)]"
 				>
 					{n.label}
 				</a>
@@ -59,12 +62,12 @@
 
 		<div class="hidden items-center gap-1 sm:flex">
 			<a
-				href="{base}/login"
-				class="rounded-full px-3 py-1.5 text-[13px] text-[var(--color-neutral-400)] transition-colors hover:text-[var(--fg)]"
+				href="{base}/login/"
+				class="rounded-full px-3 py-1.5 text-[14px] font-medium whitespace-nowrap text-[var(--color-neutral-400)] transition-colors hover:text-[var(--fg)]"
 			>
 				Log In
 			</a>
-			<Button href="{base}/signup" variant="teal" size="sm" class="rounded-full">Start Free Trial</Button>
+			<Button href="{base}/signup/" variant="teal" size="sm" class="rounded-full">Start Free Trial</Button>
 		</div>
 
 		<button
@@ -97,11 +100,11 @@
 				{/each}
 			</nav>
 			<div class="mt-2 flex items-center gap-2 border-t border-[var(--color-line)] pt-3">
-				<Button href="{base}/login" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
+				<Button href="{base}/login/" size="sm" class="flex-1 rounded-full" onclick={closeMobile}
 					>Log In</Button
 				>
 				<Button
-					href="{base}/signup"
+					href="{base}/signup/"
 					variant="teal"
 					size="sm"
 					class="flex-1 rounded-full"

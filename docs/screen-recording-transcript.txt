@@ -1,0 +1,366 @@
+[0:00 -> 0:12] Hi Danny, I thought I'd just do this video to go up on the homepage just to show how Urban Prospects works.
+[0:12 -> 0:20] Hopefully, I haven't done it in Loom because I don't think you want to be able to see my face and it can be edited.
+[0:20 -> 0:31] and hopefully you can take some of the shots here and work up and include what you want to include into it.
+[0:31 -> 0:39] I thought the homepage is a good starting point on the video just so that you can show that you navigate to here to login
+[0:39 -> 0:45] and that you get this login account.
+[0:45 -> 0:54] I did wonder whether we should have here a button here to allow people to create an account.
+[0:54 -> 0:57] If they come here to go and log in to create an account.
+[0:57 -> 1:03] I don't know, or maybe they navigate through the pricing page, but anyway, there's here or there.
+[1:03 -> 1:06] So then you'd press login.
+[1:06 -> 1:18] And the page should light up as it is.
+[1:18 -> 1:24] I think at this point or some point at the beginning, we should sort of say something
+[1:24 -> 1:32] along the lines that Urban Prospects gives instant access to property and planning data
+[1:32 -> 1:35] for any site in New South Wales,
+[1:35 -> 1:37] over 4.9 million properties,
+[1:37 -> 1:39] each with detailed zoning constraints
+[1:39 -> 1:41] and planning controls at your fingertips,
+[1:41 -> 1:46] just to give an overview of it or an introduction.
+[1:46 -> 1:50] And then I think we'd sort of go into showing this side
+[1:50 -> 1:54] as your search properties
+[1:54 -> 1:58] and that you can search using over 34 planning filters.
+[1:58 -> 2:09] and then I think we can go through and show that you can search by regions and you buy by regions,
+[2:09 -> 2:18] that you can search by LGA, you can search by suburbs, you can actually do a search by address or specific lot.
+[2:18 -> 2:23] You can choose whether you want to select all sites or only those that are complying development
+[2:23 -> 2:26] or those that are pattern books compliant.
+[2:28 -> 2:51] And if you were to do all sites that you can search by permissible use, zoning, minimum lot size, floor space ratio, gross floor area, height.
+[2:51 -> 2:55] and then you can click on site attributes
+[2:55 -> 2:59] and find sites of a particular size
+[2:59 -> 3:02] particular lot width
+[3:02 -> 3:04] lot depth
+[3:04 -> 3:07] proximity to school
+[3:07 -> 3:12] nearby to hospitals
+[3:12 -> 3:15] proximity to trains
+[3:15 -> 3:18] a walk score
+[3:21 -> 3:33] hand buy price
+[3:33 -> 3:36] and
+[3:36 -> 3:39] include or exclude
+[3:39 -> 3:57] Active street areas, airport noise, terrestrial biodiversity, bushfire prone land, coastal
+[3:57 -> 4:06] management, contaminated sites, drinking catchment, flood zone, groundwater, vulnerability, heritage
+[4:06 -> 4:15] landslide, mineral and resource land, mine subsidence, multiple street frontages, riparian
+[4:15 -> 4:23] land, salinity, scenic protection areas, whether they're strata lots or not, and wetlands.
+[4:24 -> 4:28] We should also mention that you can save your history or searches if you want so that you
+[4:28 -> 4:38] can return back to them and that you could search on within a radius of an
+[4:38 -> 4:57] area so I could pick right eastward
+[4:57 -> 5:24] I want to put a dual occupancy in there on R1 zone land
+[5:24 -> 5:27] as you know there may not be any R2
+[5:27 -> 5:29] yep
+[5:29 -> 5:32] with a minimum lot size
+[5:32 -> 5:34] of
+[5:34 -> 5:36] I don't know, 1000 square metres
+[5:36 -> 5:38] or say 800
+[5:38 -> 5:44] and a height
+[5:44 -> 5:47] of at least 8.5 metres
+[5:47 -> 5:49] so I can go two stories
+[5:53 -> 5:54] and
+[5:54 -> 5:56] Sorry, I did this wrong.
+[5:58 -> 6:03] I want minimum lot size to be at least 300.
+[6:03 -> 6:03] Sorry.
+[6:06 -> 6:08] More editing work for someone.
+[6:09 -> 6:17] So that means I want an area land to be at least, say, 800.
+[6:18 -> 6:20] I want the frontage to be at least 15 metres.
+[6:22 -> 6:23] I don't care about the depth.
+[6:23 -> 6:36] and I want it to be within the K of a school
+[6:36 -> 6:40] and within 1K of a train station
+[6:40 -> 6:46] and I want the price to be, you know,
+[6:46 -> 6:51] from a maximum of, say, $2 million.
+[6:51 -> 6:53] 1, 2, 3
+[6:53 -> 6:54] 1, 2, 3
+[6:54 -> 6:55] I like this
+[6:55 -> 6:59] and
+[6:59 -> 7:01] I'm going to exclude
+[7:01 -> 7:03] things like
+[7:03 -> 7:06] terrestrial biodiversity
+[7:06 -> 7:08] bushfire prone land
+[7:08 -> 7:10] I don't want it on contaminated land
+[7:10 -> 7:12] I don't want it to be on flooded land
+[7:12 -> 7:15] I don't want it to be a heritage item
+[7:15 -> 7:23] and then I'm going to click on search
+[7:45 -> 8:00] I don't know why am I not getting results
+[8:00 -> 8:13] So going through this again, Sydney, Ride, Eastward.
+[8:13 -> 8:19] We should also mention that none of these fields are mandatory and you can do the searches any way you like.
+[8:19 -> 8:26] Dual occupancies in up to minimum lot size 300, no maximum.
+[8:26 -> 8:33] Let's just take something out and see what happens.
+[8:33 -> 8:56] Take these off.
+[9:03 -> 9:21] I don't know.
+[9:21 -> 9:23] I'm not getting any results.
+[9:33 -> 9:59] Alright, we're getting results there.
+[10:00 -> 10:02] Let me just put back in ride.
+[10:03 -> 10:15] Alright.
+[10:15 -> 10:15] Alright.
+[10:16 -> 10:19] Let me just narrow that down to Eastwood.
+[10:29 -> 10:30] Yep.
+[10:32 -> 10:33] Okay.
+[10:33 -> 10:45] Alright, so we've done a search for Sydney in the Sydney region within Ride LGA in the
+[10:45 -> 10:53] suburb of eastward with no minimum lot size.
+[10:53 -> 11:01] I'm just going to add a minimum lot size to see if that works.
+[11:01 -> 11:03] Yeah, oh, okay.
+[11:06 -> 11:07] Yep.
+[11:09 -> 11:12] No floor space ratio, no GFA,
+[11:13 -> 11:14] a height of 8.5 metres
+[11:14 -> 11:17] on lots of the greater than 700 square metres
+[11:17 -> 11:19] with a lot width of greater than 15 metres.
+[11:22 -> 11:26] And what if I do it within
+[11:26 -> 11:30] near schools and train stations?
+[11:31 -> 11:41] and we get these sites here
+[11:41 -> 11:47] I haven't put a walk score in
+[11:47 -> 11:50] but let's see what happens if I do put one in
+[11:50 -> 11:52] with a minimum of at least 75
+[11:52 -> 11:54] that'll be interesting
+[11:54 -> 11:58] yep
+[11:58 -> 12:13] and with a price no more than 3 no more than 2.5
+[12:13 -> 12:26] 2, 3, 1, 2, 3, 1, 2, yeah this is good very handy search
+[12:28 -> 12:31] interesting
+[12:32 -> 12:42] okay and now I'm going to start excluding biodiversity bushfire prone land
+[12:42 -> 13:02] contaminated sites, flood land, heritage, land slippage, and go search.
+[13:05 -> 13:11] Back we go into Eastward and we're getting a few results. Total results are not
+[13:11 -> 13:23] coming up unfortunately. Now I can zoom out. See there's a few more results around there.
+[13:31 -> 13:37] I could demonstrate that I want to search within an area. Now I don't seem to be able to
+[13:37 -> 13:40] turn this
+[13:40 -> 13:44] searching with radius button
+[13:44 -> 13:54] just want those areas, there we go
+[13:54 -> 13:55] ok it's on now
+[13:55 -> 13:58] and so then
+[13:58 -> 14:02] do a search there
+[14:07 -> 14:12] I don't know
+[14:12 -> 14:15] It doesn't really seem to have shown me
+[14:15 -> 14:17] What's at the radius
+[14:17 -> 14:22] So I'm not too sure what's going on with that button
+[14:22 -> 14:26] And so
+[14:26 -> 14:28] Obviously
+[14:28 -> 14:31] There's been a bit of to and froing there
+[14:31 -> 14:34] And we need to probably do some editing of the video
+[14:34 -> 14:37] but I just think we need to go through all the elements of here,
+[14:38 -> 14:44] making the point that we can do a smart search using more than 34 filters
+[14:44 -> 14:50] and that we can filter by zoning, CEPs, CDC eligibility,
+[14:51 -> 14:53] patent book suitability, environmental constraints and more,
+[14:54 -> 14:57] which is giving you unmatched visibility of sites
+[14:57 -> 14:59] that truly meet your development criteria.
+[15:00 -> 15:02] And so I think we can have these visuals going on
+[15:02 -> 15:06] while some of these words are sort of popping up on the screen or,
+[15:06 -> 15:10] or, you know, cutouts to these words or something like that.
+[15:13 -> 15:19] And then the next point is that if you found something promising,
+[15:20 -> 15:23] then you can save it to your short list favorite site.
+[15:23 -> 15:27] So we would go to a site here.
+[15:28 -> 15:30] Let's pick one that we like.
+[15:30 -> 15:32] I don't know
+[15:32 -> 15:35] A nice corner one
+[15:35 -> 15:45] Up pops the property details screen
+[15:45 -> 15:48] And we can point out here
+[15:48 -> 15:51] That they say that as a favourite
+[15:51 -> 15:54] And that you can view
+[15:54 -> 15:56] All your favourites over here
+[16:00 -> 16:04] including this site here.
+[16:08 -> 16:15] And that we can purchase title deeds, plan dealings,
+[16:16 -> 16:21] and scrolling down here, we can get an overview of the property,
+[16:21 -> 16:24] including its width, its depth, permissible height,
+[16:25 -> 16:28] floor space ratio, details of the property,
+[16:28 -> 16:33] Minimum lot size, the area of the land and its zoning.
+[16:34 -> 16:37] Just to point out, I think there's something wrong with that zoning.
+[16:43 -> 16:49] Because if I turn on the zoning layer, because I actually search for...
+[16:49 -> 16:53] Key layers.
+[16:55 -> 16:56] Zoning.
+[16:58 -> 17:10] Ah, interesting.
+[17:10 -> 17:10] Okay.
+[17:12 -> 17:14] So the road, oh this site's designated
+[17:14 -> 17:15] for road winding.
+[17:16 -> 17:17] Just all the sites I have to choose.
+[17:20 -> 17:22] So it has got an SP2 zone
+[17:22 -> 17:24] on it, but the other half is
+[17:24 -> 17:25] Zodar 2.
+[17:25 -> 17:29] and here in the zoning
+[17:29 -> 17:33] I'd like to think that we could actually show both zoning somehow
+[17:33 -> 17:38] rather than what we've got here is a hybrid of the two
+[17:38 -> 17:44] which basically is R2 plus SP2
+[17:44 -> 17:48] yeah
+[17:48 -> 17:52] anyway, moving on
+[17:52 -> 17:53] we display
+[17:53 -> 17:56] eastward
+[17:56 -> 18:01] and what's near it.
+[18:02 -> 18:05] We give a list of relevant local environmental plans.
+[18:06 -> 18:08] We give a list of all the permissible uses.
+[18:10 -> 18:12] We can show there's no sold history.
+[18:14 -> 18:16] We can give a list of what
+[18:16 -> 18:18] complying development occurs there.
+[18:20 -> 18:22] At the moment I don't think we have the
+[18:22 -> 18:24] patent book on.
+[18:31 -> 18:34] We can see there are no planning constraints there,
+[18:35 -> 18:37] which is because we excluded it.
+[18:42 -> 18:45] We can show the census data that we're sharing,
+[18:45 -> 18:50] including sub of age profile, ancestry, country of birth,
+[18:52 -> 19:01] rent affordability, mortgage affordability, weekly household income, tenure type, household
+[19:01 -> 19:06] composition, crime occurrence data and crime rankings.
+[19:06 -> 19:12] We can also show what contribution plans apply to the site, what development control plan
+[19:12 -> 19:16] applies to the site, what sets apply to the site.
+[19:24 -> 19:29] And I think here, since we bookmarked this site,
+[19:30 -> 19:35] we can change the status here.
+[19:35 -> 19:39] here.
+[19:40 -> 19:42] I'm not too sure whether this really should sit here
+[19:42 -> 19:44] or whether it should sit under the yield calculator,
+[19:44 -> 19:45] but anyway, it's here for the moment.
+[19:50 -> 19:52] And that we should mention that you can
+[19:52 -> 20:00] send an email, which probably hasn't popped up in your screen,
+[20:01 -> 20:03] and that I can edit.
+[20:05 -> 20:13] any letter I want to send out, save as a template and send out as an address. So I'll close that.
+[20:17 -> 20:25] And then we should go back up here and show that we can do a yield calculator.
+[20:28 -> 20:31] Since I chose, I probably should just
+[20:31 -> 20:38] flick through the different yield calculators I can do
+[20:42 -> 20:48] you know what I probably should go back instead of doing a dual lock and see I should do an apartment
+[20:52 -> 20:55] only for the fact it gives us an opportunity to show
+[20:58 -> 20:59] apartments
+[20:59 -> 21:05] show off the yield calculator.
+[21:07 -> 21:09] Anyway, I'm going to complete this scenario.
+[21:12 -> 21:21] So, yield calculator, jewel I can see, two bedrooms, we get two dwellings.
+[21:22 -> 21:25] Then I can do a residual land calculator here.
+[21:29 -> 21:32] if it turns on
+[21:34 -> 21:37] interesting
+[21:43 -> 21:47] why why why have we
+[21:47 -> 22:03] It doesn't like me clicking the button anymore.
+[22:03 -> 22:23] Just going to refresh this page.
+[22:23 -> 22:33] Probably going to have to load the whole thing up again now.
+[22:33 -> 22:39] yep let's get in my favorites
+[22:39 -> 22:44] get an ace word
+[22:44 -> 22:47] yep
+[22:47 -> 23:01] okay
+[23:01 -> 23:04] and
+[23:04 -> 23:08] yield calculator
+[23:08 -> 23:10] drill I can see
+[23:10 -> 23:12] scrolling through here
+[23:12 -> 23:15] residual calculator
+[23:17 -> 23:24] and we can show
+[23:25 -> 23:30] specified type of building it is the building typology
+[23:30 -> 23:36] pre-populated areas such land and FSR
+[23:37 -> 23:40] and the total GFA
+[23:41 -> 23:46] then we can select circulation area we're going as we said we'll go to
+[23:46 -> 23:51] separate these out so we're going to have sales price and building cost different because the
+[23:51 -> 23:59] building topologies and sales types are different so for example it could be a residential apartment
+[23:59 -> 24:03] but that apartment will be made up for sales purposes of one two three and four bedrooms
+[24:06 -> 24:06] then we can
+[24:09 -> 24:11] show this additional costs here
+[24:16 -> 24:29] Landscaping can be...
+[24:37 -> 24:41] I have no idea where these numbers are real.
+[24:46 -> 25:06] Consultant fees, holding costs, calculate.
+[25:06 -> 25:15] And because I have any sales price put in there it's just become a stupid number.
+[25:16 -> 25:21] So I don't know whether we want to actually separate these out first
+[25:21 -> 25:28] and try and put some realistic numbers in to show what a result looks like.
+[25:30 -> 25:32] And then I think we should go to design
+[25:32 -> 25:44] and be able to pick or just show that
+[25:44 -> 25:48] you can drop in your own design
+[25:48 -> 25:50] once you drop it in
+[25:50 -> 25:51] you can
+[25:51 -> 25:53] position it
+[25:53 -> 25:56] with the rotate, pitch and roll
+[25:56 -> 25:57] and nudge tools
+[25:57 -> 25:59] and change the scale
+[25:59 -> 26:01] you could also
+[26:01 -> 26:03] select one of these
+[26:03 -> 26:06] pattern book designs
+[26:06 -> 26:08] and drop them in
+[26:08 -> 26:12] if possible
+[26:12 -> 26:13] it would be nice to show
+[26:13 -> 26:21] one dropped in just to show what it looks like and then show that we can generate a report
+[26:21 -> 26:34] which would be to customize you can give it a report name and go through and show what's
+[26:34 -> 26:45] cover page because we haven't selected a design those are not on and we can include or exclude
+[26:45 -> 26:58] each of these facets of the report and we can generate a report and I don't think the report
+[26:58 -> 27:05] the report is going to show up in your screen but it would be nice just to see the PDF report in the
+[27:05 -> 27:12] video and scroll through what's in it.
+[27:12 -> 27:30] And then so the only thing I sort of missed out is we should just show off that you can
+[27:30 -> 27:33] view it in satellite or not.
+[27:33 -> 27:41] That you can view your results in list format or map format.
+[27:42 -> 27:56] And we should also demonstrate all the layers that you can, well not all of them, but just
+[27:56 -> 28:01] show that there are layers and once again show what you can look at.
+[28:01 -> 28:06] So we should go through, we would spit this all up in a screen saying, you know, there's
+[28:06 -> 28:36] 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41.
+[28:36 -> 28:45] So like this we should sort of emphasize that there's over 40 layers that you can view your data in.
+[29:02 -> 29:02] Yes.
+[29:02 -> 29:07] so it would be good
+[29:07 -> 29:10] to show the pattern book
+[29:10 -> 29:11] designing it and be able to
+[29:11 -> 29:13] drop in a 3D model
+[29:13 -> 29:18] and I think
+[29:18 -> 29:26] I may send you just a couple
+[29:26 -> 29:28] of key messages that we may want to
+[29:28 -> 29:28] sort of get across
+[29:28 -> 29:34] in the video
+[29:34 -> 29:38] displaying in terms of pop up words
+[29:38 -> 29:42] or whether we use a voiceover to do this
+[29:42 -> 29:50] now I'm just going to do a quick run through
+[29:58 -> 29:58] so
+[29:58 -> 30:07] So that's showing where assets are. So let's turn off the zoning map and show where environmental
+[30:07 -> 30:15] sensitive areas are and there is none. Let's show if there's any heritage nearby.
+[30:15 -> 30:28] You can see there's some heritage items nearby. I want to show that the site's with the LMR
+[30:28 -> 30:37] interestingly in our property details page
+[30:37 -> 30:49] Now it doesn't want to
+[30:49 -> 30:51] appear for me
+[31:01 -> 31:01] um
+[31:01 -> 31:02] sorry Danny
+[31:02 -> 31:03] this is probably
+[31:03 -> 31:06] making a very boring video to watch
+[31:06 -> 31:19] yeah
+[31:19 -> 31:20] okay
+[31:20 -> 31:23] I'm not too sure
+[31:23 -> 31:25] I don't recall
+[31:25 -> 31:26] seeing in the property details page
+[31:26 -> 31:27] the fact that we
+[31:27 -> 31:30] showed that this site
+[31:30 -> 31:31] or said that this site's within the LMR
+[31:31 -> 31:33] but we should
+[31:33 -> 31:35] and it looks like
+[31:35 -> 31:42] it's within the 400m ring as opposed to the 800m ring if that's right.
+[31:42 -> 31:44] So...
+[31:56 -> 31:58] Yeah, so...
+[31:58 -> 32:07] If we're not showing that on the property details page, we should be sharing that information.
+[32:28 -> 32:45] okay
+[32:45 -> 32:47] okay
+[32:47 -> 32:51] So
+[32:51 -> 32:58] Going back to the search
+[32:58 -> 33:05] I should wish this
+[33:05 -> 33:06] I'd love to know
+[33:06 -> 33:08] Can we build apartments on this site
+[33:08 -> 33:11] Because we're now within the LAMR
+[33:11 -> 33:16] This thing did pop up and say
+[33:16 -> 33:19] that we'd have to rezone the land.
+[33:20 -> 33:24] But in actual fact, if it's within 400 metres of the train station,
+[33:25 -> 33:32] we should be saying that apartments are permissible on this site.
+[33:32 -> 33:44] and therefore we could do
+[33:44 -> 33:51] apartments and we could use the yield calculator
+[34:02 -> 34:18] so let's just run for another area we've got Sydney I'm going to pick Chatswood
+[34:18 -> 34:20] interesting
+[34:20 -> 34:24] let's choose St. Leon's
+[34:24 -> 34:29] sort of an LGA
+[34:29 -> 34:31] St. Leon's
+[34:31 -> 34:47] five story apartment
+[34:48 -> 34:50] Let's see what that comes up with.
+[34:59 -> 35:02] Can I add that to multiples? Yep.
+[35:18 -> 35:25] Let's take off St. Leonard's.
+[35:25 -> 35:32] And let's take that off too.
+[35:32 -> 35:43] Okay, and don't seem to be getting any search results.
+[35:43 -> 35:50] For St. Leonard's
+[35:52 -> 35:56] Or for anywhere for that matter because I've taken St. Leonard's and will it be off?
+[35:56 -> 36:02] So I'm just not getting any for the pattern box.
+[36:04 -> 36:08] Let's just try semis just to see.
+[36:08 -> 36:11] No.
+[36:13 -> 36:26] No. Okay. Alright. So let's toggle over to all sites. Let's put planning controls for
+[36:26 -> 36:36] miss and use for residential flat buildings, which is basically apartments. And try a local
+[36:36 -> 37:01] government area. Now what's going on? Okay so now I can't select a local
+[37:01 -> 37:23] government area or suburb here we go willoughby and residential flat
+[37:23 -> 37:33] buildings. Minimum lot size.
+[37:33 -> 37:39] Let's be at least a thousand square meters
+[37:39 -> 37:45] At least 20 meters
+[37:45 -> 37:47] At least 40 meters
+[37:47 -> 37:49] Or 50
+[37:49 -> 37:55] Nearby school
+[37:55 -> 38:00] And I don't want it to have
+[38:03 -> 38:07] All these things.
+[38:33 -> 38:39] and I'm getting nice results for that
+[38:39 -> 38:41] I'm gonna take that off.
+[38:51 -> 38:53] No, let's take that off.
+[39:09 -> 39:11] Let's take out Willoughby.
+[39:11 -> 39:41] Alright, well there's a few issues there.
+[39:41 -> 39:43] I'm going to send this video through to you
+[39:43 -> 39:52] and I think maybe there's a few things that need to be tidied up and fixed
+[39:52 -> 39:57] and I can do the video again if you like
+[39:57 -> 40:01] or if you're just going to show this in a view
+[40:01 -> 40:05] and edit and snip it
+[40:05 -> 40:07] that's fine
+[40:07 -> 40:09] but we can talk about that
+[40:09 -> 40:13] Alright, I'll catch up with you later. Thanks Denny, bye.

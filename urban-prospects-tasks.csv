@@ -1,0 +1,51 @@
+ID,Workstream,Task,Assigned To,Status,Due Date,Est (days),Notes
+UP-001,Frontend,Finish homepage rebuild (SvelteKit 5 + Tailwind v4),,In Progress,2026-07-24,3,Already started. Hero + 11 sections built from Figma content/order; dark/light token swap in place.
+UP-002,Frontend,Replace hero/demo/founder placeholders with real assets,,Not Started,2026-07-31,1,No product screenshot or demo video assets exist yet. Blocked on client.
+UP-003,Frontend,Decide fate of in-page anchors (Platform/Services/Data APIs/About/Insights),,Not Started,2026-07-31,1,Currently same-page anchors. If they become real routes header/footer targets need updating.
+UP-004,Frontend,Replace stub routes with real flows (/login /signup /demo /report /developers),,Not Started,2026-08-07,2,Currently mailto: placeholders. Depends on auth + checkout work below.
+UP-005,Content,Confirm no-CMS decision with client and document edit request process,,Confirmed,2026-07-24,0.5,CONFIRMED: no WYSIWYG CMS. All content edits go through a developer. Removes original scope item 6 (WYSIWYG CMS) entirely.
+UP-006,Content,Move page copy into typed content modules in repo,,Not Started,2026-08-07,2,Consequence of no-CMS: copy lives in code. Keep it in one place per page so non-narrative edits are cheap.
+UP-007,WordPress,Audit existing WordPress site (plugins themes custom code membership tables),,Not Started,2026-07-31,2,Baseline needed before any migration. Document what actually drives membership today.
+UP-008,WordPress,Custom WooCommerce product setup,,Not Started,2026-07-31,2,Interim while WP remains system of record.
+UP-009,WordPress,Stripe integration on WooCommerce,,Not Started,2026-08-07,2,"DECIDED 2026-09-06: Stripe is the gateway and the source of truth for subscription state (Stripe Billing subscriptions, not Woo Subscriptions). Pin Payments references in the original doc are superseded."
+UP-010,WordPress,Post-purchase hook to n8n for PDF delivery (title search / reports),,Not Started,2026-08-07,2,Woo order completed -> n8n -> report API -> email PDF.
+UP-011,WordPress,Expose WP API endpoint to create account from Stripe checkout,,Not Started,2026-08-14,2,INTERIM SOLUTION: subscription is taken on Stripe then calls WP to create the member account. WP stays the user store for now.
+UP-012,WordPress,Embed SvelteKit frontend app into WordPress,,Not Started,2026-08-14,3,Routing + base path + asset handling. Decide iframe vs reverse-proxy path mount early.
+UP-013,WordPress,Product ID mapping between Woo and app,,Not Started,2026-08-14,1,Single mapping table so plan/product IDs are not hardcoded in two places.
+UP-014,WordPress,Share member tokens and routing between WP and app,,Not Started,2026-08-21,2,Cookie/token handoff. Must work before app auth can be rehooked (UP-030).
+UP-015,Payments,Stripe checkout for due diligence report purchase,,Not Started,2026-08-21,3,$55 one-off. Guest checkout allowed.
+UP-016,Payments,Email delivery flow for due diligence report,,Not Started,2026-08-21,2,Stripe webhook -> n8n -> generate PDF -> email. Needs retry + failure alerting.
+UP-017,Payments,Stripe checkout for title search,,Not Started,2026-08-28,2,Requires logged-in user (unlike UP-015).
+UP-018,Payments,Email delivery flow for title search,,Not Started,2026-08-28,2,Same pipeline as UP-016; confirm whether it can be reused as-is.
+UP-019,Payments,Stripe webhook handlers (subscription status period end payment log),,Not Started,2026-09-04,3,Update subscription status and current_period_end; log payments; trigger n8n.
+UP-020,Payments,Overdue / cancellation detection job,,Not Started,2026-09-04,2,Cron or queue cleanup of expired trials and overrun periods.
+UP-021,Auth,Postgres schema: users sessions roles,,Not Started,2026-09-11,2,Target state: SvelteKit + Postgres owns auth instead of WP.
+UP-022,Auth,WP-compatible password hashing (phpass) for login parity,,Not Started,2026-09-11,3,EVENTUAL GOAL: match WP hashing so existing members can log in to the new app without a reset. Verify the exact WP hash scheme in use during UP-007.
+UP-023,Auth,Signup / login / password reset flows,,Not Started,2026-09-11,3,
+UP-024,Auth,Role-based permission checks (is_member is_child_user plan_type),,Not Started,2026-09-18,2,
+UP-025,Auth,Session sharing between SvelteKit and remaining WP surfaces,,Not Started,2026-09-18,2,Overlaps UP-014; do not build twice.
+UP-026,Subscriptions,plans table for all 5 subscription types,,Not Started,2026-09-18,1,Monthly/yearly plus additional users.
+UP-027,Subscriptions,user_subscriptions table + status lifecycle,,Not Started,2026-09-25,2,"Active/canceled/past-due, period dates, cancel-at-period-end, Stripe subscription IDs. DB: UrbanPortalDBP on 192.168.146.115, reached via `updb` ssh hop then psql -U postgres (see CLAUDE.md)."
+UP-028,Subscriptions,Subscription actions (start upgrade downgrade cancel),,Not Started,2026-09-25,3,
+UP-029,Subscriptions,Billing dashboard (active subs renewal dates cancel/upgrade),,Not Started,2026-10-02,3,
+UP-030,App,Rehook app authentication to new website/app,,Not Started,2026-10-02,3,Includes region access rules. Depends on UP-014 / UP-021.
+UP-031,App,Restyle app to match new frontend website,,Not Started,2026-10-09,5,"Port design tokens, spec-label aesthetic, glass panels, Geist fonts."
+UP-032,App,Light/dark theme in app matching frontend,,Not Started,2026-10-09,2,Same data-theme token-swap approach as the marketing site.
+UP-033,Child Users,Child-user model (parent_user_id child_user_id plan_id status),,Not Started,2026-10-16,2,
+UP-034,Child Users,api_keys table (user_id plan_id key_hash expires_at rate_limits),,Not Started,2026-10-16,2,
+UP-035,Child Users,API key generate / revoke / regenerate UI,,Not Started,2026-10-16,2,
+UP-036,Child Users,API-key-based access control on services,,Not Started,2026-10-23,2,
+UP-037,Admin,/admin/users - list users roles plans,,Not Started,2026-10-23,2,Dev/super-user only. No public content editing (see UP-005).
+UP-038,Admin,/admin/subscriptions - view and manually adjust status,,Not Started,2026-10-30,2,
+UP-039,Admin,Payments/invoice table view with filters,,Not Started,2026-10-30,2,
+UP-040,Admin,Bulk operations (plan migration mass-cancel for testing),,Not Started,2026-10-30,1,
+UP-041,Static Site,Static rendering for / /pricing /features /about /contact /docs,,Not Started,2026-11-06,3,Pricing blocks read from plans table.
+UP-042,Static Site,SEO meta tags per page,,Not Started,2026-11-06,1,
+UP-043,Static Site,Sitemap and RSS endpoints,,Not Started,2026-11-06,1,
+UP-044,Infrastructure,Server monitoring scripts and health checks,,Not Started,2026-08-07,2,
+UP-045,Infrastructure,Proxy servers and traffic routing,,Not Started,2026-08-14,2,Likely needed for UP-012 if we mount the app on a path rather than an iframe.
+UP-046,Infrastructure,Custom server backup scripts,,Not Started,2026-08-21,2,
+UP-047,Infrastructure,Firewall and network security setup,,Not Started,2026-08-21,2,Ongoing incident support as well as initial setup.
+UP-048,Infrastructure,Standby-to-production replication scripts,,Not Started,2026-08-28,3,
+UP-049,Infrastructure,Backup strategy tied to hot-standby servers,,Not Started,2026-08-28,2,
+UP-050,Infrastructure,Deploy pipeline for the SvelteKit site,,Not Started,2026-07-31,2,No deploy script wired up yet; hosting target not set up in the repo.

@@ -15,16 +15,26 @@
 		{ href: `${base}/#platform`, label: 'Reports' }
 	];
 	const services = [
-		{ href: `${base}/report`, label: 'Due Diligence Reports' },
-		{ href: `${base}/signup`, label: 'Platform Subscription' },
+		{ href: `${base}/report/`, label: 'Due Diligence Reports' },
+		{ href: `${base}/signup/`, label: 'Platform Subscription' },
 		{ href: `${base}/#data-apis`, label: 'Planning Data APIs' },
-		{ href: `${base}/demo`, label: 'Book a Demo' }
+		{ href: `${base}/demo/`, label: 'Book a Demo' }
+	];
+	// Region paths are the live WordPress ones, unchanged — these are indexed.
+	const explore = [
+		{ href: `${base}/insights/`, label: 'Insights' },
+		{ href: `${base}/nsw-regions/`, label: 'NSW Regions' },
+		{ href: `${base}/residential-development-sites-for-sale-in-sydney/`, label: 'Sydney' },
+		{ href: `${base}/land-for-sale-in-the-central-coast/`, label: 'Central Coast & Hunter' },
+		{ href: `${base}/development-land-for-sale-northern-nsw/`, label: 'Northern NSW' },
+		{ href: `${base}/development-land-for-sale-southern-nsw/`, label: 'Southern NSW' },
+		{ href: `${base}/land-for-sale-western-nsw/`, label: 'Western NSW' }
 	];
 </script>
 
 <footer class="border-t border-[var(--color-line)] bg-[var(--color-subtle)]">
 	<div class="mx-auto max-w-[1400px] px-5 py-14">
-		<div class="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
+		<div class="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
 			<div>
 				<div>
 					<Logo height={24} />
@@ -57,6 +67,21 @@
 				<div class="spec text-[var(--accent-teal-text)]">Services</div>
 				<ul class="mt-3 space-y-2">
 					{#each services as l (l.label)}
+						<li>
+							<a
+								href={l.href}
+								class="text-[13px] text-[var(--color-neutral-400)] transition-colors hover:text-[var(--fg)]"
+								>{l.label}</a
+							>
+						</li>
+					{/each}
+				</ul>
+			</div>
+
+			<div>
+				<div class="spec text-[var(--accent-teal-text)]">Explore</div>
+				<ul class="mt-3 space-y-2">
+					{#each explore as l (l.label)}
 						<li>
 							<a
 								href={l.href}

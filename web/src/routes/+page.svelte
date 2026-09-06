@@ -2,36 +2,14 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import Reveal from '$lib/components/Reveal.svelte';
 	import MapboxHero from '$lib/components/MapboxHero.svelte';
-	import DotField from '$lib/components/DotField.svelte';
 	import MagnetLines from '$lib/components/MagnetLines.svelte';
-	import { onMount } from 'svelte';
+	import VimeoEmbed from '$lib/components/VimeoEmbed.svelte';
+	import TrialCta from '$lib/components/TrialCta.svelte';
+	import { posts } from '$lib/content';
 	import { base } from '$app/paths';
 
-	// DotField's gradientFrom/gradientTo/glowColor are read fresh every
-	// animation frame (Svelte 5 $props() destructuring compiles to live
-	// getters), so tracking the theme here and passing different values in
-	// is enough to re-colour it live — no changes needed inside DotField.
-	let theme = $state<'dark' | 'light'>('dark');
-	onMount(() => {
-		const read = () => (theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
-		read();
-		const mo = new MutationObserver(read);
-		mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-		return () => mo.disconnect();
-	});
-	const dotFieldColors = $derived(
-		theme === 'light'
-			? {
-					from: 'rgba(92, 38, 135, 0.1)',
-					to: 'rgba(92, 38, 135, 0.04)',
-					glow: 'rgba(92, 38, 135, 0.16)'
-				}
-			: {
-					from: 'rgba(168, 85, 247, 0.35)',
-					to: 'rgba(180, 151, 207, 0.25)',
-					glow: '#120F17'
-				}
-	);
+	// The three most recent articles, teased in the Insights section.
+	const latest = posts.slice(0, 3);
 
 	const heroStats = [
 		{ n: '4.9 mil', l: 'Viable Sites' },
@@ -207,7 +185,7 @@
 
 		<Reveal delay={220}>
 			<div class="mt-8 flex flex-wrap items-center gap-3">
-				<Button href="{base}/signup" size="lg">Search for a Site Now</Button>
+				<Button href="{base}/signup/" size="lg">Search for a Site Now</Button>
 				<Button href="#demo" size="lg" variant="outline" class="glass">
 					<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" aria-hidden="true"
 						><polygon points="6 3 20 12 6 21 6 3" /></svg
@@ -415,8 +393,50 @@
 					additional uses to environmentally sensitive area exclusions, because it was designed by
 					people who interpret the NSW planning system for a living.
 				</p>
-				<Button href="#about" variant="teal" size="lg" class="mt-7">Follow Our Planning Insights</Button>
+				<Button href="{base}/insights/" variant="teal" size="lg" class="mt-7">Read Our Planning Insights</Button>
 			</Reveal>
+		</div>
+
+		<!-- Latest three articles, pulled from the same source /insights lists. -->
+		<div class="mt-16 border-t border-[var(--color-line)] pt-12">
+			<Reveal>
+				<div class="flex flex-wrap items-baseline justify-between gap-3">
+					<div class="spec text-[var(--color-neutral-500)]">Latest from the Insights Desk</div>
+					<a
+						href="{base}/insights/"
+						class="text-[13px] font-medium text-[var(--accent-teal-text)] hover:underline"
+						>All {posts.length} articles</a
+					>
+				</div>
+			</Reveal>
+			<div class="mt-8 grid gap-5 md:grid-cols-3">
+				{#each latest as p, i (p.slug)}
+					<Reveal delay={i * 90}>
+						<a
+							href="{base}/{p.slug}/"
+							class="group flex h-full flex-col rounded-xl border border-[var(--color-line)] bg-[var(--bg)] p-5 transition-colors duration-200 hover:border-[var(--color-neutral-600)]"
+						>
+							<div
+								class="aspect-[16/10] w-full overflow-hidden rounded-lg border border-[var(--color-line)]"
+							>
+								<img
+									src="{base}{p.hero}"
+									alt=""
+									loading="lazy"
+									decoding="async"
+									class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+								/>
+							</div>
+							<div class="mt-5 px-2 pb-2">
+								<div class="spec text-[var(--accent-teal-text)]">{p.eyebrow}</div>
+								<div class="mt-2.5 text-[15.5px] leading-snug font-semibold text-[var(--fg)]">
+									{p.title}
+								</div>
+							</div>
+						</a>
+					</Reveal>
+				{/each}
+			</div>
 		</div>
 	</div>
 </section>
@@ -446,7 +466,7 @@
 					<p class="mt-4 text-[13.5px] font-medium text-[var(--color-neutral-400)]">
 						Ideal for real estate agents, home buyers and buyers' agents.
 					</p>
-					<Button href="{base}/report" size="lg" class="mt-7">Buy a One-Off Report</Button>
+					<Button href="{base}/report/" size="lg" class="mt-7">Buy a One-Off Report</Button>
 				</div>
 			</Reveal>
 			<Reveal delay={160}>
@@ -466,7 +486,7 @@
 					<p class="mt-4 text-[13.5px] font-medium text-[#f6f4fa]/70">
 						Ideal for developers, buyers' agents, architects and property consultants.
 					</p>
-					<Button href="{base}/signup" variant="teal" size="lg" class="mt-7">Start Your Free Trial</Button>
+					<Button href="{base}/signup/" variant="teal" size="lg" class="mt-7">Start Your Free Trial</Button>
 				</div>
 			</Reveal>
 		</div>
@@ -501,7 +521,7 @@
 					integrate it into your own systems. Built for proptech companies, data brokers,
 					researchers and developers with bespoke platforms.
 				</p>
-				<Button href="{base}/developers" size="lg" class="mt-7">Explore the Data APIs</Button>
+				<Button href="{base}/developers/" size="lg" class="mt-7">Explore the Data APIs</Button>
 			</Reveal>
 			<Reveal delay={100}>
 				<ul class="space-y-4">
@@ -522,54 +542,8 @@
 	</div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="relative isolate overflow-hidden border-t border-[var(--color-line)]">
-	<!-- Wrapped rather than passed via DotField's own `class` prop: its root
-	     div hardcodes "relative" before the class prop, and since it's plain
-	     string concatenation (not tailwind-merge) upstream, Tailwind's own
-	     utility generation order — not HTML class order — decides which of
-	     "relative"/"absolute" wins, and it wasn't the one this needs. -->
-	<div class="pointer-events-none absolute inset-0 -z-10">
-		<DotField
-			dotRadius={1.5}
-			dotSpacing={14}
-			cursorRadius={400}
-			cursorForce={0.34}
-			bulgeOnly={true}
-			bulgeStrength={68}
-			glowRadius={160}
-			sparkle={false}
-			waveAmplitude={0}
-			gradientFrom={dotFieldColors.from}
-			gradientTo={dotFieldColors.to}
-			glowColor={dotFieldColors.glow}
-		/>
-	</div>
-	<div class="mx-auto max-w-[1400px] px-5 py-24 text-center">
-		<Reveal>
-			<h2 class="mx-auto max-w-2xl text-[32px] leading-tight font-semibold tracking-tight text-[var(--fg)] sm:text-[42px]">
-				Your next site is already in the platform.
-			</h2>
-		</Reveal>
-		<Reveal delay={100}>
-			<p class="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[var(--color-neutral-400)]">
-				Start your 7-day free trial of NSW's most powerful planning intelligence platform. We'll
-				notify you before your trial ends, with an extra 3 days free or the option to opt out.
-			</p>
-		</Reveal>
-		<Reveal delay={160}>
-			<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-				<Button href="{base}/signup" variant="teal" size="lg">Start Your 7-Day Free Trial</Button>
-				<Button href="{base}/demo" size="lg" variant="outline" class="glass">Team of 10+? Book a Demo</Button>
-			</div>
-		</Reveal>
-		<Reveal delay={200}>
-			<p class="mt-5 text-[13px] text-[var(--color-neutral-500)]">
-				Prefer a one-off report? <a href="{base}/report" class="underline underline-offset-2 hover:text-[var(--fg)]">Get a Due Diligence Report for $55.</a>
-			</p>
-		</Reveal>
-	</div>
-</section>
+<!-- FINAL CTA — the same block every article closes on (see TrialCta.svelte). -->
+<TrialCta />
 
 <!-- FOUNDER'S STORY -->
 <section id="about" class="scroll-mt-28 border-t border-[var(--color-line)]">
@@ -577,20 +551,12 @@
 		<div class="grid items-start gap-12 lg:grid-cols-2">
 			<Reveal>
 				<h2 class="spec mb-5 text-[var(--accent-teal-text)]">Founder's Story</h2>
-				<button
-					type="button"
-					aria-label="Play: Stuart tells the story behind Urban Prospects"
-					class="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl border border-[var(--color-line)]"
-					style="background: linear-gradient(160deg, var(--color-brand-purple-700), var(--color-brand-purple));"
-				>
-					<span
-						class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[var(--color-brand-teal)] text-[#0a0710] transition-transform group-hover:scale-105"
-					>
-						<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none" aria-hidden="true"
-							><polygon points="6 3 20 12 6 21 6 3" /></svg
-						>
-					</span>
-				</button>
+				<VimeoEmbed
+					videoId="1022699488"
+					title="Stuart Wilmot — Urban Prospects founder story"
+					label="Play: Stuart tells the story behind Urban Prospects"
+					poster="{base}/founder-story-poster.jpg"
+				/>
 				<p class="mt-4 text-[14px] text-[var(--color-neutral-400)]">
 					Watch Stuart tell the story behind Urban Prospects
 				</p>

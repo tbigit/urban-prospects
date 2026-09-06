@@ -3,6 +3,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { page } from '$app/state';
+	import { getEntry } from '$lib/content';
 	import { onMount } from 'svelte';
 	import { afterNavigate } from '$app/navigation';
 	let { children } = $props();
@@ -18,9 +19,16 @@
 	onMount(resetScroll);
 	afterNavigate(resetScroll);
 
+	// Trailing slash included — that is the form these URLs are served and
+	// indexed at (see trailingSlash in +layout.ts), so the canonical has to
+	// match it exactly rather than point at a URL that redirects.
 	const canonical = $derived(
-		`https://www.urbanprospects.com.au${page.url.pathname === '/' ? '' : page.url.pathname.replace(/\/$/, '')}`
+		`https://www.urbanprospects.com.au${page.url.pathname.replace(/\/?$/, '/')}`
 	);
+	// Migrated articles and region pages declare og:type "article" themselves;
+	// emitting the site default here too would leave two og:type tags on those
+	// pages, so the layout only supplies it for everything else.
+	const isEntry = $derived(Boolean(getEntry(page.url.pathname.replace(/^\/|\/$/g, ''))));
 	const orgLd = JSON.stringify({
 		'@context': 'https://schema.org',
 		'@type': 'Organization',
@@ -50,7 +58,7 @@
 <svelte:head>
 	<link rel="canonical" href={canonical} />
 	<meta property="og:site_name" content="Urban Prospects" />
-	<meta property="og:type" content="website" />
+	{#if !isEntry}<meta property="og:type" content="website" />{/if}
 	<meta property="og:url" content={canonical} />
 	<meta name="twitter:card" content="summary_large_image" />
 	{@html `<script type="application/ld+json">${orgLd}<\/script>`}
