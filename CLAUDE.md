@@ -436,7 +436,13 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
   `auth_request`; `/app/` is just another node route. `/opt/www/upapp` and upapp's
   `npm run build` SFTP deploy are obsolete — **do not run upapp's build any more**; deploying
   this project deploys the app.
-- **Not themed**: the app's stylesheets carry ~1,580 hard-coded colours (311 distinct) and no
-  dark palette, so it does not follow the site's dark/light toggle; the layout pins it light.
-  Theming and any shadcn/Tailwind move belong to UP-031/UP-032 (a 9.4k-line page with 2,300
-  class usages of the `incremental.css` grid/spacing utilities — a rewrite, not a swap).
+- **Dark/light**: the app follows the site's theme (data-theme on `<html>`, else system).
+  `web/scripts/app-theme.py` replaced all 1,580 colour literals in the app's CSS contexts
+  (.css files, `<style>` blocks, literal `style=""` attrs — never JS/Chart.js/Mapbox paint)
+  with `var(--up-c-<hex>)` and generates `web/static/app/css/theme.css`: light = original
+  values, dark = derived (greys invert lightness with a faint purple cast toward `--bg`,
+  pastel surfaces go dark, saturated darks lift to ~0.7 lightness). 226 tokens. Re-run the
+  script after adding colours to app styles; it is idempotent. Page ground uses the site's
+  `--bg`/`--fg`. Map tiles and photos are untouched. A shadcn/Tailwind rewrite of the app
+  (2,300 usages of `incremental.css` grid/spacing utilities across a 9.4k-line page) remains
+  a separate decision under UP-031.

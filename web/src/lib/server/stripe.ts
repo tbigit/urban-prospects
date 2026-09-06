@@ -49,3 +49,49 @@ export async function createCheckoutSession(params: Record<string, unknown>) {
 	if (!res.ok || !json.url) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
 	return json as { url: string; id: string };
 }
+
+/** Fetch a Checkout Session with its subscription expanded (for the renewal
+ *  success page, which writes the new row itself rather than waiting for a webhook). */
+export async function getCheckoutSession(id: string): Promise<StripeSession> {
+	const key = env.STRIPE_SECRET_KEY;
+	if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+	if (!/^cs_[A-Za-z0-9_]+$/.test(id)) throw new Error('bad session id');
+	const res = await fetch(`https://api.stripe.com/v1/checkout/sessions/${id}?expand[]=subscription`, {
+		headers: { Authorization: `Bearer ${key}` }
+	});
+	const json = (await res.json()) as StripeSession & { error?: { message: string } };
+	if (!res.ok) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
+	return json;
+}
+
+export interface StripeSession {
+	id: string;
+	status: 'open' | 'complete' | 'expired';
+	payment_status: 'paid' | 'unpaid' | 'no_payment_required';
+	customer: string | null;
+	customer_details?: { email?: string | null } | null;
+	metadata?: Record<string, string>;
+	subscription: null | {
+		id: string;
+		status: string;
+		customer: string;
+		current_period_end?: number;
+		default_payment_method?: string | null;
+		items: { data: { price: { id: string; unit_amount: number | null; recurring?: { interval: string } }; quantity: number; current_period_end?: number }[] };
+	};
+}
+
+/** Cancel a Stripe subscription. `atPeriodEnd` keeps access until the paid period
+ *  runs out (Stripe then emits customer.subscription.deleted); otherwise it ends now. */
+export async function cancelSubscription(subscriptionId: string, atPeriodEnd: boolean) {
+	const key = env.STRIPE_SECRET_KEY;
+	if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+	if (!/^sub_[A-Za-z0-9]+$/.test(subscriptionId)) throw new Error('bad subscription id');
+	const url = `https://api.stripe.com/v1/subscriptions/${subscriptionId}`;
+	const res = atPeriodEnd
+		? await fetch(url, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'cancel_at_period_end=true' })
+		: await fetch(url, { method: 'DELETE', headers: { Authorization: `Bearer ${key}` } });
+	const json = (await res.json()) as { id: string; status: string; cancel_at_period_end: boolean; current_period_end?: number; items?: { data: { current_period_end?: number }[] }; error?: { message: string } };
+	if (!res.ok) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
+	return json;
+}

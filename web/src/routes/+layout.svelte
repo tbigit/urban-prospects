@@ -29,6 +29,8 @@
 	// emitting the site default here too would leave two og:type tags on those
 	// pages, so the layout only supplies it for everything else.
 	const isEntry = $derived(Boolean(getEntry(page.url.pathname.replace(/^\/|\/$/g, ''))));
+	// The admin console and the member account page bring their own shell (left rail); no marketing chrome there.
+	const isAdmin = $derived(page.url.pathname.startsWith('/admin') || page.url.pathname.startsWith('/app') || page.url.pathname.startsWith('/account'));
 	const orgLd = JSON.stringify({
 		'@context': 'https://schema.org',
 		'@type': 'Organization',
@@ -80,11 +82,11 @@
 >
 
 <div class="flex min-h-screen flex-col">
-	<Header />
+	{#if !isAdmin}<Header />{/if}
 	<main id="main" class="flex-1">
 		{@render children?.()}
 	</main>
-	<Footer />
+	{#if !isAdmin}<Footer />{/if}
 </div>
 
 <style>

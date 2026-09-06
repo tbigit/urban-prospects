@@ -5,14 +5,14 @@ UP-003,Frontend,Decide fate of in-page anchors (Platform/Services/Data APIs/Abou
 UP-004,Frontend,Replace stub routes with real flows (/login /signup /demo /report /developers),,Not Started,2026-08-07,2,Currently mailto: placeholders. Depends on auth + checkout work below.
 UP-005,Content,Confirm no-CMS decision with client and document edit request process,,Confirmed,2026-07-24,0.5,CONFIRMED: no WYSIWYG CMS. All content edits go through a developer. Removes original scope item 6 (WYSIWYG CMS) entirely.
 UP-006,Content,Move page copy into typed content modules in repo,,Not Started,2026-08-07,2,Consequence of no-CMS: copy lives in code. Keep it in one place per page so non-narrative edits are cheap.
-UP-007,WordPress,Audit existing WordPress site (plugins themes custom code membership tables),,Not Started,2026-07-31,2,Baseline needed before any migration. Document what actually drives membership today.
+UP-007,WordPress,Audit existing WordPress site (plugins themes custom code membership tables),,Done,2026-07-31,2,"Audited 2026-09-06: see CLAUDE.md ""WordPress source"". WP 6.9.7, Woo Subscriptions legacy storage, Pin Payments + WooPayments, 169 users (96 $wp$ bcrypt / 73 phpass), 74 active subs of which 21 paid. Baseline needed before any migration. Document what actually drives membership today."
 UP-008,WordPress,Custom WooCommerce product setup,,Not Started,2026-07-31,2,Interim while WP remains system of record.
 UP-009,WordPress,Stripe integration on WooCommerce,,Not Started,2026-08-07,2,"DECIDED 2026-09-06: Stripe is the gateway and the source of truth for subscription state (Stripe Billing subscriptions, not Woo Subscriptions). Pin Payments references in the original doc are superseded."
 UP-010,WordPress,Post-purchase hook to n8n for PDF delivery (title search / reports),,Not Started,2026-08-07,2,Woo order completed -> n8n -> report API -> email PDF.
 UP-011,WordPress,Expose WP API endpoint to create account from Stripe checkout,,Not Started,2026-08-14,2,INTERIM SOLUTION: subscription is taken on Stripe then calls WP to create the member account. WP stays the user store for now.
-UP-012,WordPress,Embed SvelteKit frontend app into WordPress,,Not Started,2026-08-14,3,Routing + base path + asset handling. Decide iframe vs reverse-proxy path mount early.
+UP-012,WordPress,Embed SvelteKit frontend app into WordPress,,Done,2026-08-14,3,"2026-09-06: upapp merged into this SvelteKit project at /app (not iframe, not proxy). See CLAUDE.md ""The property app, merged"". Routing + base path + asset handling. Decide iframe vs reverse-proxy path mount early."
 UP-013,WordPress,Product ID mapping between Woo and app,,Not Started,2026-08-14,1,Single mapping table so plan/product IDs are not hardcoded in two places.
-UP-014,WordPress,Share member tokens and routing between WP and app,,Not Started,2026-08-21,2,Cookie/token handoff. Must work before app auth can be rehooked (UP-030).
+UP-014,WordPress,Share member tokens and routing between WP and app,,Done,2026-08-21,2,2026-09-06: superseded — one session cookie serves site and app. Cookie/token handoff. Must work before app auth can be rehooked (UP-030).
 UP-015,Payments,Stripe checkout for due diligence report purchase,,Not Started,2026-08-21,3,$55 one-off. Guest checkout allowed.
 UP-016,Payments,Email delivery flow for due diligence report,,Not Started,2026-08-21,2,Stripe webhook -> n8n -> generate PDF -> email. Needs retry + failure alerting.
 UP-017,Payments,Stripe checkout for title search,,Not Started,2026-08-28,2,Requires logged-in user (unlike UP-015).
@@ -20,23 +20,23 @@ UP-018,Payments,Email delivery flow for title search,,Not Started,2026-08-28,2,S
 UP-019,Payments,Stripe webhook handlers (subscription status period end payment log),,Not Started,2026-09-04,3,Update subscription status and current_period_end; log payments; trigger n8n.
 UP-020,Payments,Overdue / cancellation detection job,,Not Started,2026-09-04,2,Cron or queue cleanup of expired trials and overrun periods.
 UP-021,Auth,Postgres schema: users sessions roles,,Not Started,2026-09-11,2,Target state: SvelteKit + Postgres owns auth instead of WP.
-UP-022,Auth,WP-compatible password hashing (phpass) for login parity,,Not Started,2026-09-11,3,EVENTUAL GOAL: match WP hashing so existing members can log in to the new app without a reset. Verify the exact WP hash scheme in use during UP-007.
+UP-022,Auth,WP-compatible password hashing (phpass) for login parity,,In Progress,2026-09-11,3,"web/src/lib/server/password.ts handles $wp$ (bcrypt over HMAC-SHA384), $2y$ and $P$ phpass. 21 paid members imported into users with original hashes 2026-09-06; login flow still to be built. EVENTUAL GOAL: match WP hashing so existing members can log in to the new app without a reset. Verify the exact WP hash scheme in use during UP-007."
 UP-023,Auth,Signup / login / password reset flows,,Not Started,2026-09-11,3,
 UP-024,Auth,Role-based permission checks (is_member is_child_user plan_type),,Not Started,2026-09-18,2,
-UP-025,Auth,Session sharing between SvelteKit and remaining WP surfaces,,Not Started,2026-09-18,2,Overlaps UP-014; do not build twice.
-UP-026,Subscriptions,plans table for all 5 subscription types,,Not Started,2026-09-18,1,Monthly/yearly plus additional users.
+UP-025,Auth,Session sharing between SvelteKit and remaining WP surfaces,,Done,2026-09-18,2,2026-09-06: superseded by the merge; no separate WP surface to share with. Overlaps UP-014; do not build twice.
+UP-026,Subscriptions,plans table for all 5 subscription types,,In Progress,2026-09-18,1,Plans are still free-text on user_subscriptions.plan; admin UI offers a datalist of the 10 Woo product names + Demo. Monthly/yearly plus additional users.
 UP-027,Subscriptions,user_subscriptions table + status lifecycle,,Not Started,2026-09-25,2,"Active/canceled/past-due, period dates, cancel-at-period-end, Stripe subscription IDs. DB: UrbanPortalDBP on 192.168.146.115, reached via `updb` ssh hop then psql -U postgres (see CLAUDE.md)."
-UP-028,Subscriptions,Subscription actions (start upgrade downgrade cancel),,Not Started,2026-09-25,3,
+UP-028,Subscriptions,Subscription actions (start upgrade downgrade cancel),,In Progress,2026-09-25,3,2026-09-06: admin cancel (period end / now) via Stripe API + /renew/ re-subscribe flow built. Upgrade/downgrade still via Stripe dashboard. 
 UP-029,Subscriptions,Billing dashboard (active subs renewal dates cancel/upgrade),,Not Started,2026-10-02,3,
-UP-030,App,Rehook app authentication to new website/app,,Not Started,2026-10-02,3,Includes region access rules. Depends on UP-014 / UP-021.
-UP-031,App,Restyle app to match new frontend website,,Not Started,2026-10-09,5,"Port design tokens, spec-label aesthetic, glass panels, Geist fonts."
-UP-032,App,Light/dark theme in app matching frontend,,Not Started,2026-10-09,2,Same data-theme token-swap approach as the marketing site.
+UP-030,App,Rehook app authentication to new website/app,,Done,2026-10-02,3,2026-09-06: app auth is the site session; has_access gates the property panel; cancelled members can still log in and search. 2026-09-06: /auth/me now returns has_access + renew_url; upapp property details panel must render the subscribe page when has_access is false. Includes region access rules. Depends on UP-014 / UP-021.
+UP-031,App,Restyle app to match new frontend website,,In Progress,2026-10-09,5,"2026-09-06: fonts moved to Geist and marketing chrome removed; colours tokenised (theme.css); components still the legacy stylesheet. Full restyle/shadcn is the remaining work. Port design tokens, spec-label aesthetic, glass panels, Geist fonts."
+UP-032,App,Light/dark theme in app matching frontend,,Done,2026-10-09,2,2026-09-06: app follows site theme via generated theme.css (scripts/app-theme.py). 2026-09-06: app is pinned light; depends on UP-031 tokenising colours. Same data-theme token-swap approach as the marketing site.
 UP-033,Child Users,Child-user model (parent_user_id child_user_id plan_id status),,Not Started,2026-10-16,2,
 UP-034,Child Users,api_keys table (user_id plan_id key_hash expires_at rate_limits),,Not Started,2026-10-16,2,
 UP-035,Child Users,API key generate / revoke / regenerate UI,,Not Started,2026-10-16,2,
 UP-036,Child Users,API-key-based access control on services,,Not Started,2026-10-23,2,
-UP-037,Admin,/admin/users - list users roles plans,,Not Started,2026-10-23,2,Dev/super-user only. No public content editing (see UP-005).
-UP-038,Admin,/admin/subscriptions - view and manually adjust status,,Not Started,2026-10-30,2,
+UP-037,Admin,/admin/users - list users roles plans,,Done,2026-10-23,2,"2026-09-06: /admin/users built (list, filter, create, edit, temp password, sessions). Dev/super-user only. No public content editing (see UP-005)."
+UP-038,Admin,/admin/subscriptions - view and manually adjust status,,Done,2026-10-30,2,"2026-09-06: /admin/subscriptions built (list, filter, edit status/plan/cycle/regions/period end, delete). "
 UP-039,Admin,Payments/invoice table view with filters,,Not Started,2026-10-30,2,
 UP-040,Admin,Bulk operations (plan migration mass-cancel for testing),,Not Started,2026-10-30,1,
 UP-041,Static Site,Static rendering for / /pricing /features /about /contact /docs,,Not Started,2026-11-06,3,Pricing blocks read from plans table.

@@ -21,7 +21,7 @@ Marketing pages are still prerendered; only the auth routes run at request time.
 cd web && npm ci && npm run build
 rsync -avz --delete --exclude .env build/ root@143.42.46.116:/opt/www/upweb-node/
 rsync -avz package.json package-lock.json root@143.42.46.116:/opt/www/upweb-node/
-ssh root@143.42.46.116 'cd /opt/www/upweb && npm ci --omit=dev && systemctl restart upweb'
+ssh root@143.42.46.116 'cd /opt/www/upweb-node && npm ci --omit=dev && systemctl restart upweb'
 
 # The property app ships inside this build (web/src/routes/app) since 2026-09-06.
 # Do not run upapp's own build/deploy any more; /opt/www/upapp is obsolete.
