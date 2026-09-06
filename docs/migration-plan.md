@@ -34,7 +34,7 @@ Accept: row count matches wp_users; test member's password verifies.
 
 ## Phase 3 — Auth + app mount (preview domain)
 
-Status 2026-09-06: code complete and smoke-tested locally (see CLAUDE.md "Login, sessions and
+Status 2026-09-06: DONE and proven end to end — stuart@urbanperspectives.com.au logged in on a local build against the real DB with the WordPress password; row rehashed to argon2id, session row created. Previously: code complete and smoke-tested locally (see CLAUDE.md "Login, sessions and
 the /app mount"). Not yet deployed: needs 002_sessions.sql applied, .env on the server, nginx
 vhost + systemd unit installed, and a throwaway member to prove same-password login.
 
@@ -57,7 +57,7 @@ legacy → old WP host; TLS for both. 4. Add nginx 301s for old WP paths. 5. Smo
 ## Open items needed from Danny
 
 - ~~SSH host of the WP Docker stack~~ — 45.79.118.32 (`upapi` alias), per the migration session.
-- A throwaway WP member account for login parity testing.
+- ~~A throwaway WP member account for login parity testing~~ — done with Stuart's account.
 - ~~OK to move the website to adapter-node~~ — approved 2026-09-06, done.
 - Is 143.42.46.116 able to reach the DB host 192.168.146.115? If not, the Node server needs a tunnel or the DB a public listener.
 - `wp-credentials.md` is still tracked in git despite the .gitignore change; untrack it.
