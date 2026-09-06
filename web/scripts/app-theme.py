@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Tokenise the property app's hard-coded colours and emit a light + dark palette.
 
-The app (src/routes/app, src/lib/app, static/app/css) was written with ~1,500 colour
+The app (src/routes/app, src/lib/app, src/lib/app/css) was written with ~1,500 colour
 literals and no theme. Rather than hand-edit them, this replaces every literal that
 appears in a CSS context — .css files, <style> blocks, and style="" attributes — with
-`var(--up-c-<key>)` and writes static/app/css/theme.css defining each variable twice:
+`var(--up-c-<key>)` and writes src/lib/app/css/theme.css defining each variable twice:
 the original value for light, and a derived value for dark:
 
   * low-saturation colours (greys, whites, blacks): lightness inverted, tinted
@@ -21,10 +21,10 @@ import re, glob, colorsys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 # balloon.min.css (tooltips) is deliberately left untouched — its dark tooltip reads well on both themes.
-CSS_FILES = [ROOT / 'static/app/css' / f for f in ('incremental.css', 'custom.css')]
+CSS_FILES = [ROOT / 'src/lib/app/css' / f for f in ('incremental.css', 'custom.css')]
 SVELTE_FILES = [pathlib.Path(p) for p in glob.glob(str(ROOT / 'src/routes/app/**/*.svelte'), recursive=True)] + \
                [pathlib.Path(p) for p in glob.glob(str(ROOT / 'src/lib/app/*.svelte'))]
-THEME = ROOT / 'static/app/css/theme.css'
+THEME = ROOT / 'src/lib/app/css/theme.css'
 
 HEX = r'#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b'
 RGB = r'rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0?\.\d+|1|0|\d{1,3}%)\s*)?\)'

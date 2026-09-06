@@ -428,7 +428,7 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
   `custom_backup.css` were not carried over.
 - `web/src/routes/app/+layout.ts`: `ssr=false`, `prerender=false` (browser-only SPA).
   `+layout.server.ts`: requires `locals.user` (else `/login/?next=`), returns `has_access`.
-  `+layout.svelte`: loads `/app/css/global.css` + lucide, forces a white light page, and maps
+  `+layout.svelte`: imports `$lib/app/css/{global,theme,skin}.css` (Vite-bundled, HMR) + links lucide, forces a white light page, and maps
   `--font-family` to the site's `--font-sans` (Geist). Root layout hides Header/Footer on `/app*`.
 - Identity: the page's existing `/auth/me` branch is used (no query string). `/auth/me` now
   also returns `has_access` + `renew_url`; `+page.svelte` passes `has_access` into
@@ -451,7 +451,7 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
   `auth_request`; `/app/` is just another node route. `/opt/www/upapp` and upapp's
   `npm run build` SFTP deploy are obsolete — **do not run upapp's build any more**; deploying
   this project deploys the app.
-- **Skin**: `web/static/app/css/skin.css` (loaded after theme.css) restyles the app's main
+- **Skin**: `web/src/lib/app/css/skin.css` (loaded after theme.css) restyles the app's main
   surfaces to match the site and /admin without touching its markup: frosted-glass search
   panel, tool rail and property panel (`color-mix` on `--bg`/`--fg` + backdrop blur, so it
   works in both themes), mono `.spec`-style section labels, pill segment groups, brand-purple
@@ -476,7 +476,7 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
 - **Dark/light**: the app follows the site's theme (data-theme on `<html>`, else system).
   `web/scripts/app-theme.py` replaced all 1,580 colour literals in the app's CSS contexts
   (.css files, `<style>` blocks, literal `style=""` attrs — never JS/Chart.js/Mapbox paint)
-  with `var(--up-c-<hex>)` and generates `web/static/app/css/theme.css`: light = original
+  with `var(--up-c-<hex>)` and generates `web/src/lib/app/css/theme.css`: light = original
   values, dark = derived (greys invert lightness with a faint purple cast toward `--bg`,
   pastel surfaces go dark, saturated darks lift to ~0.7 lightness). 226 tokens. Re-run the
   script after adding colours to app styles; it is idempotent. Page ground uses the site's
