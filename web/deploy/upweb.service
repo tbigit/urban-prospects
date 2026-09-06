@@ -6,7 +6,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=nginx
 WorkingDirectory=/opt/www/upweb-node
 EnvironmentFile=/opt/www/upweb-node/.env
 Environment=NODE_ENV=production
