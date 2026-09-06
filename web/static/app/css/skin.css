@@ -1,0 +1,267 @@
+/* skin.css — makes the property app read as the same product as the website and
+   /admin: frosted-glass panels, the site's line/surface tokens, mono "spec"
+   labels, pill segments, the brand-purple primary button. Loaded after
+   theme.css; every rule is scoped to .up-app and uses the site's CSS variables
+   (--bg, --fg, --color-line, --color-brand-*, --font-mono) so it follows the
+   theme without branching. Specificity is deliberately high: the app's own
+   scoped styles must lose. */
+
+/* ---- ground ------------------------------------------------------------ */
+.up-app .app.search-app { background: var(--bg) !important; color: var(--fg); }
+.up-app hr { border: 0; border-top: 1px solid var(--color-line); opacity: 1; margin: .5rem 0; }
+
+/* ---- glass surfaces ---------------------------------------------------- */
+.up-app .listing-container .one-third.border-rounder.border-primary,
+.up-app .custom-control,
+.up-app .viewing-property .property-container,
+.up-app .property-details-container,
+.up-app .legend-container,
+.up-app .settings-panel {
+	background: color-mix(in srgb, var(--bg) 62%, transparent) !important;
+	border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent) !important;
+	backdrop-filter: blur(14px) saturate(150%);
+	-webkit-backdrop-filter: blur(14px) saturate(150%);
+	box-shadow: 0 12px 40px rgba(0, 0, 0, .28), inset 0 1px 1px color-mix(in srgb, var(--fg) 10%, transparent) !important;
+	border-radius: 1rem !important;
+	color: var(--fg);
+}
+:root[data-theme='light'] .up-app .listing-container .one-third.border-rounder.border-primary,
+:root[data-theme='light'] .up-app .custom-control { box-shadow: 0 12px 40px rgba(20, 13, 31, .10), inset 0 1px 1px rgba(255,255,255,.7) !important; }
+.up-app .custom-control { padding: .35rem !important; border-radius: .9rem !important; }
+.up-app .custom-control button { background: transparent !important; border-radius: .55rem !important; color: var(--fg) !important; }
+.up-app .custom-control button:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; }
+.up-app .filter-container { background: transparent !important; }
+
+/* ---- type ---------------------------------------------------------------- */
+.up-app h3.uppercases { text-transform: none !important; font-size: 20px !important; font-weight: 600 !important; letter-spacing: -0.01em; color: var(--fg) !important; }
+.up-app .collapsible-title h6,
+.up-app .collapsible-title h6 strong,
+.up-app h6.uppercase { font-family: var(--font-mono) !important; font-size: 11px !important; letter-spacing: .08em; text-transform: uppercase; font-weight: 500 !important; color: var(--color-neutral-400) !important; }
+.up-app .search-form h5 { font-size: 12px !important; font-weight: 500 !important; color: var(--color-neutral-300) !important; letter-spacing: 0; }
+.up-app .checkbox-group label, .up-app .my-account-link, .up-app .checkbox-fav label { color: var(--color-neutral-300) !important; font-size: 13px; }
+.up-app .my-account-link:hover { color: var(--fg) !important; }
+
+/* ---- controls ---------------------------------------------------------- */
+.up-app .btn-group { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--fg) 4%, transparent); }
+.up-app .btn-group .btn { border: 0 !important; border-radius: 999px !important; background: transparent !important; color: var(--color-neutral-300) !important; font-weight: 500 !important; font-size: 13px !important; padding: .35rem .9rem !important; box-shadow: none !important; }
+.up-app .btn-group .btn.active { background: var(--color-brand-purple) !important; color: #fff !important; }
+.up-app .btn-group .btn:not(.active):hover { color: var(--fg) !important; }
+
+.up-app .btn.btn-search { background: var(--color-brand-purple) !important; color: #fff !important; border: 0 !important; border-radius: .6rem !important; font-weight: 600 !important; letter-spacing: .02em; height: 2.6rem; line-height: 2.6rem; box-shadow: 0 6px 20px color-mix(in srgb, var(--color-brand-purple) 35%, transparent) !important; }
+.up-app .btn.btn-search:hover { filter: brightness(1.1); }
+.up-app .btn.btn-search.unclickable, .up-app .btn.btn-search[disabled] { opacity: .45; box-shadow: none !important; }
+.up-app .btn-reset-search { color: var(--accent-teal-text) !important; font-size: 12px; font-weight: 500; }
+.up-app .btn.btn-save-search, .up-app #btn-calculate-total { border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: .5rem !important; background: transparent !important; color: var(--color-neutral-300) !important; }
+
+/* region + option chips */
+.up-app #regions-filter-container .checkbox-container,
+.up-app .checkbox-container.chip { border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: 999px !important; background: transparent !important; color: var(--color-neutral-300) !important; font-size: 12.5px; }
+.up-app #regions-filter-container .checkbox-container.checked,
+.up-app #regions-filter-container .checkbox-container.active,
+.up-app #regions-filter-container .checkbox-container:has(input:checked) { border-color: var(--color-brand-purple) !important; background: color-mix(in srgb, var(--color-brand-purple) 22%, transparent) !important; color: var(--fg) !important; }
+.up-app #regions-filter-container .checkbox-container.unclickable { opacity: .45; }
+
+/* text inputs + svelte-select, matching the site's .auth-field */
+.up-app .search-form input[type='text'], .up-app .search-form input[type='number'], .up-app .search-form input[type='search'],
+.up-app .search-form textarea {
+	background: color-mix(in srgb, var(--bg) 60%, transparent) !important; border: 1px solid var(--color-line) !important; border-radius: .5rem !important;
+	color: var(--fg) !important; font-family: var(--font-sans) !important; font-size: 13px !important; height: 2.4rem; padding: 0 .75rem !important;
+}
+.up-app .search-form input::placeholder { color: var(--color-neutral-500); font-family: var(--font-sans); }
+.up-app .search-form input:focus { outline: none !important; border-color: var(--color-brand-purple) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-purple) 30%, transparent) !important; }
+.up-app .themed .svelte-select, .up-app .svelte-select {
+	--background: color-mix(in srgb, var(--bg) 60%, transparent); --list-background: var(--color-subtle);
+	--border: 1px solid var(--color-line); --border-hover: 1px solid var(--color-neutral-600); --border-focused: 1px solid var(--color-brand-purple);
+	--border-radius: .5rem; --list-border-radius: .6rem; --font-size: 13px; --height: 2.4rem;
+	--placeholder-color: var(--color-neutral-500); --item-color: var(--fg); --item-hover-bg: color-mix(in srgb, var(--fg) 8%, transparent);
+	--item-is-active-bg: var(--color-brand-purple); --multi-item-bg: color-mix(in srgb, var(--color-brand-purple) 22%, transparent);
+	--multi-item-color: var(--fg); --multi-item-clear-icon-color: var(--fg); --multi-item-border-radius: 999px; --multi-item-outline: 1px solid color-mix(in srgb, var(--color-brand-purple) 50%, transparent);
+	--clear-icon-color: var(--color-neutral-400); --chevron-color: var(--color-neutral-400); --list-shadow: 0 12px 40px rgba(0,0,0,.35);
+	font-family: var(--font-sans) !important;
+}
+.up-app .themed .svelte-select input { font-family: var(--font-sans) !important; color: var(--fg) !important; }
+
+/* checkboxes / toggles */
+.up-app .checkbox-group input[type='checkbox'] { accent-color: var(--color-brand-purple); }
+
+/* ---- property panel ---------------------------------------------------- */
+.up-app .property-details-container h1 { font-weight: 600 !important; letter-spacing: -0.015em; color: var(--fg) !important; text-transform: none !important; }
+.up-app .property-details-container h2, .up-app .property-details-container h3 { color: var(--fg) !important; }
+.up-app .btn-close { background: color-mix(in srgb, var(--bg) 70%, transparent) !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; color: var(--fg) !important; backdrop-filter: blur(8px); }
+
+/* flat filter groups inside the glass panel; the tool rail buttons carry no border of their own */
+.up-app .collapsible-container, .up-app .filter-container > div { background: transparent !important; }
+.up-app .custom-control button, .up-app .custom-control button:focus { border: 0 !important; outline: none !important; box-shadow: none !important; }
+.up-app .custom-control button.unclickable { opacity: .35; }
+
+/* neutral resting borders: the app's own purple outlines on chips and selects
+   are set inline (tokenised), so custom properties need !important to win */
+.up-app .themed .svelte-select, .up-app .svelte-select { --border: 1px solid var(--color-line) !important; --border-hover: 1px solid var(--color-neutral-600) !important; --background: color-mix(in srgb, var(--bg) 60%, transparent) !important; }
+.up-app #regions-filter-container .checkbox-container:not(:has(input:checked)) label,
+.up-app #regions-filter-container .checkbox-container:not(:has(input:checked)) { border-color: color-mix(in srgb, var(--fg) 14%, transparent) !important; color: var(--color-neutral-300) !important; background: transparent !important; }
+.up-app #regions-filter-container .checkbox-container:has(input:checked) label { color: var(--fg) !important; }
+
+/* checked chip keeps a readable label; selects get a real (not variable) border */
+.up-app #regions-filter-container .checkbox-container:has(input:checked),
+.up-app #regions-filter-container .checkbox-container:has(input:checked) * { color: var(--fg) !important; }
+.up-app #regions-filter-container .checkbox-container.unclickable:has(input:checked) { opacity: .7; }
+.up-app .themed .svelte-select, .up-app .svelte-select { border: 1px solid var(--color-line) !important; box-shadow: none !important; }
+.up-app .themed .svelte-select.focused, .up-app .svelte-select.focused { border-color: var(--color-brand-purple) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-purple) 30%, transparent) !important; }
+
+/* ---- corrections after review ------------------------------------------- */
+/* svelte-select's inner search input must not look like a field of its own */
+.up-app .svelte-select input, .up-app .search-form .svelte-select input[type='text'] { border: 0 !important; background: transparent !important; box-shadow: none !important; height: auto !important; padding: 0 !important; border-radius: 0 !important; }
+.up-app .svelte-select .value-container { padding: .35rem 0 !important; }
+.up-app .svelte-select { min-height: 2.5rem; }
+.up-app .filter-container { box-shadow: none !important; }
+
+/* region chips: one outline only — on the label, which carries the padding */
+.up-app #regions-filter-container .checkbox-container,
+.up-app #regions-filter-container .checkbox-container:not(:has(input:checked)),
+.up-app #regions-filter-container .checkbox-container:has(input:checked) { border: 0 !important; background: transparent !important; padding: 0 !important; margin: 0 .35rem .35rem 0 !important; }
+.up-app #regions-filter-container .checkbox-container label { display: inline-block; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: 999px !important; padding: .35rem .8rem !important; background: transparent !important; color: var(--color-neutral-300) !important; font-size: 12.5px; line-height: 1.3; cursor: pointer; }
+.up-app #regions-filter-container .checkbox-container:has(input:checked) label { border-color: var(--color-brand-purple) !important; background: color-mix(in srgb, var(--color-brand-purple) 22%, transparent) !important; color: var(--fg) !important; }
+.up-app #regions-filter-container .checkbox-container.unclickable label { opacity: .5; cursor: default; }
+
+/* segment groups hug their content; full-width ones split evenly */
+.up-app .btn-group { width: auto !important; flex: 0 0 auto; align-self: flex-start; }
+.up-app .btn-group.width-100 { width: 100% !important; display: flex; }
+.up-app .btn-group.width-100 .btn { flex: 1 1 0; text-align: center; }
+
+/* breathing room under the last row of the search panel */
+.up-app .listing-container .one-third.border-rounder.border-primary { padding-bottom: 1rem !important; }
+.up-app .total-results-row { margin-top: .5rem; padding-bottom: .25rem; }
+
+/* bottom-right corner holds the theme toggle, which is already a pill: no second frame */
+.up-app .custom-control.custom-control-bottom { background: transparent !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
+.up-app .custom-control.custom-control-bottom > .rounded-full { background: color-mix(in srgb, var(--bg) 62%, transparent); border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%); box-shadow: 0 12px 40px rgba(0,0,0,.2); }
+
+/* map tool rail floats off the edges like the search panel does */
+.up-app .custom-control { top: .75rem !important; right: .75rem !important; bottom: auto !important; border-radius: .9rem !important; }
+.up-app .custom-control.custom-control-bottom { top: auto !important; bottom: .75rem !important; right: .75rem !important; }
+:root[data-theme='light'] .up-app .custom-control.custom-control-bottom { box-shadow: none !important; }
+
+/* region chips on a single line */
+.up-app #regions-filter-container { flex-wrap: nowrap !important; gap: .25rem; overflow-x: auto; scrollbar-width: none; }
+.up-app #regions-filter-container::-webkit-scrollbar { display: none; }
+.up-app #regions-filter-container .checkbox-container { margin: 0 !important; flex: 0 0 auto; }
+.up-app #regions-filter-container .checkbox-container label { padding: .25rem .55rem !important; font-size: 11.5px; white-space: nowrap; letter-spacing: -0.01em; }
+
+/* regions as ONE segmented group (same look as Map/List); "All" is just a segment */
+.up-app #regions-filter-container { display: inline-flex !important; width: auto; max-width: 100%; gap: 2px !important; padding: 3px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--fg) 4%, transparent); }
+.up-app #regions-filter-container .checkbox-container label { border: 0 !important; background: transparent !important; color: var(--color-neutral-300) !important; padding: .3rem .65rem !important; font-size: 12px; font-weight: 500; }
+.up-app #regions-filter-container .checkbox-container:not(.unclickable) label:hover { color: var(--fg) !important; }
+.up-app #regions-filter-container .checkbox-container:has(input:checked) label { background: var(--color-brand-purple) !important; color: #fff !important; border: 0 !important; }
+.up-app #regions-filter-container .checkbox-container.unclickable label { opacity: .45; }
+.up-app #regions-filter-container .checkbox-container.unclickable:has(input:checked) label { opacity: .8; }
+
+/* segment labels never wrap; full-width groups shrink type slightly to fit */
+.up-app .btn-group .btn { white-space: nowrap !important; line-height: 1.3 !important; }
+.up-app .btn-group.width-100 .btn { font-size: 12px !important; padding: .35rem .5rem !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* wider search panel on desktop so the region group and long segment labels sit on one line */
+@media (min-width: 1200px) { .up-app .app.mapview .listing-container .one-third.border-rounder.border-primary { width: 30rem !important; max-width: calc(100vw - 6rem); flex-basis: 30rem !important; } }
+.up-app #regions-filter-container .checkbox-container label { font-size: 11.5px; padding: .28rem .55rem !important; }
+.up-app #regions-filter-container { gap: 1px !important; }
+.up-app .btn-group.width-100 .btn { font-size: 11.5px !important; padding: .35rem .4rem !important; }
+
+/* multi-select tags: compact pills, not blocks */
+.up-app .themed .svelte-select, .up-app .svelte-select { --multi-item-height: 1.5rem; --multi-item-padding: 0 .5rem; --multi-item-margin: 2px; --multi-select-padding: 0 .3rem; --multi-select-input-margin: 0 .25rem; --multi-item-gap: .25rem; --value-container-padding: 2px 0; --internal-padding: 0 .3rem; }
+.up-app .svelte-select .multi-item { height: 1.5rem !important; line-height: 1.5rem !important; font-size: 12px; }
+.up-app .svelte-select .value-container { padding: 2px 0 !important; gap: 3px; }
+
+/* the panel's absolute wrapper caps the width — widen it on desktop too */
+/* map view only — in list view .listing-container holds the results grid as well */
+@media (min-width: 1200px) { .up-app .app.mapview .listing-container { width: 32rem !important; max-width: 32rem !important; } .up-app .app.mapview .listing-container .one-third.border-rounder.border-primary { width: 30rem !important; flex-basis: 30rem !important; } }
+
+/* hover: quiet tint, never the active purple; active segment stays purple/white */
+.up-app #regions-filter-container .checkbox-container:not(.unclickable) label:hover,
+.up-app .btn-group .btn:not(.active):hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; color: var(--fg) !important; }
+.up-app #regions-filter-container .checkbox-container:has(input:checked) label:hover,
+.up-app .btn-group .btn.active:hover { background: var(--color-brand-purple-600, #4a1d70) !important; color: #fff !important; }
+
+/* primary button: flex-centred label, no inherited padding pushing it down */
+.up-app .btn.btn-search { display: flex !important; align-items: center; justify-content: center; height: 2.75rem !important; line-height: 1 !important; padding: 0 1rem !important; }
+.up-app .map-search-btn-container .checkbox-group label { white-space: nowrap; }
+
+/* final fit: region segments and the three-way site-type group on one line at 30rem */
+.up-app #regions-filter-container .checkbox-container label { font-size: 11px; padding: .28rem .45rem !important; }
+.up-app .btn-group.width-100 .btn { font-size: 11px !important; padding: .35rem .25rem !important; letter-spacing: -0.01em; }
+.up-app #regions-filter-container .checkbox-container label { padding: .28rem .36rem !important; }
+.up-app #regions-filter-container { gap: 0 !important; padding: 2px; }
+
+/* Map/List (and any non-full-width group) hugs its segments exactly */
+.up-app .btn-group:not(.width-100) { width: max-content !important; min-width: 0 !important; }
+.up-app .btn-group:not(.width-100) .btn { width: auto !important; min-width: 0 !important; flex: 0 0 auto !important; }
+
+/* light theme: thinner frost so the map shows through, like the site's light .glass (35% white) */
+:root[data-theme='light'] .up-app .listing-container .one-third.border-rounder.border-primary,
+:root[data-theme='light'] .up-app .custom-control,
+:root[data-theme='light'] .up-app .custom-control.custom-control-bottom > .rounded-full,
+:root[data-theme='light'] .up-app .viewing-property .property-container,
+:root[data-theme='light'] .up-app .property-details-container {
+	background: rgba(255, 255, 255, 0.42) !important;
+	backdrop-filter: blur(10px) saturate(140%);
+	-webkit-backdrop-filter: blur(10px) saturate(140%);
+	border-color: rgba(22, 18, 31, 0.10) !important;
+}
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme='dark']) .up-app .listing-container .one-third.border-rounder.border-primary,
+	:root:not([data-theme='dark']) .up-app .custom-control,
+	:root:not([data-theme='dark']) .up-app .custom-control.custom-control-bottom > .rounded-full {
+		background: rgba(255, 255, 255, 0.42) !important;
+		backdrop-filter: blur(10px) saturate(140%);
+		-webkit-backdrop-filter: blur(10px) saturate(140%);
+	}
+}
+
+/* dropdown lists: fixed-positioned (escape the scrolling panel), capped height, themed */
+.up-app .svelte-select { --list-max-height: 16rem; --list-z-index: 1000; --list-background: var(--color-subtle); --item-hover-bg: color-mix(in srgb, var(--fg) 8%, transparent); --item-is-active-bg: var(--color-brand-purple); --item-is-active-color: #fff; --list-border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); }
+:root[data-theme='light'] .up-app .svelte-select { --list-background: #ffffff; }
+
+/* dropdown lists paint above everything in the panel: no stacking traps between the
+   panel and the list, and the list itself sits on top */
+.up-app .filter-container, .up-app .collapsible-container, .up-app .collapsible-content, .up-app .themed { z-index: auto !important; transform: none !important; filter: none !important; overflow: visible !important; }
+.up-app .svelte-select-list { z-index: 5000 !important; }
+.up-app .svelte-select.focused { z-index: 4000; position: relative; }
+
+/* ---- correction: keep the panel's internal scroll region ------------------
+   backdrop-filter on the panel made it the containing block for the fixed-positioned
+   dropdown, which then got clipped by the scrolling .filter-container. Moving the blur
+   onto a ::before pseudo-element removes that containing block, so the dropdown
+   escapes on its own and .filter-container can scroll again. */
+.up-app .filter-container { overflow: auto !important; }
+.up-app .collapsible-container, .up-app .collapsible-content, .up-app .themed { overflow: visible !important; }
+.up-app .listing-container .one-third.border-rounder.border-primary,
+.up-app .viewing-property .property-container,
+.up-app .property-details-container {
+	position: relative; isolation: isolate;
+	backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+	background: transparent !important;
+}
+.up-app .listing-container .one-third.border-rounder.border-primary::before,
+.up-app .viewing-property .property-container::before,
+.up-app .property-details-container::before {
+	content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+	background: color-mix(in srgb, var(--bg) 62%, transparent);
+	backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+}
+:root[data-theme='light'] .up-app .listing-container .one-third.border-rounder.border-primary::before,
+:root[data-theme='light'] .up-app .viewing-property .property-container::before,
+:root[data-theme='light'] .up-app .property-details-container::before { background: rgba(255,255,255,.42); backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); }
+@media (prefers-color-scheme: light) { :root:not([data-theme='dark']) .up-app .listing-container .one-third.border-rounder.border-primary::before { background: rgba(255,255,255,.42); backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); } }
+
+/* list view keeps the narrower panel: let the region group wrap instead of clipping */
+.up-app .app.listview #regions-filter-container { flex-wrap: wrap !important; border-radius: 1.25rem; row-gap: 2px !important; }
+
+/* region group: no trailing margins on segments (even 2px inset both sides), and the
+   search panel hugs the group — 24.5rem panel / 26.5rem wrapper instead of 30/32 */
+.up-app #regions-filter-container .checkbox-container,
+.up-app #regions-filter-container .checkbox-container:has(input:checked),
+.up-app #regions-filter-container .checkbox-container label { margin: 0 !important; }
+@media (min-width: 1200px) {
+  .up-app .app.mapview .listing-container { width: 26.5rem !important; max-width: 26.5rem !important; }
+  .up-app .app.mapview .listing-container .one-third.border-rounder.border-primary { width: 24.5rem !important; flex-basis: 24.5rem !important; }
+}
+/* full-width groups: segments size by label so a long one is not clipped by equal thirds */
+.up-app .btn-group.width-100 .btn { flex: 1 1 auto !important; }
