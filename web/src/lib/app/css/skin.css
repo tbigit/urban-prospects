@@ -326,3 +326,42 @@
    currentColor and works in both themes — replaces the filled grey disc glyph */
 .up-app i.circle { width: 14px !important; height: 14px !important; font-size: 0 !important; color: transparent !important; border-radius: 0 !important; background: color-mix(in srgb, var(--fg) 40%, transparent) !important; -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; vertical-align: middle !important; transform: translateY(-1px) !important; margin-left: 3px !important; }
 .up-app i.circle:hover { background: var(--fg) !important; }
+
+/* address card (property details) sits flush under the photo: no rounded corners, no outline */
+.up-app .property-details-container, .up-app .property-details-container::before { border-radius: 0 !important; }
+.up-app .property-details-container { border: 0 !important; box-shadow: none !important; }
+
+/* map-view property panel: suburb-profile sections stack full width (the app's .half
+   is a 50% column meant for the wide list-view layout) */
+.up-app .app.mapview .map-view-detail .row > .row.half, .up-app .app.mapview .viewing-property .property-container .row > .row.half { width: 100% !important; max-width: 100% !important; flex-basis: 100% !important; }
+.up-app .app.mapview .map-view-detail .row.half > p.width-90, .up-app .app.mapview .viewing-property .property-container .row.half > p.width-90 { width: 100% !important; }
+
+/* property panel (map view): half as see-through as the search panel — the body text has
+   to stay readable over the map. Light 42% -> 72% white, dark 62% -> 82% bg. */
+.up-app .viewing-property .property-container::before,
+.up-app .property-details-container::before { background: color-mix(in srgb, var(--bg) 82%, transparent) !important; }
+:root[data-theme='light'] .up-app .viewing-property .property-container::before,
+:root[data-theme='light'] .up-app .property-details-container::before { background: rgba(255,255,255,.72) !important; }
+@media (prefers-color-scheme: light) { :root:not([data-theme='dark']) .up-app .viewing-property .property-container::before, :root:not([data-theme='dark']) .up-app .property-details-container::before { background: rgba(255,255,255,.72) !important; } }
+
+/* property header icons (pdf + star): flush with the button group's right edge, a little air between them */
+.up-app .map-view-detail .property-details-container .one-sixth.row.right.padding-right { padding-right: 0 !important; }
+.up-app .map-view-detail .property-details-container a.toggle-fav { margin-left: 4px; }
+
+/* map-view property panel: the app's fractional columns (.half, .one-third, ...) were sized
+   for the wide list view. In the 30rem panel every block-level column takes the full width;
+   flex rows (address + icons, the price/beds/persons strip) keep their columns. */
+.up-app .app.mapview .map-view-detail .row > .half,
+.up-app .app.mapview .map-view-detail .row > .one-third,
+.up-app .app.mapview .map-view-detail .row > .two-third,
+.up-app .app.mapview .map-view-detail .row > .one-quarter,
+.up-app .app.mapview .map-view-detail .row > .three-quarter,
+.up-app .app.mapview .map-view-detail .row > .one-fifth,
+.up-app .app.mapview .map-view-detail .row > .two-fifth,
+.up-app .app.mapview .map-view-detail .row > .three-fifth,
+.up-app .app.mapview .map-view-detail .row > .four-fifth,
+.up-app .app.mapview .map-view-detail .row > .one-sixth,
+.up-app .app.mapview .map-view-detail .row > .five-sixth { width: 100% !important; max-width: 100% !important; flex-basis: 100% !important; }
+
+/* map-layer switches: a touch larger (16px -> 20px) */
+.up-app .filter-container-map-layers .checkbox-group input[type='checkbox'] + label::before { width: 20px !important; height: 20px !important; margin-top: -2px; }

@@ -2808,7 +2808,9 @@
               <a style="width: 100%;"class:unclickable={disable_title_search} class:full={mapview_viewing_property} target="_parent" href="?" class="btn center" on:click={_handle_enter_dealings}><i class=" icon-building"></i> PLAN DEALINGS {#if show_plan_dealing_popup}<i class=" icon-x"></i>{/if}</a>
             </div>
 
-            {#if disable_title_search}
+            <!-- While purchases are paused the buttons are simply greyed out (class unclickable);
+                 the callout only appears for the upstream-maintenance case. -->
+            {#if disable_title_search && !PURCHASES_PAUSED}
               <div class="three-fifth title-search-disable-container row right">
                 <div class="left">
                   <p><i class=" icon-triangle-alert"></i> {PURCHASES_PAUSED ? PURCHASES_PAUSED_NOTICE : 'Title and Plan Dealings Purchase are currently unavailable due to scheduled maintenance by our upstream service provider.'}</p>
