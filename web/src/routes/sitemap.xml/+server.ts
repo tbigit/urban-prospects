@@ -25,6 +25,7 @@ export function GET() {
 		url('/', { priority: '1.0' }),
 		url('/platform/', { priority: '0.9' }),
 		url('/services/', { priority: '0.9' }),
+		url('/pricing/', { priority: '0.9' }),
 		url('/data-apis/', { priority: '0.8' }),
 		url('/about/', { priority: '0.8' }),
 		url('/insights/', { priority: '0.9' }),
@@ -34,7 +35,6 @@ export function GET() {
 		url('/report/', { priority: '0.5' }),
 		url('/developers/', { priority: '0.5' }),
 		url('/demo/', { priority: '0.4' }),
-		url('/signup/', { priority: '0.4' }),
 		'</urlset>'
 	].join('\n');
 

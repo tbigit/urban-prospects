@@ -16,7 +16,7 @@
 	];
 	const services = [
 		{ href: `${base}/report/`, label: 'Due Diligence Reports' },
-		{ href: `${base}/signup/`, label: 'Platform Subscription' },
+		{ href: `${base}/pricing/`, label: 'Pricing' },
 		{ href: `${base}/data-apis/`, label: 'Planning Data APIs' },
 		{ href: `${base}/demo/`, label: 'Book a Demo' },
 		{ href: `${base}/about/`, label: 'About' }
