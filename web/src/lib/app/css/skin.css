@@ -374,3 +374,16 @@
 .up-app .map-search-btn-container > .flex { flex-wrap: wrap; gap: .25rem 0; }
 .up-app .map-search-btn-container > .flex > .full { flex: 1 1 auto !important; width: auto !important; min-width: 0; }
 .up-app .map-search-btn-container #btn-calculate-total { min-width: 0 !important; white-space: nowrap; padding-left: .6rem !important; padding-right: .6rem !important; }
+
+/* map-layers header: the Legend / recentre buttons become quiet round icon buttons
+   (not the app's square purple-outlined .btn) and the empty spacer row collapses */
+.up-app .filter-container-map-layers .flex:has(> .full > .row > .btn-reset) { padding-top: 0 !important; padding-bottom: .25rem !important; align-items: center; }
+.up-app .filter-container-map-layers .flex:has(> .full > .row > .btn-reset) > .one-third { display: none; }
+.up-app .filter-container-map-layers .row:has(> .btn-reset) { display: flex; justify-content: flex-end; gap: .35rem; }
+.up-app .filter-container-map-layers .btn.btn-reset { width: 28px !important; height: 28px !important; padding: 0 !important; margin: 0 !important; display: inline-flex !important; align-items: center; justify-content: center; border-radius: 999px !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; background: transparent !important; color: var(--color-neutral-300) !important; box-shadow: none !important; line-height: 1 !important; }
+.up-app .filter-container-map-layers .btn.btn-reset i { font-size: 13px; line-height: 1; }
+.up-app .filter-container-map-layers .btn.btn-reset:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; color: var(--fg) !important; }
+
+/* theme toggle (bottom-right map control): keep the component's own pressed state — the
+   generic .custom-control button reset above would otherwise flatten it */
+.up-app .custom-control button[aria-pressed="true"] { background: color-mix(in srgb, var(--fg) 10%, transparent) !important; color: var(--fg) !important; }
