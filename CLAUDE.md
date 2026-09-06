@@ -263,3 +263,59 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
   Login code must detect the prefix, verify accordingly, and may opportunistically rehash to a
   modern algo on successful login. Schema files under `web/deploy/sql/` are numbered and applied
   by piping through the `updb` hop.
+
+### WordPress source and the 2026-09-06 member import
+
+- Source site runs in Docker on the Urban API host (`upapi` alias = `ssh root@45.79.118.32`), stack
+  at `/opt/urbanprospects-test`, containers `urbanprospects-test-web` / `urbanprospects-test-db`
+  (MariaDB 11.4). DB credentials are in the git-ignored `wp-credentials.md` at the repo root — never
+  commit them. WordPress 6.9.7, WooCommerce Subscriptions with **legacy post storage** (HPOS off:
+  subscriptions are `wp_posts.post_type='shop_subscription'`), gateway plugins are Pin Payments and
+  WooPayments. Regions a member bought are stored as the `Regions` meta on the subscription's line
+  item; older 2024 Enterprise subs have no `Regions` meta (treated as all five).
+- 169 `wp_users`: 96 on `$wp$` (WP 6.8+ bcrypt), 73 on `$P$` phpass. Both formats are verified by
+  `web/src/lib/server/password.ts` (`verifyPassword`), tested 2026-09-06 against hashes generated
+  by the live WordPress container. `$wp$` is bcrypt over
+  base64(**HMAC**-SHA384(trim(password), key `'wp-sha384'`)) — a plain sha384 prehash silently
+  fails every WP 6.8+ login, which is how the first draft of that file was wrong.
+- Of 74 `wc-active` subscriptions, 53 are the "VIP … free trial" products (4224/4238/4240/4241)
+  and were **deliberately not imported**. The other 21 paid/comped subscriptions (Starter,
+  Business, Enterprise, 1 region, 3 regions; yearly and monthly) were loaded 2026-09-06 into
+  `wp_import_subscriptions` (raw, DDL `web/deploy/sql/003_wp_import_staging.sql`, includes the
+  Pin customer tokens), `users`, and `user_subscriptions` (status `Active`, `plan` = Woo product
+  title, `billing_cycle` `Yearly`/`Monthly`, `user_region` comma-joined with no spaces, the format
+  `upapp/api.js` writes). Pin tokens cannot map to Stripe `payment_customer_id`; those columns stay
+  NULL until each member is re-carded on Stripe. The 24 rows in `user_subscriptions` = 3 pre-existing
+  Stripe/Demo rows + 21 imported.
+- The current `upapp` API has no login of its own: it calls WordPress `/api/create_update_user`
+  (a functions.php endpoint, bearer token in `api.js`) and relies on WP for auth. That is what the
+  new `users` table replaces (UP-021/022/030).
+
+## Login, sessions and the /app mount (phase 3, built 2026-09-06)
+
+- The site now builds with **adapter-node** (`web/build/index.js`), not adapter-static. Marketing
+  pages are still prerendered; the auth routes opt out with `export const prerender = false`.
+  Deploy steps, nginx vhost and systemd unit: `web/deploy/README-auth.md`, `nginx-site.conf`,
+  `upweb.service`. Env comes from `web/.env` (template `web/.env.example`, git-ignored).
+- `web/src/lib/server/`: `db.ts` (pg pool on `DATABASE_URL`), `password.ts` (verify phpass /
+  `$wp$` bcrypt / bcrypt / argon2id, rehash to argon2id — `npm run test:password`), `session.ts`
+  (`sessions` table, cookie `up_session` holds a random token, only its sha256 is stored, 30-day
+  sliding expiry), `auth.ts` (login by email or user_login, reset tokens, change password),
+  `mail.ts` (nodemailer; no `SMTP_HOST` = print to stdout, so staging never sends).
+  `src/hooks.server.ts` puts the user on `locals.user`. Schema: `web/deploy/sql/002_sessions.sql`.
+- Routes: `/login/` (`?next=` same-origin paths only), `/logout/` (POST), `/forgot-password/`,
+  `/reset-password/[token]/`, `/account/` (plan + regions from `user_subscriptions`, password
+  change), `/auth/check` (nginx `auth_request` target, 200/401), `/auth/me` (JSON profile).
+- **upapp is not merged into this repo.** It is built separately with `BASE_PATH=/app npx vite build`
+  (never `npm run build` there: its postbuild sftp-deploys by itself) and served by nginx at `/app/`
+  behind `auth_request`. `/auth/me` returns `id/email/plan/first_name/last_name/regions`, the same
+  fields the WordPress embed used to pass in the query string; upapp's `onMount` fetches it when
+  `?id=` is absent and feeds it into the existing querystring parsing, so nothing else changed.
+  `is_logged_in` in `map/+page.svelte` is now derived from `/auth/me` too.
+- **Paused in upapp until the Stripe checkout exists** (`PURCHASES_PAUSED` in `Property.svelte`,
+  `+page.svelte`; `TRIAL_LINKS_PAUSED` in `trial/+page.svelte`): title search (Woo item 920),
+  plan dealings / image search (5057), due-diligence report (`add-to-cart=9926`), and the
+  `/vipN/<email>` trial magic links. Each shows a holding notice. Flip the constants to re-enable.
+- Still to wire after the move: upapp's `api_domain` is `https://www.urbanprospects.com.au/q`,
+  which WordPress proxied to `api.js`; the nginx vhost has a commented `/q/` block for it. The
+  `/pricing` and `/property?pid=` WordPress URLs upapp links to need routes or redirects.

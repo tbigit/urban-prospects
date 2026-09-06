@@ -1,0 +1,23 @@
+# /etc/systemd/system/upweb.service — SvelteKit (adapter-node) server for the site.
+#   systemctl daemon-reload && systemctl enable --now upweb
+[Unit]
+Description=Urban Prospects website (SvelteKit / Node)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/www/upweb
+EnvironmentFile=/opt/www/upweb/.env
+Environment=NODE_ENV=production
+# adapter-node reads ORIGIN/PORT from the environment (.env above) and
+# trusts X-Forwarded-* from nginx via these.
+Environment=ADDRESS_HEADER=X-Forwarded-For
+Environment=PROTOCOL_HEADER=X-Forwarded-Proto
+Environment=HOST_HEADER=X-Forwarded-Host
+ExecStart=/usr/bin/node /opt/www/upweb/index.js
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

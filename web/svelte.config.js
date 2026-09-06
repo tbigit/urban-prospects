@@ -1,12 +1,15 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: vitePreprocess(),
 	kit: {
-		// static build; every route is prerendered
-		adapter: adapter(),
+		// adapter-node: the marketing pages stay prerendered (src/routes/+layout.ts),
+		// the auth routes (/login, /logout, /forgot-password, /reset-password,
+		// /account, /auth/*) opt out and run on the Node server so a session
+		// cookie can be set and checked. See deploy/README-auth.md.
+		adapter: adapter({ out: 'build' }),
 		paths: {
 			// Set by the GitHub Pages Actions workflow to '/<repo-name>' since
 			// project sites serve from a subpath, not the domain root. Empty

@@ -34,6 +34,10 @@ Accept: row count matches wp_users; test member's password verifies.
 
 ## Phase 3 — Auth + app mount (preview domain)
 
+Status 2026-09-06: code complete and smoke-tested locally (see CLAUDE.md "Login, sessions and
+the /app mount"). Not yet deployed: needs 002_sessions.sql applied, .env on the server, nginx
+vhost + systemd unit installed, and a throwaway member to prove same-password login.
+
 1. Switch website to adapter-node (one Node process behind nginx) — needed for sessions.
 2. Login / logout / password reset; verify `$P$` (phpass), `$wp$` (WP 6.8 bcrypt-sha384),
    `$2y$` (bcrypt); rehash to argon2id on success.
@@ -52,7 +56,8 @@ legacy → old WP host; TLS for both. 4. Add nginx 301s for old WP paths. 5. Smo
 
 ## Open items needed from Danny
 
-- SSH host of the "Urban API primary host" running the WP Docker stack.
+- ~~SSH host of the WP Docker stack~~ — 45.79.118.32 (`upapi` alias), per the migration session.
 - A throwaway WP member account for login parity testing.
-- OK to move the website to adapter-node.
+- ~~OK to move the website to adapter-node~~ — approved 2026-09-06, done.
+- Is 143.42.46.116 able to reach the DB host 192.168.146.115? If not, the Node server needs a tunnel or the DB a public listener.
 - `wp-credentials.md` is still tracked in git despite the .gitignore change; untrack it.
