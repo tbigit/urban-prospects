@@ -5275,13 +5275,9 @@ async function _send_mail_property(property_selected) {
     const single_suburb = suburb_selected && suburb_selected.length === 1;
     const frame_suburb_overview = is_suburb_overview && !single_suburb;
 
-    let api_url_path = '/properties';
-    if (is_logged_in) {
-
-    }
-    else {
-      api_url_path = `/quickproperties`;
-    }
+    // /quickproperties (the anonymous variant) was removed from the API on
+    // 2026-09-07; /app/ always has a logged-in user.
+    const api_url_path = '/properties';
 
     is_searching_main = true;
     search_aborted = false;
@@ -5489,12 +5485,7 @@ async function _send_mail_property(property_selected) {
     _build_body(clone_body);
     clone_body.count = 1;
 
-    let api_url_path = '/properties';
-    if (is_logged_in) {
-      api_url_path = `/properties`;
-    } else {
-      api_url_path = `/quickproperties`;
-    }
+    const api_url_path = '/properties';
 
     const properties_count_response = await fetch(`${api_domain}${api_url_path}`, {
       method: 'POST',
