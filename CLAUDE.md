@@ -47,8 +47,9 @@ scrolling frame) rendered to PNG via `pdftoppm` and read in slices. Section orde
 Figma also duplicates the founder content (a short teaser mid-page, a fuller story near the footer) —
 preserved as-is rather than de-duplicated, since that's a deliberate teaser→payoff pattern.
 
-`Platform`/`Services`/`Data APIs`/`About`/`Insights` are same-page anchors (`#platform` etc.), not
-separate routes — Figma only covers the homepage. `Login`/`Start Free Trial`/`Book a Demo`/`Buy a
+`Platform`/`Services`/`Data APIs`/`About` are real routes (`web/src/routes/{platform,services,data-apis,about}`)
+built on the same content as the homepage sections (shared arrays in `web/src/lib/content/site.ts`,
+page header in `PageHeader.svelte`); the homepage keeps its `#platform` etc. anchors. `Login`/`Start Free Trial`/`Book a Demo`/`Buy a
 Report`/`Explore the Data APIs` route to small stub pages (`web/src/routes/{login,signup,demo,report,developers}`)
 that `mailto:info@urbanprospects.com.au` rather than pretending a working signup/auth backend exists.
 

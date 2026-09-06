@@ -15,10 +15,10 @@
 	// Prefixed with `base` since GitHub Pages project sites serve from a
 	// subpath, not the domain root (empty string for any root-served host).
 	const nav = [
-		{ href: `${base}/#platform`, label: 'Platform' },
-		{ href: `${base}/#services`, label: 'Services' },
-		{ href: `${base}/#data-apis`, label: 'Data APIs' },
-		{ href: `${base}/#about`, label: 'About' },
+		{ href: `${base}/platform/`, label: 'Platform' },
+		{ href: `${base}/services/`, label: 'Services' },
+		{ href: `${base}/data-apis/`, label: 'Data APIs' },
+		{ href: `${base}/about/`, label: 'About' },
 		// The index lives at /insights (its old /blog address 301s there); each
 		// article keeps its indexed root-level /<slug>/ path.
 		{ href: `${base}/insights/`, label: 'Insights' },
