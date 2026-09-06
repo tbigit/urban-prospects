@@ -20,12 +20,6 @@
 	let buffering = $state(false);
 	let canPlay = $state(false);
 	let onScreen = $state(false);
-	let canAirPlay = $state(false);
-
-	let qualities = $state<any[]>([]);
-	let autoQuality = $state(true);
-	let currentHeight = $state(0);
-	let menuOpen = $state(false);
 
 	// Bar visibility: shown while paused or before commit, otherwise hidden after 3s idle.
 	let barVisible = $state(true);
@@ -41,22 +35,6 @@
 			barVisible = true;
 		} else wakeBar();
 	});
-
-	function qualityLabel(q: { height: number }): string {
-		if (q.height >= 2160) return '4K';
-		if (q.height >= 1440) return '1440p';
-		if (q.height >= 1080) return '1080p';
-		return `${q.height}p`;
-	}
-	const qualityButtonLabel = $derived(
-		qualities.length === 0
-			? 'Quality'
-			: autoQuality
-				? currentHeight
-					? `Auto ${qualityLabel({ height: currentHeight })}`
-					: 'Auto'
-				: qualityLabel({ height: currentHeight })
-	);
 
 	const loopAllowed = () =>
 		!matchMedia('(prefers-reduced-motion: reduce)').matches && !saveDataOn();
@@ -106,10 +84,6 @@
 				paused = state.paused;
 				buffering = state.waiting || (!state.canPlay && !state.paused);
 				canPlay = state.canPlay;
-				canAirPlay = state.canAirPlay;
-				autoQuality = state.autoQuality;
-				currentHeight = state.quality?.height ?? 0;
-				qualities = [...(state.qualities ?? [])].sort((a, b) => b.height - a.height);
 			});
 
 			// vidstack honours `loop` itself; this is the guard for the providers that
@@ -159,17 +133,7 @@
 		if (player.paused) player.play();
 		else player.pause();
 	}
-	function pickAuto() {
-		player?.qualities?.autoSelect();
-		menuOpen = false;
-	}
-	function pick(q: any) {
-		q.selected = true;
-		menuOpen = false;
-	}
 </script>
-
-<svelte:window onkeydown={(e) => e.key === 'Escape' && menuOpen && (menuOpen = false)} />
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div bind:this={stage} class="stage" onpointermove={wakeBar}>
@@ -253,41 +217,7 @@
 							</div>
 						</media-volume-slider>
 					</div>
-					<div class="time">
-						<media-time type="current"></media-time>
-						<span class="sep">/</span>
-						<media-time type="duration"></media-time>
-					</div>
 					<div class="grow"></div>
-					{#if qualities.length > 1}
-						<div class="menu">
-							<button class="btn quality" aria-haspopup="true" aria-expanded={menuOpen} onclick={() => (menuOpen = !menuOpen)}>
-								{qualityButtonLabel}
-							</button>
-							{#if menuOpen}
-								<div class="menu-items" role="menu">
-									<button role="menuitemradio" aria-checked={autoQuality} class="menu-item" class:on={autoQuality} onclick={pickAuto}>Auto</button>
-									{#each qualities as q (q.height)}
-										<button role="menuitemradio" aria-checked={!autoQuality && q.height === currentHeight} class="menu-item" class:on={!autoQuality && q.height === currentHeight} onclick={() => pick(q)}>{qualityLabel(q)}</button>
-									{/each}
-								</div>
-							{/if}
-						</div>
-					{/if}
-					{#if canAirPlay}
-						<media-airplay-button class="btn" aria-label="AirPlay">
-							<svg viewBox="0 0 24 24" aria-hidden="true">
-								<path d="M4 17h2.5M17.5 17H20a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-								<path d="M12 13.5l4.5 6h-9z" />
-							</svg>
-						</media-airplay-button>
-					{/if}
-					<media-pip-button class="btn" aria-label="Mini player">
-						<svg viewBox="0 0 24 24" aria-hidden="true">
-							<rect x="3" y="5" width="18" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7" />
-							<rect x="11.5" y="11" width="8" height="6.2" rx="1" />
-						</svg>
-					</media-pip-button>
 					<media-fullscreen-button class="btn" aria-label="Full screen">
 						<svg class="i-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M15 20h5v-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
 						<svg class="i-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h5V4M20 9h-5V4M20 15h-5v5M4 15h5v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -590,78 +520,6 @@
 		border-radius: 999px;
 		background: var(--fg);
 		transform: translate(-50%, -50%);
-	}
-	.time {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		margin-left: 8px;
-		font-family: var(--font-mono);
-		font-size: 12px;
-		font-variant-numeric: tabular-nums;
-		color: var(--fg);
-		opacity: 0.75;
-		white-space: nowrap;
-	}
-	.time .sep {
-		opacity: 0.45;
-	}
-	.menu {
-		position: relative;
-	}
-	.quality {
-		width: auto;
-		padding: 0 12px;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		font-weight: 500;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		white-space: nowrap;
-	}
-	.menu-items {
-		position: absolute;
-		right: 0;
-		bottom: calc(100% + 8px);
-		min-width: 132px;
-		padding: 5px;
-		border-radius: 12px;
-		background: var(--fg);
-		box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.5);
-		display: flex;
-		flex-direction: column;
-	}
-	.menu-item {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
-		padding: 7px 10px;
-		border: 0;
-		border-radius: 8px;
-		background: transparent;
-		color: color-mix(in srgb, var(--bg) 72%, transparent);
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		text-align: left;
-		cursor: pointer;
-	}
-	.menu-item:hover,
-	.menu-item:focus-visible {
-		background: color-mix(in srgb, var(--bg) 12%, transparent);
-		color: var(--bg);
-	}
-	.menu-item.on {
-		color: var(--bg);
-	}
-	.menu-item.on::after {
-		content: '';
-		width: 5px;
-		height: 5px;
-		border-radius: 999px;
-		background: currentColor;
 	}
 	@media (max-width: 640px) {
 		.volume {
