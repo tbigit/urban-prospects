@@ -45,6 +45,15 @@
 	let host: HTMLDivElement;
 	let mapEl: HTMLDivElement;
 	let failed = $state(false);
+	// Tracked for the static fallback only; the live map swaps its own style.
+	let theme = $state<'light' | 'dark'>('dark');
+
+	// Static Images API render of the same view, for browsers where WebGL is
+	// unavailable (Safari Lockdown Mode, WebGL switched off, some GPUs): a
+	// real map rather than a gradient. No spin, no scroll zoom, but the scroll
+	// fade still applies via `host`.
+	const staticSrc = (t: 'light' | 'dark', scale: 1 | 2) =>
+		`https://api.mapbox.com/styles/v1/mapbox/${t}-v11/static/${CENTER[0]},${CENTER[1]},${baseZoom},20,${basePitch}/1280x800${scale === 2 ? '@2x' : ''}?access_token=${MAPBOX_TOKEN}&logo=false&attribution=false`;
 
 	onMount(() => {
 		let disposed = false;
@@ -52,6 +61,11 @@
 		let cleanup: (() => void) | undefined;
 
 		const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const readTheme = () =>
+			(theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+		readTheme();
+		const themeMo = new MutationObserver(readTheme);
+		themeMo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 		(async () => {
 			const mapboxgl = (await import('mapbox-gl')).default;
@@ -77,9 +91,13 @@
 					attributionControl: false
 				});
 			} catch {
+				// mapbox-gl v3 throws here when it cannot create a WebGL context.
 				failed = true;
 				return;
 			}
+			// A context lost mid-session (GPU reset, tab memory pressure) leaves
+			// a blank canvas with no exception; treat it the same way.
+			map.getCanvas()?.addEventListener('webglcontextlost', () => (failed = true), { once: true });
 			// Separate try: a compact-attribution-control failure shouldn't strand
 			// (and never remove) an otherwise-working map. Deliberately no ongoing
 			// `map.on('error', ...)` handler here — Mapbox fires 'error' for plenty
@@ -190,6 +208,7 @@
 
 		return () => {
 			disposed = true;
+			themeMo.disconnect();
 			cleanup?.();
 		};
 	});
@@ -201,7 +220,13 @@
 	     which would stomp our fixed/inset-0 positioning above. -->
 	<div bind:this={mapEl} class="h-full w-full"></div>
 	{#if failed}
-		<div class="maphero-fallback absolute inset-0"></div>
+		<img
+			class="maphero-fallback absolute inset-0 h-full w-full object-cover"
+			src={staticSrc(theme, 1)}
+			srcset="{staticSrc(theme, 1)} 1x, {staticSrc(theme, 2)} 2x"
+			alt=""
+			decoding="async"
+		/>
 	{/if}
 </div>
 
@@ -222,11 +247,8 @@
 		display: none !important;
 	}
 	.maphero-fallback {
-		background: radial-gradient(
-			circle at 30% 20%,
-			var(--color-brand-purple-600),
-			var(--bg) 70%
-		);
+		/* Shown while the static image loads, and behind it if it never does. */
+		background: radial-gradient(circle at 30% 20%, var(--color-brand-purple-600), var(--bg) 70%);
 	}
 	/* Soften the map's hard viewport edges into the page background and keep
 	   the hero copy legible over busy tiles. */
