@@ -4312,12 +4312,26 @@ async function _send_mail_property(property_selected) {
       }
     }
 
+    // Readiness must not wait on the per-user API calls: none of them gates
+    // rendering, and on 2026-09-07 a starved API pool held /q/fav for 30-125s
+    // and left this page blank. Mark ready first, then fetch the three in
+    // parallel with a per-request timeout.
+    is_ready = true;
+
     if (user_id) {
-      const user_fav_response = await fetch(`${api_domain}/fav/` + user_id, {
+      const user_fetch = (url) => fetch(url, {
         method: 'GET',
         cache: "no-cache",
         headers: {"Content-Type": "application/json"},
-      }).then(user_fav_response => user_fav_response.json()).catch(function(){});
+        signal: AbortSignal.timeout(15000),
+      }).then(r => (r.ok ? r.json() : null)).catch(function(){});
+
+      const [user_fav_response, user_search_response, user_template_response] = await Promise.all([
+        user_fetch(`${api_domain}/fav/` + user_id),
+        user_fetch(`${api_domain}/usersearch/${user_id}`),
+        user_fetch(`${api_domain}/template/` + user_id),
+      ]);
+
       if (user_fav_response) {
         console.log(user_fav_response);
         user_fav_response.forEach((fav) => {
@@ -4325,24 +4339,13 @@ async function _send_mail_property(property_selected) {
         });
       }
 
-
-      const user_search_response = await fetch(`${api_domain}/usersearch/${user_id}`, {
-        method: 'GET',
-        cache: "no-cache",
-        headers: {"Content-Type": "application/json"},
-      }).then(user_search_response => user_search_response.json()).catch(function(){});
       if (user_search_response) {
         user_search = user_search_response;
 
         console.log(JSON.stringify(user_search, null, 2));
       }
 
-      const user_template_response = await fetch(`${api_domain}/template/` + user_id, {
-        method: 'GET',
-        cache: "no-cache",
-        headers: {"Content-Type": "application/json"},
-      }).then(user_template_response => user_template_response.json()).catch(function(){});
-      if (user_template_response) {
+      if (user_template_response && user_template_response[0]) {
         console.log(user_template_response[0].template);
         user_template = user_template_response[0].template;
 

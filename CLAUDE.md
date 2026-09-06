@@ -399,6 +399,29 @@ Decided 2026-09-06: members are never emailed or linked. `web/src/lib/server/ren
 - First live case: jai@definedplumbingcivil.com.au, monthly, Pin renews 9 Sep 2026 — bump his
   `current_period_end` to 9 Oct after confirming that charge; he becomes the first Stripe renewal.
 
+## API list lookups: materialised views (2026-09-07)
+
+Uncached `/q/{lga_name,suburbname,zone}/search` calls used to scan the 47GB
+`up_property_d_3` (150–230s each) and, with Sequelize's default pool of 5, starved
+`/q/fav`, `/q/template` and `/q/usersearch` for minutes (Cloudflare 524s). Now:
+
+- `mv_d3_zone_lookup` (region, LGA, suburb, zone label, zone class, count; 40k rows) and
+  `mv_region_lga_suburb` (5.1k rows) are built off `up_property_d_3` in ~25s and answer
+  every list endpoint in <40ms. `api.js` (`_lga_list`/`_suburb_list`/`_zone_list`) queries
+  only these; `Region_LGA_Suburb` is no longer used by the list endpoints (its data was
+  suspected stale). Cache keys are sorted/trimmed lists.
+- Nightly refresh + memcache flush/warm: `/usr/local/bin/refresh-lookups.sh` on the DB hop
+  host (`updb`, cron 03:30 UTC, log `/var/log/refresh-lookups.log`). Run it by hand after any
+  property-data load.
+- `sequelize.js` / `sequelize-standby.js` on the API host now set
+  `pool: { max: 20, acquire: 120000 }` and `statement_timeout: 180000` (the old top-level
+  `max: 10` was ignored by Sequelize). Backups of both plus `api.js.bak-2026-09-07-pre-mv`
+  sit beside them.
+- `deploy/nginx-site.conf` proxies `/q`, `/q2` straight to `upapi.imtg.com.au` and `/p`, `/p2`
+  to the GIS server with the standby as an nginx `backup`, replacing WordPress's PHP proxies
+  (`/var/www/html/{q,q2,p,p2}`). The DB live/standby swap already lives in `api.js`
+  (`standby` file, `/standby/on|off`).
+
 ## Dev server note
 
 `vite.config.ts` ignores `build/**` and `.svelte-kit/output/**` in the file watcher. Without
