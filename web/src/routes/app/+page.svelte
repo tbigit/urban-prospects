@@ -3634,6 +3634,13 @@ async function _send_mail_property(property_selected) {
     return `${day}/${month}/${year}`;
   }
 
+  $: total_results_label = is_getting_total_on_demand ? 'Calculating...'
+    : total_count_failed ? 'Count Unavailable'
+    : (objects_total_on_demand === null || objects_total_on_demand === undefined) ? 'Total Results'
+    : objects_total_on_demand === 1 ? '1 Match'
+    : objects_total_on_demand > 0 ? `${objects_total_on_demand.toLocaleString()} Matches`
+    : 'No Matches';
+
   async function _handle_reset_search(event) {
     _reset_filter();
     _fetch_data_by_regions();
@@ -9006,32 +9013,27 @@ async function _send_mail_property(property_selected) {
                     <a class="btn btn-save-search {has_ran_search ? '' : 'unclickable'}" href="?" on:click={_handle_save_search}><i class=" icon-zoom-in"></i> SAVE</a>
                   {/if}
                 </div>
-                <div class="padding-top-thinnest full {use_listview ? 'hide' : ''} {circle_center && circle_radius ? '' : 'unclickable'}">
-                  <div class="checkbox-group"><div class=""><input bind:checked={is_search_within_radius} type="checkbox" id="searchradius_checkbox"  on:change={_handle_toggle_search_by_radius}> <label for="searchradius_checkbox" style="padding-right: 2.5em; text-align: right;">Search within Radius</label></div></div>
-                </div>
-              </div>
-              <div class="flex">
-                <div class="row right full padding-top-thinnest">
+                {#if use_listview}
+                  <!-- List view has no radius search, so the Total Results button takes that slot
+                       (it used to sit on a third row and was clipped by the panel). -->
+                  <div class="full row right total-results-row">
+                    <a id="btn-calculate-total" on:click={_calculate_total_count} class="btn btn-save-search {is_getting_total_on_demand ? 'unclickable': ''}" style="text-align: center; min-width: 120px">
+                      <i class=" icon-calculator"></i> {total_results_label}
+                    </a>
                   </div>
-                </div>
+                {:else}
+                  <div class="padding-top-thinnest full {circle_center && circle_radius ? '' : 'unclickable'}">
+                    <div class="checkbox-group"><div class=""><input bind:checked={is_search_within_radius} type="checkbox" id="searchradius_checkbox"  on:change={_handle_toggle_search_by_radius}> <label for="searchradius_checkbox" style="padding-right: 2.5em; text-align: right;">Search within Radius</label></div></div>
+                  </div>
+                {/if}
+              </div>
+              {#if !use_listview}
                 <div class="row right total-results-row">
                   <a id="btn-calculate-total" on:click={_calculate_total_count} class="btn btn-save-search {is_getting_total_on_demand ? 'unclickable': ''}" style="text-align: center; min-width: 120px">
-                    <i class=" icon-calculator"></i> 
-                    {#if is_getting_total_on_demand}
-                      Calculating...
-                    {:else if total_count_failed}
-                      Count Unavailable
-                    {:else if objects_total_on_demand === null || objects_total_on_demand === undefined}
-                      Total Results
-                    {:else if objects_total_on_demand === 1}
-                      1 Match
-                    {:else if objects_total_on_demand > 0}
-                      {objects_total_on_demand.toLocaleString()} Matches
-                    {:else}
-                      No Matches
-                    {/if}
+                    <i class=" icon-calculator"></i> {total_results_label}
                   </a>
                 </div>
+              {/if}
             </div>
             {/if}
 

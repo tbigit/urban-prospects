@@ -365,3 +365,12 @@
 
 /* map-layer switches: a touch larger (16px -> 20px) */
 .up-app .filter-container-map-layers .checkbox-group input[type='checkbox'] + label::before { width: 20px !important; height: 20px !important; margin-top: -2px; }
+
+/* panel title row is 24px tall in both views (map view has the minimise button in that row,
+   list view does not) so the Map/List toggle sits at the same height when switching */
+.up-app .search-panel-container h3.uppercases { line-height: 24px !important; min-height: 24px; }
+
+/* Clear All / PDF / Save + Total Results row: wraps on narrow panels instead of overflowing */
+.up-app .map-search-btn-container > .flex { flex-wrap: wrap; gap: .25rem 0; }
+.up-app .map-search-btn-container > .flex > .full { flex: 1 1 auto !important; width: auto !important; min-width: 0; }
+.up-app .map-search-btn-container #btn-calculate-total { min-width: 0 !important; white-space: nowrap; }
