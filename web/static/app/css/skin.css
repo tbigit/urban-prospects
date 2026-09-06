@@ -309,3 +309,20 @@
 
 /* no purple focus ring on any field in the app: a quiet border change only */
 .up-app input:focus, .up-app textarea:focus, .up-app select:focus, .up-app .address-input:focus, .up-app .svelte-select.focused, .up-app .svelte-select:focus-within { outline: none !important; box-shadow: none !important; border-color: var(--color-neutral-500) !important; }
+
+/* ---- Include Only / Exclude / All: same segmented track as the region pills ---- */
+.up-app .radio-buttons { display: inline-flex !important; gap: 3px; padding: 3px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--fg) 4%, transparent); }
+.up-app .radio-buttons .pill { border: 0 !important; border-radius: 999px !important; background: transparent !important; color: var(--color-neutral-300) !important; padding: .3rem .55rem !important; font-size: 11px !important; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; white-space: nowrap; }
+.up-app .radio-buttons .pill:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; color: var(--fg) !important; }
+.up-app .radio-buttons .pill:has(input[type="radio"]:checked), .up-app .radio-buttons .pill:has(input[type="radio"]:checked):hover { background: var(--color-brand-purple) !important; color: #fff !important; }
+.up-app .radio-group > .flex { align-items: center; }
+.up-app .radio-group .width-80 { flex: 1 1 auto !important; width: auto !important; min-width: 0; }
+.up-app .radio-group .width-20 { flex: 0 0 auto !important; width: max-content !important; min-width: 0 !important; }
+
+/* breathing room between the Search button and the Clear All / PDF / Save row */
+.up-app .map-search-btn-container .btn-search { margin-bottom: .75rem !important; }
+
+/* info icon: a stroked "i" ring (lucide info) drawn from a mask, so it takes
+   currentColor and works in both themes — replaces the filled grey disc glyph */
+.up-app i.circle { width: 14px !important; height: 14px !important; font-size: 0 !important; color: transparent !important; border-radius: 0 !important; background: color-mix(in srgb, var(--fg) 40%, transparent) !important; -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; vertical-align: middle !important; transform: translateY(-1px) !important; margin-left: 3px !important; }
+.up-app i.circle:hover { background: var(--fg) !important; }
