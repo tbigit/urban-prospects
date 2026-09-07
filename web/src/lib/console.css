@@ -1,4 +1,4 @@
-/* Shared console shell for /admin/ and /account/ (rail, tiles, tables, forms). */
+/* Console shell for /admin/ (rail, tiles, tables, forms). /account/ has its own app-styled sheet, lib/account.css. */
 .adm-shell { display: flex; min-height: 100dvh; background: var(--bg); color: var(--fg); }
 .adm-rail { position: sticky; top: 0; display: none; height: 100dvh; width: 13.5rem; flex-shrink: 0; flex-direction: column; border-right: 1px solid var(--color-line); padding: 1rem 0.75rem; background: color-mix(in srgb, var(--color-subtle) 60%, var(--bg)); }
 @media (min-width: 640px) { .adm-rail { display: flex; } }

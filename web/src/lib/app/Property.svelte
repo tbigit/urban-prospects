@@ -2734,19 +2734,19 @@
           {#if is_logged_in}
           <div class="pdf-popover-container relative" style="display:inline-block;">
             <a class:unclickable={generating_pdf} class="generate-pdf" href="?" on:click|preventDefault={() => show_pdf_popover = !show_pdf_popover} title="PDF Options">
-              <i class=" {generating_pdf ? 'icon-loader-circle icon-spin': 'icon-file-text'}"></i>
+              <i class=" {generating_pdf ? 'icon-loader-circle icon-spin': 'icon-file-down'}"></i>
             </a>
             {#if show_pdf_popover}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div class="pdf-popover-menu" transition:fade>
                 <div class="pdf-popover-triangle"></div>
-                <a href="?" class="btn popover-item" data-address="{property.address} {property?.postcode || ""}" data-id="{property.gurasid}" on:click={(e) => { show_pdf_popover = false; _generate_pdf(e); }}>
-                  <i class=" icon-cloud-download"></i> <span>DOWNLOAD</span>
-                </a>
-                <div class="padding-top-thin">
-                <a href="?" class="btn popover-item" on:click|preventDefault={() => { show_pdf_popover = false; show_pdf_builder = true; }}>
-                  <i class=" icon-settings"></i> <span>CUSTOMISE</span>
-                </a>
+                <div class="flex pdf-popover-actions">
+                  <a href="?" class="btn popover-item" data-address="{property.address} {property?.postcode || ""}" data-id="{property.gurasid}" on:click={(e) => { show_pdf_popover = false; _generate_pdf(e); }}>
+                    <i class=" icon-download"></i> <span>Download</span>
+                  </a>
+                  <a href="?" class="btn popover-item" on:click|preventDefault={() => { show_pdf_popover = false; show_pdf_builder = true; }}>
+                    <i class=" icon-settings"></i> <span>Customise</span>
+                  </a>
                 </div>
               </div>
             {/if}
@@ -3748,8 +3748,8 @@
       </div>
 
       <div class="padding-top-wider collapsible-content {pdf_property ? '' : 'animate-fade-out'}">
-        <div class="flex wrap" style="gap: 0.5rem 0.75rem;">
-          <div class="half">
+        <div class="flex wrap pipeline-fields" style="gap: 0.5rem 0.75rem;">
+          <div class="full">
             <div class="padding-bottom-thinner"><h6 class="info-type">STATUS</h6></div>
             <div class="select-container relative">
               <select bind:value={pipelineStatus} on:change={_handle_status_change}>
@@ -3763,21 +3763,20 @@
               </div>
             </div>
           </div>
-          <div class="half">
+          <div class="full">
             <div class="padding-bottom-thinner"><h6 class="info-type">NEXT ACTION</h6></div>
-            <input type="text" bind:value={pipelineComments} on:change={_handle_comments_change} placeholder="Next Action..." style="width: 100%;"/>
+            <textarea rows="3" bind:value={pipelineComments} on:change={_handle_comments_change} placeholder="Next Action..." style="width: 100%;"></textarea>
           </div>
         </div>
 
         <div class="padding-top">
-            <div class="flex flex-gap">
-              <a class="btn center" style="min-width: 5rem;" href="?" on:click={_handle_pipeline_email}><i class=" icon-mail"></i> Email</a>
+            <div class="flex flex-gap pipeline-actions">
+              <a class="btn center half" href="?" on:click={_handle_pipeline_email}><i class=" icon-mail"></i> Email</a>
               {#if user_fav[property.gurasid] && user_fav[property.gurasid].mailed}
-                <a class="btn center unclickable" style="min-width: 5rem;" href="?" on:click={_handle_pipeline_mail}><i class=" {user_fav[property.gurasid] && user_fav[property.gurasid].sending ? 'icon-loader-circle icon-spin' : 'icon-mailbox'}"></i> Sent</a>
+                <a class="btn center half unclickable" href="?" on:click={_handle_pipeline_mail}><i class=" {user_fav[property.gurasid] && user_fav[property.gurasid].sending ? 'icon-loader-circle icon-spin' : 'icon-mailbox'}"></i> Sent</a>
               {:else}
-                <a class="btn center {(user_fav[property.gurasid] && user_fav[property.gurasid].sending) ? 'unclickable' : ''}" style="min-width: 5rem;" href="?" on:click={_handle_pipeline_mail}><i class=" {user_fav[property.gurasid] && user_fav[property.gurasid].sending ? 'icon-loader-circle icon-spin' : 'icon-mailbox'}"></i> Mail</a>
+                <a class="btn center half {(user_fav[property.gurasid] && user_fav[property.gurasid].sending) ? 'unclickable' : ''}" href="?" on:click={_handle_pipeline_mail}><i class=" {user_fav[property.gurasid] && user_fav[property.gurasid].sending ? 'icon-loader-circle icon-spin' : 'icon-mailbox'}"></i> Mail</a>
               {/if}
-              <a class="btn center" style="min-width: 5rem; margin-left: auto;" href="?" on:click|preventDefault={() => show_mail_template = true}><i class=" icon-pencil"></i> Edit Mail</a>
             </div>
           </div>
 

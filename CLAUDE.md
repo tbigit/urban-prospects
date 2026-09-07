@@ -356,6 +356,26 @@ site's tokens (`.spec`, `--color-line`, brand purple/teal) via `.adm-*` classes 
 - `/admin/subscriptions/` — filter by status/cycle/plan/test; `/admin/subscriptions/[id]/` — edit
   status, plan, cycle, price, period end, regions, lookups, note; delete (for duplicates).
 - Renaming a user's email cascades to `user_subscriptions` because the app keys on email.
+- `/account/` (2026-09-07) no longer uses the console shell. It is styled as the property app's
+  map view on the plain page ground (the spinning `MapboxHero` backdrop was dropped
+  2026-09-07): a full-height 30rem frosted menu panel on the left (Overview / API keys /
+  Billing / Email template / Password) and one continuous detail panel
+  on the right. Overview carries the dashboard tiles (plan, regions, plan ends, bookmarked
+  properties from `user_fav` keyed by `wp_user_id`, API key count). API keys render redacted
+  with a per-row eye toggle; Copy always copies the full key. Billing shows the
+  `user_subscriptions` row. "Update card" (Stripe customers) mounts a Stripe card element:
+  `POST /account/card` mints a SetupIntent (`createSetupIntent`), the client confirms it,
+  then the `?/card` action makes the `pm_` the customer's and subscription's default
+  (`setDefaultPaymentMethod`, `lib/server/stripe.ts`). Needs `STRIPE_PUBLISHABLE_KEY` as well
+  as the secret key; until both are set the button is disabled. "Invoices and billing
+  details" still opens the Billing Portal. Imported Pin members are sent to `/renew/` to
+  re-card. Overview tiles: Plan (4/5) + Plan ends (1/5), then Regions / Bookmarked / API
+  keys; no region pills or Search button. Log out sits at the foot of the menu panel.
+  "Email template" (2026-09-07) edits the prospect email the app merges with Handlebars:
+  tiptap editor + from-address fields, upserted into `user_template` keyed by the same id
+  the app uses (`wp_user_id`, else email) so upapp's `/q/template/<id>` reads it unchanged.
+  Styles in `web/src/lib/account.css` (`.acct-*`, tokens mirror `lib/app/css/skin.css`); the
+  open section is kept in the URL hash.
 - Administrators land on `/admin/` after login (and when visiting `/login/` already signed in)
   unless a `next` was given; everyone else lands on `/account/`. The root layout drops the
   marketing Header/Footer on `/admin*` — the console has its own rail. Wording is "Log out"
@@ -495,7 +515,13 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
   `_clean_options()` filters empty/whitespace/duplicate rows out of the LGA, suburb and zone
   lists (the API returned two blank LGAs); the "All" region chip was removed (a member whose
   plan covers all five regions simply starts with all five selected; `region_all` is still
-  derived reactively for the legacy code paths). `_regions_filter_value()` omits the
+  derived reactively for the legacy code paths). **List is a slide-in panel over the map
+  (2026-09-07)**: the map is always the view; `show_list` (not `use_listview`, which still
+  drives the CRM/settings layouts) adds `.show-list` to the root and skin.css positions the
+  already-rendered `.search-result-parent-container` as a fixed 34rem frosted column on the
+  right, fed by the same 450-per-page `properties` the markers use (no second search, no
+  infinite scroll). It slides out while `.viewing-property` and returns when the detail
+  panel closes; a full-width bottom sheet under 60em. `_regions_filter_value()` omits the
   `regions` filter from LGA/suburb/zone/permissible-use calls when every region is selected:
   the API answers `{}` in <1s but an explicit five-region list on `suburbname/search` takes
   >25s (server-side, worth an index on the API box). The 30rem-wide panel applies to map

@@ -87,7 +87,8 @@
 /* ---- property panel ---------------------------------------------------- */
 .up-app .property-details-container h1 { font-weight: 600 !important; letter-spacing: -0.015em; color: var(--fg) !important; text-transform: none !important; }
 .up-app .property-details-container h2, .up-app .property-details-container h3 { color: var(--fg) !important; }
-.up-app .btn-close { background: color-mix(in srgb, var(--bg) 70%, transparent) !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; color: var(--fg) !important; backdrop-filter: blur(8px); }
+.up-app .btn-close { top: 12px !important; right: 12px !important; width: 28px !important; height: 28px !important; display: inline-flex !important; align-items: center; justify-content: center; font-size: 15px !important; line-height: 1 !important; background: color-mix(in srgb, var(--bg) 70%, transparent) !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; border-radius: 999px !important; color: var(--fg) !important; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.up-app .btn-close:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; }
 
 /* flat filter groups inside the glass panel; the tool rail buttons carry no border of their own */
 .up-app .collapsible-container, .up-app .filter-container > div { background: transparent !important; }
@@ -116,7 +117,7 @@
 
 /* breathing room under the last row of the search panel */
 .up-app .listing-container .one-third.border-rounder.border-primary { padding-bottom: 1rem !important; }
-.up-app .total-results-row { margin-top: .5rem; padding-bottom: .25rem; }
+.up-app .total-results-row { padding-top: .5rem; padding-bottom: .25rem; }
 
 /* bottom-right corner holds the theme toggle, which is already a pill: no second frame */
 .up-app .custom-control.custom-control-bottom { background: transparent !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
@@ -372,7 +373,7 @@
 
 /* panel title row is 24px tall in both views (map view has the minimise button in that row,
    list view does not) so the Map/List toggle sits at the same height when switching */
-.up-app .search-panel-container h3.uppercases { line-height: 24px !important; min-height: 24px; }
+.up-app .search-panel-container h3.uppercases { line-height: 24px !important; min-height: 24px; margin-top: 4px !important; }
 
 /* Clear All / PDF / Save + Total Results row: wraps on narrow panels instead of overflowing */
 .up-app .map-search-btn-container > .flex { flex-wrap: wrap; gap: .25rem 0; }
@@ -401,3 +402,172 @@
 /* debug readouts ("Selected: ...") stay hidden unless Ctrl+Shift+D turns .debug on — the chip
    rule above sets display !important and must not resurrect them */
 .up-app .debug-container:not(.debug), .up-app .test-container:not(.debug) { display: none !important; }
+
+/* Property detail panel in map view: 85% white ground (dark-theme value in theme.css). */
+.up-app .app.mapview.viewing-property .map-view-detail { background-color: var(--up-c-ffffff-a85) !important; }
+
+/* list view: search panel the same 24.5rem as map view; results take the remaining width */
+@media (min-width: 1200px) {
+  .up-app .app:not(.mapview) .listing-container > .flex > .search-panel-container.one-third { width: 24.5rem !important; max-width: 24.5rem !important; flex: 0 0 24.5rem !important; }
+  .up-app .app:not(.mapview) .listing-container > .flex > .search-result-parent-container.two-third { width: auto !important; max-width: none !important; flex: 1 1 0 !important; min-width: 0; }
+  /* same height as map view: the app gives list view a taller filter list (100vh - 19em) inside a
+     90vh hidden-overflow panel, which cut off the Clear All / PDF / Save / Total Results row */
+  .up-app .app:not(.mapview) .listing-container .search-panel-container.one-third { max-height: calc(88vh + 50px) !important; overflow: visible !important; }
+  .up-app .app:not(.mapview) .listing-container .filter-container { height: calc(100vh - 23em) !important; }
+}
+
+/* list view results: smaller thumbnail column so more properties fit on screen */
+@media (min-width: 1200px) {
+  .up-app .search-result-container .property-container > .one-third.aspect-ratio-16x9 { width: 12rem !important; max-width: 12rem !important; flex: 0 0 12rem !important; }
+  .up-app .search-result-container .property-container > .two-third { width: auto !important; max-width: none !important; flex: 1 1 0 !important; min-width: 0; }
+  .up-app .search-result-container .padding-bottom:has(> .property-container) { padding-bottom: .5rem !important; }
+}
+
+/* the app's .container collides with Tailwind's .container (max-width 1536px at 2xl) — let the
+   app fill the viewport so the list view's results take the full remaining width */
+.up-app .app.container { max-width: none !important; }
+
+/* ---- "List" as a slide-in panel over the map ------------------------------------
+   The map is always the view. The results markup already renders in map view (the
+   app hid it with display:none); `.show-list` on the root positions it as a fixed
+   frosted column on the right that slides in. It slides back out while a property
+   is open (the detail panel uses the same edge) and returns when that closes. */
+.up-app .app.mapview .listing-container .search-result-parent-container {
+  display: flex !important; flex-direction: column;
+  position: fixed; top: 1em; right: 1em; bottom: 1em; z-index: 4;
+  width: 34rem; max-width: calc(100vw - 2em);
+  padding: 0 !important; margin: 0 !important;
+  border-radius: .75rem; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .22);
+  transform: translateX(calc(100% + 1.5em)); visibility: hidden; pointer-events: none;
+  transition: transform .35s cubic-bezier(.22, .61, .36, 1), visibility 0s linear .35s;
+}
+.up-app .app.mapview.show-list:not(.viewing-property) .listing-container .search-result-parent-container {
+  transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s;
+}
+.up-app .app.mapview .listing-container .search-result-parent-container .search-result-container {
+  flex: 1 1 auto; min-height: 0; height: auto !important; overflow-y: auto !important; margin: 0 !important; padding: .75rem !important;
+}
+.up-app .list-panel-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .8rem 1rem .7rem; border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent); }
+.up-app .list-panel-head h6 { margin: 0 !important; font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; }
+.up-app .list-panel-count { display: block; margin-top: .15rem; font-size: 11.5px; color: var(--color-neutral-400); }
+.up-app .list-panel-close { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent); color: var(--color-neutral-300); }
+.up-app .list-panel-close:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+.up-app .list-panel-close i { font-size: 14px; line-height: 1; }
+/* cards in the panel: thumbnail column, the details take the rest */
+.up-app .app.mapview .search-result-container .property-container > .one-third.aspect-ratio-16x9 { width: 9rem !important; max-width: 9rem !important; flex: 0 0 9rem !important; }
+.up-app .app.mapview .search-result-container .property-container > .two-third { width: auto !important; max-width: none !important; flex: 1 1 0 !important; min-width: 0; padding-left: .75rem !important; padding-right: 0 !important; }
+.up-app .app.mapview .search-result-container .padding-bottom:has(> .property-container) { padding-bottom: .5rem !important; }
+.up-app .app.mapview .search-result-container .property-container { padding: .5rem !important; border-radius: .6rem; background: color-mix(in srgb, var(--fg) 4%, transparent); }
+@media (max-width: 60em) {
+  .up-app .app.mapview .listing-container .search-result-parent-container { top: auto; left: .5em; right: .5em; bottom: .5em; width: auto; max-width: none; height: 60vh; transform: translateY(calc(100% + 1em)); }
+}
+
+/* List / Satellite / Layers: three pill toggles in one left-aligned row */
+.up-app .map-toolbar { gap: .4rem; align-items: center; }
+.up-app .map-toolbar .btn-group { margin: 0 !important; }
+.up-app .map-toolbar .btn i { font-size: 12px; margin-right: .25rem; vertical-align: -1px; }
+.up-app .my-account-btn { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent); color: var(--color-neutral-300); background: transparent; flex-shrink: 0; }
+.up-app .my-account-btn:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+.up-app .my-account-btn i { font-size: 13px; line-height: 1; margin: 0; }
+/* compact so List / Satellite / Layers / My Fav / account fit the 24.5rem panel on one line */
+.up-app .map-toolbar { flex-wrap: wrap; gap: .3rem; }
+.up-app .map-toolbar .btn-group .btn { font-size: 11px !important; padding: .3rem .5rem !important; line-height: 1.3 !important; }
+.up-app .map-toolbar .btn i { font-size: 11px; margin-right: .2rem; }
+
+/* the app root sets --color-dark: #5C2587 inline (h6 labels, slider value badges
+   like "1100+ sqm", "Nearby School"). Route it through the themed token, and in the
+   search form match the h5 labels ("Area of Land", neutral-300) exactly. */
+.up-app .app { --color-dark: var(--up-c-5c2587) !important; }
+.up-app .search-form h6, .up-app .search-form .light-overlay code { color: var(--color-neutral-300) !important; }
+
+/* result thumbnails without a photo: the root sets --color-dark-overlay-lightest:
+   #F1E9F7 inline, so the tinted block stayed light lavender in dark mode. Themed
+   token instead (dark: near-black purple) with a quiet camera glyph on top. */
+.up-app .app { --color-dark-overlay-lightest: var(--up-c-f1e9f7) !important; }
+.up-app .search-result-container .aspect-ratio-16x9.dark-overlay-lightest { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.up-app .search-result-container .aspect-ratio-16x9:has(img[src*="gif"])::after { color: var(--color-neutral-500) !important; }
+
+/* ---- property panel: buttons and fields share the search panel's language ------
+   Outline buttons: neutral hairline, .5rem radius, 13px/500, 2.4rem tall (the
+   search panel's Save / Total Results). Active stays brand purple (rule above).
+   Fields: the .search-form input treatment. */
+.up-app .property-details-container .btn:not(.btn-search):not(.btn-group .btn):not(.btn-close):not(.link-back),
+.up-app .map-view-detail .btn:not(.btn-search):not(.btn-group .btn):not(.btn-close):not(.link-back) {
+  display: inline-flex; align-items: center; justify-content: center; gap: .35rem; box-sizing: border-box;
+  min-height: 2.4rem; padding: .45rem .9rem !important; border-radius: .5rem !important;
+  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent) !important; background: transparent !important;
+  color: var(--color-neutral-300) !important; font-size: 13px !important; font-weight: 500 !important; line-height: 1.3 !important;
+  letter-spacing: 0 !important; text-transform: none !important; text-decoration: none !important; box-shadow: none !important;
+}
+.up-app .property-details-container .btn:not(.active):not(.unclickable):hover,
+.up-app .map-view-detail .btn:not(.active):not(.unclickable):hover { color: var(--fg) !important; background: color-mix(in srgb, var(--fg) 6%, transparent) !important; }
+.up-app .property-details-container .btn i, .up-app .map-view-detail .btn i { font-size: 13px; line-height: 1; }
+.up-app .pipeline-actions { gap: .75rem !important; }
+.up-app .pipeline-actions .btn.half { flex: 1 1 0; width: auto !important; max-width: none !important; }
+.up-app .property-details-container input[type='text'], .up-app .property-details-container textarea, .up-app .property-details-container select,
+.up-app .map-view-detail input[type='text'], .up-app .map-view-detail textarea, .up-app .map-view-detail select {
+  background: color-mix(in srgb, var(--bg) 60%, transparent) !important; border: 1px solid var(--color-line) !important; border-radius: .5rem !important;
+  color: var(--fg) !important; font-family: var(--font-sans) !important; font-size: 13px !important; padding: .55rem .75rem !important; box-sizing: border-box;
+}
+.up-app .property-details-container input[type='text'], .up-app .property-details-container select,
+.up-app .map-view-detail input[type='text'], .up-app .map-view-detail select { height: 2.4rem; padding-top: 0 !important; padding-bottom: 0 !important; }
+.up-app .property-details-container textarea, .up-app .map-view-detail textarea { min-height: 4.5rem; resize: vertical; line-height: 1.45; }
+.up-app .property-details-container .select-container select, .up-app .map-view-detail .select-container select { width: 100% !important; appearance: none; -webkit-appearance: none; padding-right: 2rem !important; }
+
+.up-app .pipeline-fields > .full { flex: 0 0 100% !important; width: 100% !important; max-width: 100% !important; }
+/* PDF popover: Download / Customise side by side, same outline buttons */
+.up-app .pdf-popover-menu { padding: .6rem !important; border-radius: .6rem !important; border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent) !important; }
+.up-app .pdf-popover-actions { gap: .5rem; }
+.up-app .pdf-popover-actions .btn.popover-item { flex: 1 1 0; width: auto !important; min-width: 7rem; white-space: nowrap; }
+.up-app .pdf-popover-actions .btn.popover-item span { text-transform: none !important; letter-spacing: 0 !important; }
+/* hairlines on the panel's fields a touch lighter to match the buttons */
+.up-app .property-details-container input[type='text'], .up-app .property-details-container textarea, .up-app .property-details-container select,
+.up-app .map-view-detail input[type='text'], .up-app .map-view-detail textarea, .up-app .map-view-detail select { border-color: color-mix(in srgb, var(--fg) 12%, transparent) !important; }
+
+/* PDF customise sheet: option labels had line-height:0 and overlapped when they wrapped */
+.up-app .lightbox-content .vertical-center label { line-height: 1.3 !important; height: auto !important; }
+
+/* property panel on phones: the app's mobile type ran to 1.5rem headings and 1.25rem
+   values; use the desktop sizes everywhere, and keep the action buttons on a row equal height */
+@media (max-width: 60em) {
+  .up-app .property-details-container h1, .up-app .map-view-detail h1 { font-size: 1.1rem !important; line-height: 1.25 !important; }
+  .up-app .property-details-container h3, .up-app .map-view-detail h3 { font-size: 1rem !important; }
+  .up-app .property-details-container h4, .up-app .property-details-container .h4, .up-app .map-view-detail h4, .up-app .map-view-detail .h4 { font-size: 0.8rem !important; line-height: 1.3 !important; }
+  .up-app .property-details-container h6, .up-app .map-view-detail h6 { font-size: 0.6rem !important; }
+  .up-app .property-details-container .span-info, .up-app .map-view-detail .span-info { font-size: 0.8rem !important; }
+  .up-app .property-details-container .btn:not(.btn-group .btn), .up-app .map-view-detail .btn:not(.btn-group .btn) { font-size: 12px !important; padding: .45rem .5rem !important; height: 100%; }
+}
+.up-app .property-details-container .flex:has(> * > .btn), .up-app .map-view-detail .flex:has(> * > .btn) { align-items: stretch; }
+.up-app .property-details-container .flex > *:has(> .btn), .up-app .map-view-detail .flex > *:has(> .btn) { display: flex; }
+.up-app .property-details-container .flex > * > .btn, .up-app .map-view-detail .flex > * > .btn { flex: 1 1 auto; align-self: stretch; }
+@media (max-width: 60em) {
+  .up-app .property-details-container .flex > * > .btn, .up-app .map-view-detail .flex > * > .btn { font-size: 11px !important; padding: .45rem .35rem !important; white-space: nowrap; overflow: hidden; }
+  .up-app .property-details-container .flex > * > .btn i, .up-app .map-view-detail .flex > * > .btn i { font-size: 12px; flex-shrink: 0; }
+}
+
+/* property banner with no Street View: keep a placeholder strip so the close
+   button has its own space above the title row (it used to collapse to 0 and
+   sit on the PDF / star icons) */
+.up-app .banner-container:has(.banner img[src*="gif"]) { height: 11rem; }
+.up-app .banner-container:has(.banner img[src*="gif"]) .banner { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.up-app .banner-container:has(.banner img[src*="gif"]) .banner::after {
+  content: "\e064"; font-family: "lucide"; font-size: 28px; color: var(--color-neutral-500);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.up-app .banner-container:has(.banner img[src*="gif"]) .banner img { opacity: 0; }
+
+/* planning constraints: label and Include / Exclude / All pills on the same centre line */
+.up-app .planning-constraint-container .radio-group > .flex { align-items: center !important; }
+.up-app .planning-constraint-container .radio-group .vertical-center { display: flex; align-items: center; min-height: 100%; }
+.up-app .planning-constraint-container .radio-group .vertical-center label { margin: 0 !important; line-height: 1.3 !important; }
+.up-app .planning-constraint-container .radio-group + .radio-group { margin-top: .35rem; }
+.up-app .planning-constraint-container .radio-group .vertical-center { top: auto !important; transform: none !important; }
+/* the app clips these labels (overflow:hidden for ellipsis), which also clipped the
+   balloon tooltip on the info icon; the pill column is fixed so ellipsis is not needed */
+.up-app .planning-constraint-container .vertical-center label { overflow: visible !important; white-space: normal; }
+/* slider labels rendered as h6 (Nearby School / Hospital / Trains) match the h5 ones */
+.up-app .search-form .collapsible-content h6:not(.uppercase):not(.info-type) { font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; }

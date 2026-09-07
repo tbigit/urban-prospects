@@ -2547,6 +2547,11 @@ function _fit_to_suburb_matches(suburbs) {
   let use_legend = false;
 
   let use_listview = false;
+  // Map is always the view now; "List" slides the matching properties in as a
+  // right-hand panel over the map (skin.css `.show-list`). It draws from the same
+  // `properties` the markers use, so no second search. Hidden while a property is
+  // open (both live on the right edge) and back when the property panel closes.
+  let show_list = false;
 
   let is_select_all = false;
 
@@ -2554,7 +2559,10 @@ function _fit_to_suburb_matches(suburbs) {
   // "All" is lit when every region the member can search is selected. It is a
   // shortcut, not a separate mode: clicking it selects (or clears) all of them.
   $: region_all = Array.isArray(user_regions) && user_regions.length > 0 && user_regions.every((r) => regions_selected.includes(r));
-  let regions = [];
+  // The five NSW regions, so the chips render greyed on first paint instead of an
+  // empty pill while /region_name and the member's plan are still loading.
+  let regions = ['Central and Hunter', 'Northern', 'Southern', 'Sydney', 'Western'];
+  let regions_loaded = false;
   let lga_names = [];
   let zones = [];
   let suburbs = [];
@@ -3314,6 +3322,14 @@ async function _send_mail_property(property_selected) {
     use_patternbooks = true;
   }
 
+  function _set_list(on) {
+    show_list = on;
+    // Opening the list closes an open property: both panels use the right edge.
+    if (on && view_property) {
+      _handle_btn_back();
+    }
+  }
+
   function _toggle_mapview() {
     use_listview = !use_listview;
 
@@ -3902,15 +3918,6 @@ async function _send_mail_property(property_selected) {
       }, 100);
       return false;
     }
-    else if (event.ctrlKey && event.shiftKey && key == 'K') {
-      window.location = '?id=55&email=stuart%40urbanperspectives.com.au&first_name=Stuart&last_name=Wilmot&plan=Enterprise+5+regions&regions=Sydney%2C+Western%2C+Southern%2C+Northern%2C+Central+and+Hunter&rid=ib97k1&search%3D%7B%22region_names%22%3A%5B%5D%2C%22complying_development%22%3A%7B%22cdc_dual_occupancy%22%3Afalse%7D%2C%22no_exclusions%22%3A%7B%22strata%22%3A1%7D%2C%20%22address%22%3A%20%2229%20Chandos%20Street%20ASHFIELD%22%7D';
-    }
-    else if (event.ctrlKey && event.shiftKey && key == 'S') {
-      window.location = '?map_view=1&use_map_layer=&id=55&email=stuart%40urbanprospects.com.au&first_name=Stuart&last_name=Wilmot&plan=Enterprise+5+regions&regions=Sydney%2C+Western%2C+Southern%2C+Northern%2C+Central+and+Hunter&rid=ib97k1&search%3D%7B%22region_names%22%3A%5B%5D%2C%22complying_development%22%3A%7B%22cdc_dual_occupancy%22%3Atrue%7D%2C%22no_exclusions%22%3A%7B%22strata%22%3A1%7D%2C%20%22address%22%3A%20%2229%20Chandos%20Street%20ASHFIELD%22%7D&dev=1';
-    }
-    else if (event.ctrlKey && event.shiftKey && key == 'F') {
-      window.location = '?id=55&email=stuart%40urbanperspectives.com.au&first_name=Stuart&last_name=Wilmot&plan=Enterprise+5+regions&regions=Sydney%2C+Western%2C+Southern%2C+Northern%2C+Central+and+Hunter&rid=ib97k1&search=';
-    }
   }
 
   async function downloadPdf() {
@@ -4369,7 +4376,10 @@ async function _send_mail_property(property_selected) {
       cache: "no-cache",
       headers: {"Content-Type": "application/json"},
     }).then(region_name_response => region_name_response.json()).catch(function(){});
-    regions = region_name_response;
+    if (Array.isArray(region_name_response) && region_name_response.length) {
+      regions = region_name_response;
+    }
+    regions_loaded = true;
 
     let filtered_lga_body = {};
     let filtered_zone_body = {};
@@ -7854,10 +7864,10 @@ async function _send_mail_property(property_selected) {
 
 <svelte:window on:keydown={_handle_window_keydown}/>
 
-<div class:is-print={is_print} class:pdf-property={pdf_property} class:is-ready={is_ready} class="{view_property ? 'viewing-property': ''} {(! view_property && use_listview) ? 'container': ''} app search-app {use_listview ? 'listview': 'mapview'} {satellite ? 'satellite': ''} {use_crm ? 'crmview': ''} {use_feasibility ? 'feasibilityview': ''} {use_template ? 'mailtemplateview': ''}" style="background-color: {app_background_color};--font-family: var(--font-sans);--color-dark-overlay-lightest: #F1E9F7; --thumb-bg: #5C2587; --track-bg: #F1E9F7; --progress-bg: #F1E9F7; --multi-item-bg: #5C2587; --multi-item-color: #fff; --clear-icon-color: #fff; --multi-select-padding: 0 0 0 0.5em; --item-hover-bg: #F1E9F7; --color-dark: #5C2587; ">
+<div class:is-print={is_print} class:pdf-property={pdf_property} class:is-ready={is_ready} class="{view_property ? 'viewing-property': ''} {(! view_property && use_listview) ? 'container': ''} app search-app {use_listview ? 'listview': 'mapview'} {show_list && ! use_listview ? 'show-list': ''} {satellite ? 'satellite': ''} {use_crm ? 'crmview': ''} {use_feasibility ? 'feasibilityview': ''} {use_template ? 'mailtemplateview': ''}" style="background-color: {app_background_color};--font-family: var(--font-sans);--color-dark-overlay-lightest: #F1E9F7; --thumb-bg: #5C2587; --track-bg: #F1E9F7; --progress-bg: #F1E9F7; --multi-item-bg: #5C2587; --multi-item-color: #fff; --clear-icon-color: #fff; --multi-select-padding: 0 0 0 0.5em; --item-hover-bg: #F1E9F7; --color-dark: #5C2587; ">
   <div id="mapbox" class="relative map-container dark-overlay-lightest hide-overflow  {(use_listview || view_property) ? 'hide': ''} {draw_polygon_mode ? 'is-drawing-polygon': ''}"></div>
   <div class="custom-control  {(use_listview || view_property) ? 'hide': ''}">
-    <button aria-label="Measure Radius (m)"  data-balloon-pos="left" on:click={_handle_draw_circle} id="drawCircle" class="{draw_circle_mode ? 'active' : ''}"><i class=" icon-map-pin"></i></button>
+    <button aria-label="Measure Radius (m)"  data-balloon-pos="left" on:click={_handle_draw_circle} id="drawCircle" class="{draw_circle_mode ? 'active' : ''}"><i class=" icon-radar"></i></button>
     <!-- <button aria-label="Measure Distance (m)"  data-balloon-pos="left" on:click={_handle_draw_line} id="drawLine" class="{draw_line_mode ? 'active' : ''}"><i class=" icon-ruler"></i></button> -->
     <button aria-label="Measure Multiple Distances (m)"  data-balloon-pos="left" on:click={_handle_draw_multi_line} id="drawMultiLine" class="{draw_multi_line_mode ? 'active' : ''}"><i class=" icon-ruler"></i></button>
     <button aria-label="Measure Area (m²)"  data-balloon-pos="left" on:click={_handle_draw_polygon} id="drawPolygon" class="{draw_polygon_mode ? 'active' : ''}"><i class=" icon-pentagon"></i></button>
@@ -7865,6 +7875,7 @@ async function _send_mail_property(property_selected) {
     <button aria-label="Zoom in" data-balloon-pos="left" on:click={_handle_zoom_in} id="zoomIn"><i class=" icon-zoom-in"></i></button>
     <button aria-label="Zoom out" data-balloon-pos="left" on:click={_handle_zoom_out} id="zoomOut"><i class=" icon-zoom-out"></i></button>
     <button aria-label="Toggle 3D View" data-balloon-pos="left" on:click={_handle_toggle_3d} id="toggle3d" class="{map_3d ? 'active' : ''}"><i class=" icon-box"></i></button>
+    <button aria-label="Recentre map" data-balloon-pos="left" on:click={_reset_map} id="resetMap"><i class=" icon-crosshair"></i></button>
     <button aria-label="Auto Spin" data-balloon-pos="left" on:click={_handle_toggle_spin} id="autoSpin" class="{map_spin ? 'active' : ''} {map_3d ? '' : 'unclickable'}" disabled={!map_3d}><i class=" icon-rotate-cw"></i></button>
   </div>
   <!-- System / light / dark, bottom right, boxed like the map tools above. The
@@ -8049,46 +8060,25 @@ async function _send_mail_property(property_selected) {
             </div>
           </div>
           
-          <div class="flex padding-bottom-thin">
-            <div class="half">
-             
-            </div>
-            <div class="row right {is_logged_in ? '' : 'unclickable'}">
-              <div class="flex" style="justify-content: flex-end; gap: 0; width: auto;">
-                <div class="row right">
-                  <div class="checkbox-group checkbox-fav">
-                    <div><input type="checkbox" bind:checked={isChecked} id="myfav_checkbox" on:change={_toggle_my_fav}/> <label for="myfav_checkbox"><span class=""> My Fav</span></label></div>
-                  </div>
-                </div>
-
-                <div class="row right" style="padding-left: calc(2em + 3px - 10px);">
-                  <a class="center my-account-link" href="/account/"><i class=" icon-user"></i> My Account</a>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-
-          <div class="flex" style="position: relative; margin-bottom: calc(0.5 * var(--padding-unit));">
+          <div class="flex map-toolbar" style="margin-bottom: calc(0.5 * var(--padding-unit));">
+            <!-- Map is always the view; these toggle the list panel, satellite imagery,
+                 the planning layers and the My Fav filter. Same pill style, left aligned;
+                 My Account is the round user button at the end of the row. -->
             <div class="btn-group">
-              <a on:click={_toggle_mapview} class="btn {use_listview ? '': 'active'}" href="?">Map</a>
-              <a on:click={_toggle_mapview} class="btn {use_listview ? 'active': ''}" href="?">List</a>
+              <a on:click|preventDefault={() => _set_list(! show_list)} class="btn {show_list ? 'active': ''}" href="?" aria-pressed={show_list}><i class=" icon-list"></i> List</a>
             </div>
             {#if ! use_listview}
-            <!-- Mirrors the My Fav / My Account row above so Layers lines up with
-                 My Account and the Satellite->Layers gap matches My Fav->My Account. -->
-            <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
-              <div class="flex" style="justify-content: flex-end; gap: 0; width: auto;">
-                <div class="row right">
-                  <div class="checkbox-group checkbox-satellite"><div class=""><input bind:checked={satellite} type="checkbox" id="mapstyle_checkbox"  on:change={_handle_change_map_style}> <label for="mapstyle_checkbox" style="padding-right: 0;">Satellite</label></div></div>
-                </div>
-                <div class="row right" style="padding-left: calc(2em + 3px - 10px);">
-                  <div class="checkbox-group checkbox-settings"><div class=""><input bind:checked={use_map_layer} type="checkbox" id="maplayer_checkbox"  on:change={_handle_change_map_layer}> <label for="maplayer_checkbox" style="padding-right: 0;">Layers</label></div></div>
-                </div>
+              <div class="btn-group">
+                <a on:click|preventDefault={() => { satellite = ! satellite; _handle_change_map_style(); }} class="btn {satellite ? 'active': ''}" href="?" aria-pressed={satellite}><i class=" icon-satellite"></i> Satellite</a>
               </div>
-            </div>
+              <div class="btn-group">
+                <a on:click|preventDefault={() => { use_map_layer = ! use_map_layer; _handle_change_map_layer(); }} class="btn {use_map_layer ? 'active': ''}" href="?" aria-pressed={use_map_layer}><i class=" icon-layers"></i> Layers</a>
+              </div>
             {/if}
+            <div class="btn-group {is_logged_in ? '' : 'unclickable'}">
+              <a on:click|preventDefault={() => { isChecked = ! isChecked; _toggle_my_fav(); }} class="btn {isChecked ? 'active': ''}" href="?" aria-pressed={isChecked}><i class=" icon-star"></i> My Fav</a>
+            </div>
+            <a class="my-account-btn" href="/account/" aria-label="My Account" title="My Account"><i class=" icon-user"></i></a>
           </div>
 
           <form class="search-form {(mapview_viewing_property && ! search_form_expand) || (! use_listview && ! search_form_expand)  ? 'collapsed': ''}">
@@ -8103,7 +8093,6 @@ async function _send_mail_property(property_selected) {
                   <div class="full">
                     <div class="row right">
                       <a class="btn btn-reset btn-info"  aria-label="Legend" data-balloon-pos="left" href="?" on:click={_toggle_info}><i class=" {use_legend ? 'icon-x': 'icon-info'}"></i></a>
-                      <a class="btn btn-reset" href="?" on:click={_reset_map}><i class=" icon-crosshair"></i></a>
                     </div>
                   </div>
                 </div>
@@ -8232,13 +8221,13 @@ async function _send_mail_property(property_selected) {
                     <div id="regions-filter-container" class="flex wrap">
                       {#if user_plan}
                           {#each regions as region}
-                          <div class="checkbox-container {user_regions && user_regions.includes(region) ? '' : 'unclickable'}">
+                          <div class="checkbox-container {regions_loaded && user_regions && user_regions.includes(region) ? '' : 'unclickable'}">
                             <input hidden type="checkbox" value="{region}" name="region" id="region_{region}" on:click={_handle_change_region} checked={regions_selected.includes(region)}/> <label for="region_{region}">{region}</label>
                           </div>
                           {/each}
                       {:else}
                         {#each regions as region}
-                        <div class="checkbox-container">
+                        <div class="checkbox-container {regions_loaded ? '' : 'unclickable'}">
                           <input hidden type="checkbox" value="{region}" name="region" id="region_{region}" on:click={_handle_change_region} checked={regions_selected.includes(region)}/> <label for="region_{region}">{region}</label>
                         </div>
                         {/each}
@@ -9116,7 +9105,15 @@ async function _send_mail_property(property_selected) {
       
       <div class="two-third padding-left padding-right padding-desktop search-result-parent-container">
 
-        
+        {#if show_list && ! use_listview}
+          <div class="list-panel-head">
+            <div>
+              <h6 class="uppercase"><strong>Matching properties</strong></h6>
+              <span class="list-panel-count">{properties && properties.length ? `${properties.length}${properties.length >= per_page ? '+' : ''} shown` : (has_ran_search ? 'No matches in view' : 'Run a search to see results')}</span>
+            </div>
+            <a href="?" class="list-panel-close" aria-label="Hide list" on:click|preventDefault={() => _set_list(false)}><i class=" icon-x"></i></a>
+          </div>
+        {/if}
         <div class="search-result-container padding-right padding-desktop print-break {use_settings ? 'hide': ''}">
           {#if properties && properties.length}
             
@@ -9209,7 +9206,7 @@ async function _send_mail_property(property_selected) {
             </div>
           {:else}
             <div class="padding-bottom">
-              {#each Array.from({ length: 3 }, (_, i) => i + 1) as item}
+              {#each Array.from({ length: show_list && ! use_listview ? 8 : 3 }, (_, i) => i + 1) as item}
                 <div class="padding-bottom">
                   <div class="flex container-thin property-container temp-container">
                     <!-- svelte-ignore a11y-missing-attribute -->

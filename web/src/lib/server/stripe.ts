@@ -95,3 +95,60 @@ export async function cancelSubscription(subscriptionId: string, atPeriodEnd: bo
 	if (!res.ok) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
 	return json;
 }
+
+/** Stripe Billing Portal session: lets a member change the card on file (and
+ *  see invoices) without us touching card data. Only for accounts that have a
+ *  Stripe customer; imported (Pin) members re-card through /renew/. */
+export async function createBillingPortalSession(customerId: string, returnUrl: string): Promise<string> {
+	const key = env.STRIPE_SECRET_KEY;
+	if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+	const res = await fetch('https://api.stripe.com/v1/billing_portal/sessions', {
+		method: 'POST',
+		headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: form({ customer: customerId, return_url: returnUrl })
+	});
+	const json = (await res.json()) as { url?: string; error?: { message: string } };
+	if (!res.ok || !json.url) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
+	return json.url;
+}
+export const stripeConfigured = () => Boolean(env.STRIPE_SECRET_KEY);
+
+/** Publishable key for Stripe.js on the client (card element on /account/). */
+export const stripePublishableKey = () => env.STRIPE_PUBLISHABLE_KEY || null;
+
+async function stripePost(path: string, body: Record<string, unknown>) {
+	const key = env.STRIPE_SECRET_KEY;
+	if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+	const res = await fetch(`https://api.stripe.com/v1${path}`, {
+		method: 'POST',
+		headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: form(body)
+	});
+	const json = (await res.json()) as Record<string, unknown> & { error?: { message: string } };
+	if (!res.ok) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
+	return json;
+}
+
+/** A SetupIntent lets the member enter a new card in a Stripe Element on
+ *  /account/; Stripe attaches the resulting payment method to the customer. */
+export async function createSetupIntent(customerId: string): Promise<string> {
+	if (!/^cus_[A-Za-z0-9]+$/.test(customerId)) throw new Error('bad customer id');
+	const json = await stripePost('/setup_intents', { customer: customerId, payment_method_types: ['card'], usage: 'off_session' });
+	return json.client_secret as string;
+}
+
+/** After the card is confirmed client-side: make it the customer's default for
+ *  invoices and the subscription's default, so the next renewal charges it. */
+export async function setDefaultPaymentMethod(customerId: string, subscriptionId: string | null, paymentMethodId: string) {
+	if (!/^cus_[A-Za-z0-9]+$/.test(customerId)) throw new Error('bad customer id');
+	if (!/^pm_[A-Za-z0-9]+$/.test(paymentMethodId)) throw new Error('bad payment method id');
+	const key = env.STRIPE_SECRET_KEY;
+	const pmRes = await fetch(`https://api.stripe.com/v1/payment_methods/${paymentMethodId}`, { headers: { Authorization: `Bearer ${key}` } });
+	const pm = (await pmRes.json()) as { customer?: string | null; error?: { message: string } };
+	if (!pmRes.ok) throw new Error(pm.error?.message ?? `Stripe ${pmRes.status}`);
+	if (pm.customer !== customerId) throw new Error('payment method does not belong to this customer');
+	await stripePost(`/customers/${customerId}`, { invoice_settings: { default_payment_method: paymentMethodId } });
+	if (subscriptionId && /^sub_[A-Za-z0-9]+$/.test(subscriptionId)) {
+		await stripePost(`/subscriptions/${subscriptionId}`, { default_payment_method: paymentMethodId });
+	}
+}

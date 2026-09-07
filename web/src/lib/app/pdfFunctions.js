@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { mount, unmount } from 'svelte';
 import { processChartVariables } from '$lib/app/helperFunctions.js';
 import Chart from 'chart.js/auto';
 import EthnicityChartWrapper from '$lib/app/EthnicityChartWrapper.svelte';
@@ -1815,7 +1816,9 @@ export async function convertCensusToCharts(censusData, property) {
       div.style.pointerEvents = 'none';
       document.body.appendChild(div);
 
-      const comp = new Component({
+      // Svelte 5: components are mounted with mount(), not `new Component()`
+      // (which throws component_api_invalid_new and surfaced as "Property not found").
+      const comp = mount(Component, {
         target: div,
         props: { ...props, customHeight: customHeight, customFontSize: 24 }
       });
@@ -1960,7 +1963,7 @@ export async function convertCensusToCharts(censusData, property) {
       } catch (e) {
         console.warn(`Failed to generate chart for ${inst.key}:`, e);
       }
-      inst.comp.$destroy();
+      unmount(inst.comp);
       inst.div.remove();
     }
     
