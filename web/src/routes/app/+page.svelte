@@ -790,6 +790,14 @@
     if (changebound && map && property_count > 0 && bounds) {
       clearTimeout(change_bound_timeout);
       change_bound_timeout = setTimeout(function(){
+        // fitBounds has no minZoom. A suburb-sized result set fits at ~14.9, a hair under
+        // zoom_boundary, so the dots were hidden and only the teal circle showed. If the
+        // fit would land within a level of the boundary, lift it just over instead.
+        const cam = map.cameraForBounds(bounds, { padding: 40, maxZoom: zoom_boundary + 1 });
+        if (cam && cam.zoom < zoom_boundary + 0.5 && cam.zoom >= zoom_boundary - 1.5) {
+          map.easeTo({ center: cam.center, zoom: zoom_boundary + 0.5 });
+          return;
+        }
         map.fitBounds(bounds, {
           padding: 40,
           // minZoom is not a fitBounds option — with a single result the map used to
@@ -797,6 +805,28 @@
           maxZoom: (zoom_boundary + 1)
         });
       }, 10);
+    }
+  }
+
+  // Drill into a suburb: frame the result points we already hold for it, so every one of them
+  // is on screen (two favourites 1 km apart used to vanish: the flight went to the suburb
+  // centroid at zoom 18, which showed neither). Falls back to the centroid when none are loaded.
+  function _fly_into_suburb(name, center) {
+    const want = String(name || '').toUpperCase();
+    const pts = (properties || []).filter(p => p && p.geom && p.geom.coordinates && String(p.suburbname || '').toUpperCase() === want);
+    isProgrammaticMove = false;
+    if (pts.length && mapboxgl) {
+      const b = new mapboxgl.LngLatBounds();
+      pts.forEach(p => b.extend(p.geom.coordinates));
+      // Never land below zoom_boundary: the property layers are hidden there and the suburb
+      // circle would just stay. A big suburb is framed at the boundary, clusters do the rest.
+      // +0.5: the zoom handlers compare parseInt(zoom) with zoom_boundary, so landing on
+      // 14.99 (or exactly 15.0 minus float noise) would hide the dots again.
+      const cam = map.cameraForBounds(b, { padding: 120 });
+      const zoom = Math.min(Math.max(cam ? cam.zoom : zoom_boundary, zoom_boundary + 0.5), zoom_boundary + 2);
+      map.easeTo({ center: cam ? cam.center : center, zoom, duration: 1200 });
+    } else {
+      map.flyTo({ center, zoom: zoom_boundary + 1 });
     }
   }
 
@@ -1906,7 +1936,7 @@ function _fit_to_suburb_matches(suburbs) {
       map.on('click', 'suburb-results-circles', (e) => {
         if (!e.features || !e.features.length) return;
         const c = e.features[0].geometry && e.features[0].geometry.coordinates;
-        if (c) map.flyTo({ center: [c[0], c[1]], zoom: (zoom_boundary + 3) });
+        if (c) _fly_into_suburb(e.features[0].properties.name, [c[0], c[1]]);
       });
     }
 
@@ -1940,7 +1970,7 @@ function _fit_to_suburb_matches(suburbs) {
         const center = (match && match.geom && match.geom.coordinates)
           ? match.geom.coordinates
           : (e.lngLat ? [e.lngLat.lng, e.lngLat.lat] : null);
-        if (center) map.flyTo({ center, zoom: (zoom_boundary + 3) });
+        if (center) _fly_into_suburb(name, center);
       });
     }
 

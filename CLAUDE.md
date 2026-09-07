@@ -507,6 +507,12 @@ click. Now:
   (lot/plan, land value, estimate, propid) since part lots share one address string; picking
   one calls `_handle_view_property(gurasid)`. The lot-fill click handler also treats a
   cluster under the click as "a dot is here" so it no longer opens the base lot instead.
+- **Zoom boundary is integer-compared** (`parseInt(map.getZoom()) >= zoom_boundary`, 15), so a
+  fit that lands on 14.9 hides the dots and leaves only the teal circle. `_fly_into_suburb`
+  (suburb circle / polygon click) frames the suburb's loaded result points and clamps to
+  `[zoom_boundary + 0.5, zoom_boundary + 2]`; the fresh-search fit in `addMarkers` lifts a
+  near-boundary fit to `zoom_boundary + 0.5` the same way. Previously the circle click flew to
+  the centroid at zoom 18, which showed neither of two favourites 1 km apart.
 
 ## Dev server note
 
