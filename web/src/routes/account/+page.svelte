@@ -397,15 +397,15 @@
 							</form>
 						{:else}
 							<div class="acct-actions" style="margin-top:1rem">
-								<button type="button" class="acct-btn" disabled={!data.billing.stripe || !data.billing.publishableKey} title={data.billing.stripe && data.billing.publishableKey ? undefined : 'Card changes are temporarily disabled'} onclick={() => { pmId = ''; cardOpen = true; }}>Update card</button>
+								<button type="button" class="acct-btn" disabled={!data.billing.stripe || !data.billing.publishableKey} title={data.billing.stripe && data.billing.publishableKey ? undefined : 'Not available on this account'} onclick={() => { pmId = ''; cardOpen = true; }}>Update card</button>
 								<form method="POST" action="?/billing"><button type="submit" class="acct-btn alt" disabled={!data.billing.stripe}>Invoices and billing details</button></form>
 							</div>
 						{/if}
-						{#if !data.billing.stripe || !data.billing.publishableKey}<p class="acct-value" style="margin-top:.5rem"><small>Card changes are temporarily disabled. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your card.</small></p>{/if}
+						{#if !data.billing.stripe || !data.billing.publishableKey}<p class="acct-value" style="margin-top:.5rem"><small>Card changes are not available on this account.</small></p>{/if}
 					{:else if sub}
-						<p class="acct-value">Card on file with our previous billing provider.<small>To change the card, regions, plan or users, use "Change regions or plan" above: you enter the card once and it renews from there.</small></p>
+						<p class="acct-value">Not available on this account.<small>To change the card, use "Change regions or plan" above: you enter the card once and it renews from there.</small></p>
 					{:else}
-						<p class="acct-value">No payment method on file.<small>Subscribe above to add one.</small></p>
+						<p class="acct-value">Not available on this account.<small>Subscribe above to add a card.</small></p>
 					{/if}
 				</div>
 

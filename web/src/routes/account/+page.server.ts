@@ -133,7 +133,7 @@ export const actions: Actions = {
 		const [sub] = await query<{ payment_customer_id: string | null }>(
 			`SELECT payment_customer_id FROM user_subscriptions WHERE lower(user_email) = lower($1) AND payment_customer_id IS NOT NULL ORDER BY id DESC LIMIT 1`, [locals.user.email]);
 		const customer = sub?.payment_customer_id ?? locals.user.stripe_customer_id;
-		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes are temporarily disabled for this account.' });
+		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes are not available on this account.' });
 		let portal: string;
 		try { portal = await createBillingPortalSession(customer, `${url.origin}/account/#billing`); }
 		catch { return fail(502, { billingError: 'The billing service did not answer. Please try again shortly.' }); }
@@ -148,7 +148,7 @@ export const actions: Actions = {
 		const [sub] = await query<{ payment_customer_id: string | null; payment_subscription_id: string | null }>(
 			`SELECT payment_customer_id, payment_subscription_id FROM user_subscriptions WHERE lower(user_email) = lower($1) AND payment_customer_id IS NOT NULL ORDER BY id DESC LIMIT 1`, [locals.user.email]);
 		const customer = sub?.payment_customer_id ?? locals.user.stripe_customer_id;
-		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes are temporarily disabled for this account.' });
+		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes are not available on this account.' });
 		try { await setDefaultPaymentMethod(customer, sub?.payment_subscription_id ?? null, pm); }
 		catch (e) { return fail(502, { billingError: `The card was not accepted: ${(e as Error).message}` }); }
 		return { cardSaved: true };
