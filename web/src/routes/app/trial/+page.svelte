@@ -239,7 +239,6 @@
 
 <svelte:head>
 	<title>Urban Prospects Property Trial</title>
-  <script src="https://kit.fontawesome.com/19fda93b05.js" crossorigin="anonymous"></script>
 </svelte:head>
 
 <svelte:window on:keydown={_handle_window_keydown}/>

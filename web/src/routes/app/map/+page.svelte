@@ -1369,7 +1369,6 @@
 
 <svelte:head>
 	<title>Urban Prospects Property Search App</title>
-  <script src="https://kit.fontawesome.com/19fda93b05.js" crossorigin="anonymous"></script>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css" rel="stylesheet" />

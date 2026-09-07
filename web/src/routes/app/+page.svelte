@@ -5175,6 +5175,15 @@ async function _send_mail_property(property_selected) {
       event.preventDefault();
     }
 
+    // A search with nothing but regions selected would scan the whole state — refuse it here too,
+    // on every path (button, keyboard, map-move re-search, infinite scroll), so nothing can
+    // bypass the disabled button and reach /properties with a region-only body. Evaluated
+    // fresh (not via the reactive flag) because saved-search and querystring loads set the
+    // criteria and search in the same tick, before Svelte has recomputed has_search_criteria.
+    if (!_has_search_criteria()) {
+      return;
+    }
+
     // Cancel any pending count from a previous search
     clearTimeout(counting_timeout);
 
@@ -5477,6 +5486,11 @@ async function _send_mail_property(property_selected) {
   }
 
   async function _calculate_total_count() {
+    // Same rule as the search itself: a region-only count is a full-table scan.
+    if (!_has_search_criteria()) {
+      return;
+    }
+
     is_getting_total_on_demand = true;
     total_count_failed = false;
 
@@ -5826,6 +5840,69 @@ async function _send_mail_property(property_selected) {
     custom_walkable_score_min, custom_walkable_score_max,
     is_search_within_radius
   ]);
+
+  // --- Searching label ----------------------------------------------------------------------------
+  // While a search is in flight the button cycles through a random verb, Claude-Code style,
+  // rather than sitting on a greyed-out "SEARCH". Picks a fresh word every ~1.4s, never the
+  // same one twice in a row, and stops the moment the results (or the abort) land.
+  const SEARCHING_VERBS = [
+    'Searching', 'Thinking', 'Tinkering', 'Collating', 'Aggregating', 'Digging', 'Sifting',
+    'Scanning', 'Surveying', 'Mapping', 'Zoning', 'Plotting', 'Measuring', 'Filtering',
+    'Cross-checking', 'Consulting the LEP', 'Reading the SEPPs', 'Checking setbacks',
+    'Pacing the boundaries', 'Counting lots', 'Walking the street', 'Squinting at parcels',
+    'Rummaging', 'Foraging', 'Combing', 'Trawling', 'Prospecting', 'Excavating', 'Sorting',
+    'Ranking', 'Assembling', 'Stitching', 'Triangulating', 'Reconciling', 'Deliberating',
+    'Pondering', 'Musing', 'Calibrating', 'Crunching', 'Percolating', 'Brewing', 'Simmering',
+    'Marinating', 'Untangling', 'Tallying', 'Shortlisting', 'Hunting', 'Sniffing out sites',
+    'Scouring the cadastre', 'Wrangling polygons',
+  ];
+  let searching_label = 'Searching';
+  let searching_timer = null;
+  function _next_searching_label() {
+    let next = searching_label;
+    while (next === searching_label) {
+      next = SEARCHING_VERBS[Math.floor(Math.random() * SEARCHING_VERBS.length)];
+    }
+    searching_label = next;
+  }
+  $: if (is_searching_main && !searching_timer) {
+    _next_searching_label();
+    searching_timer = setInterval(_next_searching_label, 1400);
+  } else if (!is_searching_main && searching_timer) {
+    clearInterval(searching_timer);
+    searching_timer = null;
+  }
+  $: search_button_label = is_searching_main
+    ? `${searching_label}…`
+    : (no_search_results ? no_results_label : 'SEARCH');
+
+  // --- SEARCH disabled until there is a real criterion -------------------------------------------
+  // Regions alone are not a search: with every region selected the API runs a DISTINCT ON sort
+  // over the whole 5.39M-row property table just to hand back 450 rows, holds three DB workers
+  // for the full 180s statement timeout, and then fails. Nothing useful can come of it, so the
+  // button stays disabled until the request body carries something beyond region_names.
+  // Derived from the same body _build_body sends (and the debug panel shows), so any new filter
+  // added there counts automatically. Keyed on search_criteria_signature so it recomputes on edit.
+  const NON_CRITERIA_KEYS = new Set(['region_names', 'per_page', 'page', 'count', 'bounds']);
+  function _has_search_criteria(_signature) {
+    // My Fav is a criterion on its own: _toggle_my_fav clears every region before it searches,
+    // and the request then carries the favourited gurasids, which is a bounded lookup.
+    if (isChecked && user_fav && Object.keys(user_fav).length) return true;
+    // _build_body assigns regions_selected when it is empty; skip it so this cannot loop.
+    if (!regions_selected || !regions_selected.length) return false;
+    const probe = {};
+    _build_body(probe);
+    // complying_development / pattern_books are always sent as objects of flags; they only
+    // count once one flag is on. Same rule the API's own get_suburb fast path applies.
+    const is_empty = (v) => {
+      if (v === null || v === undefined || v === '' || v === false) return true;
+      if (Array.isArray(v)) return v.length === 0;
+      if (typeof v === 'object') return Object.values(v).every(is_empty);
+      return false;
+    };
+    return Object.keys(probe).some((k) => !NON_CRITERIA_KEYS.has(k) && !is_empty(probe[k]));
+  }
+  $: has_search_criteria = _has_search_criteria(search_criteria_signature);
 
   // Captured when a search completes, so the check below compares against the query that actually
   // ran rather than firing the moment _handle_search_property sets no_search_results.
@@ -7948,7 +8025,7 @@ async function _send_mail_property(property_selected) {
               </div>
 
               <div class="padding-top-thin">
-                <a class="btn btn-search btn-search-{report_button_size} {(is_searching_main || (buy_report && ! address_selected)) ? 'unclickable': ''}" class:no-results={no_search_results} href="?" on:click={() => _handle_search_property(1, undefined, event)}>{no_search_results ? no_results_label : report_button_label}</a>
+                <a class="btn btn-search btn-search-{report_button_size} {(is_searching_main || (buy_report && ! address_selected) || !has_search_criteria) ? 'unclickable': ''}" class:no-results={no_search_results} class:searching={is_searching_main} aria-disabled={!has_search_criteria} title={has_search_criteria ? '' : 'Choose at least one search criterion'} href="?" on:click={() => _handle_search_property(1, undefined, event)}>{is_searching_main ? `${searching_label}…` : (no_search_results ? no_results_label : report_button_label)}</a>
               </div>
 
             </form>
@@ -8995,7 +9072,7 @@ async function _send_mail_property(property_selected) {
             {#if !use_map_layer}
             <div class="padding-top-thin map-search-btn-container">
               
-              <a class="btn btn-search {is_searching_main ? 'unclickable': ''}" class:no-results={no_search_results} href="?" on:click={() => _handle_search_property(1, undefined, event)}>{no_search_results ? no_results_label : 'SEARCH'}</a>
+              <a class="btn btn-search {(is_searching_main || !has_search_criteria) ? 'unclickable': ''}" class:no-results={no_search_results} class:searching={is_searching_main} aria-disabled={!has_search_criteria} title={has_search_criteria ? '' : 'Choose at least one search criterion'} href="?" on:click={() => _handle_search_property(1, undefined, event)}>{search_button_label}</a>
 
               <div class="flex padding-top-thinnest">
                 <div class="full">

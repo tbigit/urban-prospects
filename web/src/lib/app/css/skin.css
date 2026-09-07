@@ -50,6 +50,10 @@
 .up-app .btn.btn-search { background: var(--color-brand-purple) !important; color: #fff !important; border: 0 !important; border-radius: .6rem !important; font-weight: 600 !important; letter-spacing: .02em; height: 2.6rem; line-height: 2.6rem; box-shadow: none !important; }
 .up-app .btn.btn-search:hover { filter: brightness(1.1); }
 .up-app .btn.btn-search.unclickable, .up-app .btn.btn-search[disabled] { opacity: .45; box-shadow: none !important; }
+/* In flight: keep the rotating verb readable and pulse gently instead of the greyed-out look. */
+.up-app .btn.btn-search.searching { opacity: .9; animation: up-search-pulse 1.4s ease-in-out infinite; }
+@keyframes up-search-pulse { 0%, 100% { opacity: .9; } 50% { opacity: .6; } }
+@media (prefers-reduced-motion: reduce) { .up-app .btn.btn-search.searching { animation: none; } }
 /* Clear All: same box as the PDF / Save buttons (metrics mirror the page's .btn-save-search), teal text */
 .up-app .btn-reset-search { color: var(--accent-teal-text) !important; font-size: 0.5685rem !important; font-weight: 400 !important; line-height: 1.5 !important; padding: calc(0.35 * var(--padding-unit)) calc(0.3 * var(--padding-unit)) !important; width: 65px !important; text-align: center !important; display: inline-block !important; border: 1px solid color-mix(in srgb, var(--accent-teal-text) 45%, transparent) !important; border-radius: .5rem !important; background: transparent !important; text-decoration: none !important; }
 .up-app .btn-reset-search:hover { background: color-mix(in srgb, var(--accent-teal-text) 10%, transparent) !important; }
