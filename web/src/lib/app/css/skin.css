@@ -599,3 +599,6 @@
 /* 3D / Mono / 45° / Spin: the buttons sat edge to edge; give the row a gap */
 .up-app .design-controls .row.right { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: flex-end; }
 .up-app .design-controls .row.right .btn { margin: 0 !important; }
+
+/* Total Results / Search within Radius match the uppercase CLEAR ALL / PDF / SAVE beside them */
+.up-app #btn-calculate-total, .up-app label[for="searchradius_checkbox"] { text-transform: uppercase; }
