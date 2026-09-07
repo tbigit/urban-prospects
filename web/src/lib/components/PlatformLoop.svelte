@@ -1,19 +1,23 @@
 <script lang="ts">
-	// The platform walkthrough on /platform/: a silent, looping screen recording of the app
-	// (My Fav -> Castle Hill -> Land Zoning + DA-by-Type layers) in place of a static map. No
-	// chrome, no sound: it reads as a moving illustration, not a film. hls.js drives the ladder
+	// A silent, looping screen recording of the app in place of a static map: /platform/ (My Fav
+	// -> Castle Hill -> Land Zoning + DA-by-Type layers) and /data-apis/ (My Fav -> an Alexandria
+	// lot and its 18 m height control). No chrome, no sound: it reads as a moving illustration,
+	// not a film. `base` is a film-ladder directory under /media/ (master.m3u8, mp4/, poster). hls.js drives the ladder
 	// where MSE exists, Safari plays the m3u8 natively, and a progressive mp4 covers the rest.
 	// The loop pauses off screen and never starts under reduced-motion or Save-Data; the
 	// poster (the opening frame) stands in.
 	import { onMount } from 'svelte';
 	import { saveDataOn } from '$lib/video';
 
-	const BASE = '/media/platform';
-	const HLS_SRC = `${BASE}/master.m3u8`;
-	const MP4_SRC = `${BASE}/mp4/platform-900.mp4`;
-	const POSTER = `${BASE}/poster-open.jpg`;
-
-	let { class: className = '' }: { class?: string } = $props();
+	let {
+		class: className = '',
+		base = '/media/platform',
+		mp4 = 'platform-900.mp4',
+		label = 'Walkthrough of the Urban Prospects platform: opening a favourite in Castle Hill and turning on the Land Zoning and Development Applications layers'
+	}: { class?: string; base?: string; mp4?: string; label?: string } = $props();
+	const HLS_SRC = `${base}/master.m3u8`;
+	const MP4_SRC = `${base}/mp4/${mp4}`;
+	const POSTER = `${base}/poster-open.jpg`;
 	let video = $state<HTMLVideoElement | null>(null);
 
 	onMount(() => {
@@ -62,5 +66,5 @@
 	loop
 	playsinline
 	preload="metadata"
-	aria-label="Walkthrough of the Urban Prospects platform: opening a favourite in Castle Hill and turning on the Land Zoning and Development Applications layers"
+	aria-label={label}
 ></video>

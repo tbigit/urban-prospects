@@ -3,6 +3,7 @@
 	import Reveal from '$lib/components/Reveal.svelte';
 	import TrialCta from '$lib/components/TrialCta.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import PlatformLoop from '$lib/components/PlatformLoop.svelte';
 	import { apiChecklist } from '$lib/content/site';
 	import { base } from '$app/paths';
 
@@ -45,17 +46,18 @@
 	<div class="mx-auto max-w-[1400px] px-5 py-14 sm:py-20">
 		<div class="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
 			<Reveal class="lg:col-span-7">
-				<img
-					src="{base}/media/maps/height-stleonards.jpg"
-					alt="Height of building map extract around St Leonards"
-					loading="eager"
-					fetchpriority="high"
-					decoding="async"
-					class="aspect-[16/10] w-full rounded-2xl object-cover"
+				<!-- The same data seen through the app: a silent looping screen recording (web/static/media/
+				     data-apis/, film-ladder from a screenproof take; git-ignored, deployed by
+				     deploy/deploy-media.sh data-apis). -->
+				<PlatformLoop
+					class="aspect-[16/10] w-full rounded-2xl bg-[var(--color-subtle)] object-cover"
+					base="/media/data-apis"
+					mp4="data-apis-900.mp4"
+					label="Walkthrough of the Urban Prospects platform: opening a favourite in Alexandria and reading its 18 metre height of building control"
 				/>
 				<p class="mt-4 text-[13.5px] text-[var(--color-neutral-500)]">
-					Height of building controls around St Leonards, one of the layers served per lot. Map:
-					NSW ePlanning over the Spatial Services base map, CC BY 4.0.
+					A saved site in Alexandria opened from My Favourites: frontage, depth, permissible height,
+					FSR, lot size and zoning, read off the same weekly-refreshed dataset the API serves per lot.
 				</p>
 			</Reveal>
 			<Reveal delay={80} class="lg:col-span-5">
