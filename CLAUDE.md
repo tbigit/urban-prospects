@@ -500,6 +500,13 @@ click. Now:
   else `MIXED`. Cluster labels show "SUBURB\n n" for single-suburb clusters of 10+ below
   zoom 15, otherwise the count; clicking a cluster eases to its expansion zoom. Teal suburb
   circles (zoomed out) now carry "NAME · n".
+- **Stacked points** (strata units, "PT" part lots): every unit sits on the parent lot's point,
+  so the cluster can never expand. When the expansion zoom is past `clusterMaxZoom` (or the
+  map is already at 16+), the click opens `_show_cluster_picker`: a Mapbox popup
+  (`.cluster-picker`, skin.css) listing each leaf's address plus a detail line
+  (lot/plan, land value, estimate, propid) since part lots share one address string; picking
+  one calls `_handle_view_property(gurasid)`. The lot-fill click handler also treats a
+  cluster under the click as "a dot is here" so it no longer opens the base lot instead.
 
 ## Dev server note
 

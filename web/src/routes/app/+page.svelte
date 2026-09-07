@@ -765,7 +765,12 @@
         features.push({
           type: 'Feature',
           geometry: { type: 'Point', coordinates: property.geom.coordinates },
-          properties: { gurasid: property.gurasid, suburb: String(property.suburbname || '') }
+          properties: {
+            gurasid: property.gurasid, suburb: String(property.suburbname || ''), address: String(property.address || ''),
+            // for the stacked-point picker: what tells part lots / units of one address apart
+            lot: String(property.property_description || property.lot_section_plan || ''),
+            propid: property.propid ?? '', land_value: property.land_value_1 ?? '', estimate: property.estimated_price ?? ''
+          }
         });
         // Extend over EVERY result, not the first handful. Capping this at 5 meant the map
         // fitted to whichever five came back first, so a suburb search could settle on a
@@ -795,7 +800,37 @@
     }
   }
 
+  // Popup listing the properties stacked on one point (strata units); click one to open it.
+  let cluster_picker = null;
+  function _show_cluster_picker(lngLat, leaves) {
+    if (cluster_picker) { cluster_picker.remove(); cluster_picker = null; }
+    const money = (v) => { const n = Number(v); return v !== '' && v != null && Number.isFinite(n) ? '$' + Math.round(n).toLocaleString('en-AU') : ''; };
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const items = leaves
+      .map(l => {
+        const p = l.properties;
+        const detail = [p.lot, money(p.land_value) && `Land value ${money(p.land_value)}`, money(p.estimate) && `Est. ${money(p.estimate)}`, p.propid !== '' && `ID ${p.propid}`].filter(Boolean).join(' · ');
+        return { gurasid: p.gurasid, address: p.address || String(p.gurasid), detail, propid: Number(p.propid) || 0 };
+      })
+      .sort((a, b) => a.address.localeCompare(b.address, undefined, { numeric: true }) || a.propid - b.propid);
+    const el = document.createElement('div');
+    el.className = 'cluster-picker';
+    el.innerHTML = `<div class="cluster-picker-head">${items.length} properties here</div>` +
+      items.map(i => `<button type="button" data-gurasid="${i.gurasid}"><span class="addr">${esc(i.address)}</span>${i.detail ? `<span class="detail">${esc(i.detail)}</span>` : ''}</button>`).join('');
+    el.addEventListener('click', (ev) => {
+      const b = ev.target.closest('button[data-gurasid]');
+      if (!b) return;
+      cluster_picker && cluster_picker.remove();
+      cluster_picker = null;
+      _handle_view_property(b.dataset.gurasid);
+    });
+    cluster_picker = new mapboxgl.Popup({ closeButton: true, maxWidth: '22rem', offset: 14, className: 'cluster-picker-popup' })
+      .setLngLat(lngLat).setDOMContent(el).addTo(map);
+    cluster_picker.on('close', () => { cluster_picker = null; });
+  }
+
   function clearMarkers() {
+    if (cluster_picker) { cluster_picker.remove(); cluster_picker = null; }
     property_results_fc = { type: 'FeatureCollection', features: [] };
     if (map && map.getSource('property-results')) {
       map.getSource('property-results').setData(property_results_fc);
@@ -1402,7 +1437,7 @@ function _fit_to_suburb_matches(suburbs) {
             // of the scheme, whereas the dot identifies the one that was clicked by gurasid. The
             // highlight and 3D model above still apply either way.
             const dotHere = map.getLayer('property-results-circles')
-              ? map.queryRenderedFeatures(e.point, { layers: ['property-results-circles'] })
+              ? map.queryRenderedFeatures(e.point, { layers: ['property-results-circles', 'property-results-clusters'].filter(id => map.getLayer(id)) })
               : [];
 
             // Only re-fetch property data when switching to a different lot.
@@ -1802,10 +1837,22 @@ function _fit_to_suburb_matches(suburbs) {
       map.on('mouseenter', 'property-results-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'property-results-clusters', () => { map.getCanvas().style.cursor = ''; });
       map.on('click', 'property-results-clusters', (e) => {
+        if (Date.now() < suppressClicksUntil) return;
         if (!e.features || !e.features.length) return;
         const f = e.features[0];
-        map.getSource('property-results').getClusterExpansionZoom(f.properties.cluster_id, (err, zoom) => {
+        const src = map.getSource('property-results');
+        src.getClusterExpansionZoom(f.properties.cluster_id, (err, zoom) => {
           if (err) return;
+          // Strata: every unit of a scheme sits on the parent lot's point, so the cluster can
+          // never spread out. Mapbox reports an expansion zoom past clusterMaxZoom for that
+          // case; list the units so each one can be opened, instead of zooming into nothing.
+          if (zoom > 16 || map.getZoom() >= 16) {
+            src.getClusterLeaves(f.properties.cluster_id, 200, 0, (err2, leaves) => {
+              if (err2 || !leaves) return;
+              _show_cluster_picker(f.geometry.coordinates, leaves);
+            });
+            return;
+          }
           map.easeTo({ center: f.geometry.coordinates, zoom: Math.min(zoom + 0.5, 18) });
         });
       });
