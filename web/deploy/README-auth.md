@@ -6,7 +6,7 @@ Marketing pages are still prerendered; only the auth routes run at request time.
 
 ## One-time server setup (143.42.46.116)
 
-1. Node 22 on the box; `mkdir -p /opt/www/upweb-node /opt/www/upapp`. The Node build lives in `upweb-node`; the old static site stays in `/opt/www/upweb` until nginx is switched over.
+1. Node 22 on the box; `mkdir -p /opt/www/upweb-node`. The Node build lives in `upweb-node`. (`/opt/www/upapp` was for the standalone app build, which no longer exists: the app ships inside this build.) Set `PORT=3010` in the `.env`: port 3000 on 143.42.46.116 belongs to an unrelated service (`/opt/api/api.js`).
 2. Apply the schema to UrbanPortalDBP (via the `updb` hop, see CLAUDE.md):
    `001_users.sql` (the migration session owns filling it), then `002_sessions.sql`.
 3. `/opt/www/upweb-node/.env` from `web/.env.example` — DATABASE_URL, ORIGIN, SMTP.
@@ -38,6 +38,7 @@ ssh root@143.42.46.116 'cd /opt/www/upweb-node && npm ci --omit=dev && systemctl
   invalidates other sessions). With `SMTP_HOST` unset the mail is printed to the
   server log instead of sent.
 - `/account/` shows plan/regions from `user_subscriptions` and changes password.
-- `/auth/check` is nginx's `auth_request` target for `/app/`; `/auth/me` hands the
-  app its profile in the same shape the WordPress embed used to pass in the query
-  string, so upapp needed one fetch rather than a rewrite.
+- `/auth/check` is a 200/401 session probe (nginx no longer gates `/app/` with it;
+  the app's `+layout.server.ts` checks the session). `/auth/me` hands the app its
+  profile in the shape the WordPress embed used to pass in the query string, with
+  `id` = the WordPress user id, which keys favourites, saved searches and templates.

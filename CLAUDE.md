@@ -321,20 +321,22 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
   `src/hooks.server.ts` puts the user on `locals.user`. Schema: `web/deploy/sql/002_sessions.sql`.
 - Routes: `/login/` (`?next=` same-origin paths only), `/logout/` (POST), `/forgot-password/`,
   `/reset-password/[token]/`, `/account/` (plan + regions from `user_subscriptions`, password
-  change), `/auth/check` (nginx `auth_request` target, 200/401), `/auth/me` (JSON profile).
-- **upapp is not merged into this repo.** It is built separately with `BASE_PATH=/app npx vite build`
-  (never `npm run build` there: its postbuild sftp-deploys by itself) and served by nginx at `/app/`
-  behind `auth_request`. `/auth/me` returns `id/email/plan/first_name/last_name/regions`, the same
-  fields the WordPress embed used to pass in the query string; upapp's `onMount` fetches it when
-  `?id=` is absent and feeds it into the existing querystring parsing, so nothing else changed.
-  `is_logged_in` in `map/+page.svelte` is now derived from `/auth/me` too.
+  change), `/auth/check` (200/401 session probe; nginx no longer uses it as an `auth_request`
+  gate), `/auth/me` (JSON profile).
+- **Superseded 2026-09-06/07:** the app was merged into this repo (see "The property app,
+  merged" below), so it is no longer built separately or served by nginx from a static alias.
+  `/auth/me` returns `id/email/plan/first_name/last_name/regions/has_access/renew_url`; `id` is
+  the WordPress user id (see "Schema notes"). The app's `onMount` fetches it when `?id=` is
+  absent and feeds it into the existing querystring parsing; `is_logged_in` in
+  `map/+page.svelte` derives from it too.
 - **Paused in upapp until the Stripe checkout exists** (`PURCHASES_PAUSED` in `Property.svelte`,
   `+page.svelte`; `TRIAL_LINKS_PAUSED` in `trial/+page.svelte`): title search (Woo item 920),
   plan dealings / image search (5057), due-diligence report (`add-to-cart=9926`), and the
   `/vipN/<email>` trial magic links. Each shows a holding notice. Flip the constants to re-enable.
-- Still to wire after the move: upapp's `api_domain` is `https://www.urbanprospects.com.au/q`,
-  which WordPress proxied to `api.js`; the nginx vhost has a commented `/q/` block for it. The
-  `/pricing` and `/property?pid=` WordPress URLs upapp links to need routes or redirects.
+- `api_domain` is relative `/q`; nginx proxies it to `upapi.imtg.com.au` (done in the repo's
+  `deploy/nginx-site.conf` and, since 2026-09-07, in the live preview vhost — see "Live server
+  vhost" below). Still open: the `/pricing` and `/property?pid=` WordPress URLs the app links
+  to need routes or redirects.
 - `users.is_test` (added by `004_users_is_test.sql`) and `wp_import_subscriptions.is_test` flag the
   11 non-customer accounts Danny identified on 2026-09-06: urbanperspectives.com.au staff (Stuart,
   Mary, Tony, Wassef), the imtg dev-agency accounts, kheradmandi.m@gmail.com, and mitch@partridgebuilding.com (has a Pin token but confirmed test). They keep login access;
@@ -402,6 +404,19 @@ Decided 2026-09-06: members are never emailed or linked. `web/src/lib/server/ren
   shows a "not switched on yet" notice and disables the button until it is.
 - First live case: jai@definedplumbingcivil.com.au, monthly, Pin renews 9 Sep 2026 — bump his
   `current_period_end` to 9 Oct after confirming that charge; he becomes the first Stripe renewal.
+
+## Live server vhost (143.42.46.116) vs `deploy/nginx-site.conf`
+
+The nginx config actually serving `preview.urbanprospects.com.au` is
+`/etc/nginx/conf.d/preview.urbanprospects.com.au.conf` on the box, **not** the repo file, and it
+drifts. Found 2026-09-07: it still aliased `/app/` to `/opt/www/upapp-gated/` (a stale standalone
+build behind `auth_request`) and proxied `/q/` to `127.0.0.1:3000`, which on that host is
+`/opt/api/api.js`, an unrelated OpenAI vector-store service, so every app API call 404'd. Both
+blocks were rewritten that day (`/app/` -> the Node site, `/q/` -> `upapi.imtg.com.au`, cookies
+stripped); backup `*.conf.bak-2026-09-07`. The Node site listens on **3010** there (`PORT` in
+`/opt/www/upweb-node/.env`) because 3000 is taken. `deploy/nginx-site.conf` is the intended
+config; when it and the live file disagree, check the live file first. `/opt/www/upapp`,
+`/opt/www/upapp-gated` and `/opt/www/app` are dead directories.
 
 ## API list lookups: materialised views (2026-09-07)
 
