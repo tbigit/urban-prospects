@@ -337,6 +337,20 @@
   // Result rendering as GPU layers (replaces DOM markers):
   let property_results_fc = { type: 'FeatureCollection', features: [] }; // property circle source data
   let suburb_results_fc = { type: 'FeatureCollection', features: [] };   // teal suburb circle source data
+  // /v2/app/properties/suburbs: one GROUP BY suburb scan per search. Its counts sum to the total,
+  // so the separate count(*) scan is gone; null until the first aggregate answers.
+  let suburb_total = null;
+  // v2 routes carry the session cookie and are the ones that survive the v1 deprecation.
+  const API_V2 = '/v2/app'; // /v2/properties (no /app) is the public bearer-key Planning Data API
+  // POST to a v2 route; while the API host has not been given the v2 routes yet (404) fall
+  // back to the v1 path so the app keeps working through the cutover. 401 is a real
+  // "not logged in" and is not retried.
+  async function _api_post(path, body, v1_path, signal) {
+    const opts = { method: 'POST', cache: 'no-cache', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal };
+    let r = await fetch(`${api_domain}${path}`, opts).catch(() => null);
+    if (r && r.status === 404 && v1_path) r = await fetch(`${api_domain}${v1_path}`, opts).catch(() => null);
+    return r && r.ok ? r.json().catch(() => null) : null;
+  }
   let suburb_matches = [];                       // last get_suburb response (name + centroid)
   let suburb_match_filter = ['boolean', false];  // Suburbs-tile filter for matching suburbs
   let _resultClickHandlersBound = false;         // bind property/suburb click handlers only once (map.on persists across style reloads)
@@ -751,7 +765,7 @@
         features.push({
           type: 'Feature',
           geometry: { type: 'Point', coordinates: property.geom.coordinates },
-          properties: { gurasid: property.gurasid }
+          properties: { gurasid: property.gurasid, suburb: String(property.suburbname || '') }
         });
         // Extend over EVERY result, not the first handful. Capping this at 5 meant the map
         // fitted to whichever five came back first, so a suburb search could settle on a
@@ -802,7 +816,7 @@ function _refresh_suburb_circles() {
   const features = (suburb_matches || []).map(s => {
     const c = s && s.geom && s.geom.coordinates;
     if (!c || c.length < 2 || !isFinite(c[0]) || !isFinite(c[1])) return null;
-    return { type: 'Feature', geometry: { type: 'Point', coordinates: [c[0], c[1]] }, properties: { name: _suburb_name(s) } };
+    return { type: 'Feature', geometry: { type: 'Point', coordinates: [c[0], c[1]] }, properties: { name: _suburb_name(s), n: Number(s.n) || 0 } };
   }).filter(Boolean);
   suburb_results_fc = { type: 'FeatureCollection', features };
   if (map && map.getSource('suburb-results')) {
@@ -836,9 +850,9 @@ function clearSuburbMarkers() {
 // Toggle result layers by zoom: property circles when zoomed in, teal suburb circles when zoomed out.
 function _set_result_layer_zoom(zoomedIn) {
   if (!map) return;
-  if (map.getLayer('property-results-circles')) {
-    map.setLayoutProperty('property-results-circles', 'visibility', zoomedIn ? 'visible' : 'none');
-  }
+  ['property-results-circles', 'property-results-clusters', 'property-results-cluster-labels'].forEach(id => {
+    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', zoomedIn ? 'visible' : 'none');
+  });
   const subVis = zoomedIn ? 'none' : 'visible';
   ['custom-layer-suburb-match', 'custom-layer-suburb-match-outline', 'suburb-results-circles', 'suburb-results-labels'].forEach(id => {
     if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', subVis);
@@ -1741,13 +1755,67 @@ function _fit_to_suburb_matches(suburbs) {
     if (map.getSource('property-results')) {
       map.getSource('property-results').setData(property_results_fc);
     } else {
-      map.addSource('property-results', { type: 'geojson', data: property_results_fc });
+      // Mapbox clusters the page of results on the GPU. `suburb` reduces to the suburb name while
+      // every point in the cluster shares it, else 'MIXED' — so once you are at "suburb level"
+      // the cluster is labelled with the suburb, not just a number.
+      map.addSource('property-results', {
+        type: 'geojson', data: property_results_fc,
+        cluster: true, clusterRadius: 48, clusterMaxZoom: 16,
+        clusterProperties: {
+          suburb: [['case', ['==', ['accumulated'], ['get', 'suburb']], ['accumulated'], 'MIXED'], ['get', 'suburb']]
+        }
+      });
+    }
+    if (!map.getLayer('property-results-clusters')) {
+      map.addLayer({
+        id: 'property-results-clusters',
+        type: 'circle',
+        source: 'property-results',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': '#5C2587',
+          'circle-opacity': 0.8,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#ffffff',
+          'circle-radius': ['step', ['get', 'point_count'], 14, 10, 18, 50, 24, 200, 30]
+        }
+      });
+      map.addLayer({
+        id: 'property-results-cluster-labels',
+        type: 'symbol',
+        source: 'property-results',
+        filter: ['has', 'point_count'],
+        layout: {
+          // Suburb name on the cluster only while it is worth reading: a single-suburb cluster of
+          // 10+ sites, below zoom 15. Closer in (or for small/mixed clusters) the count alone.
+          'text-field': ['step', ['zoom'],
+            ['case', ['all', ['!=', ['get', 'suburb'], 'MIXED'], ['>=', ['get', 'point_count'], 10]],
+              ['concat', ['get', 'suburb'], '\n', ['to-string', ['get', 'point_count_abbreviated']]],
+              ['to-string', ['get', 'point_count_abbreviated']]],
+            15, ['to-string', ['get', 'point_count_abbreviated']]],
+          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+          'text-size': 11,
+          'text-allow-overlap': true
+        },
+        paint: { 'text-color': '#ffffff', 'text-halo-color': '#5C2587', 'text-halo-width': 1 }
+      });
+      map.on('mouseenter', 'property-results-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'property-results-clusters', () => { map.getCanvas().style.cursor = ''; });
+      map.on('click', 'property-results-clusters', (e) => {
+        if (!e.features || !e.features.length) return;
+        const f = e.features[0];
+        map.getSource('property-results').getClusterExpansionZoom(f.properties.cluster_id, (err, zoom) => {
+          if (err) return;
+          map.easeTo({ center: f.geometry.coordinates, zoom: Math.min(zoom + 0.5, 18) });
+        });
+      });
     }
     if (!map.getLayer('property-results-circles')) {
       map.addLayer({
         id: 'property-results-circles',
         type: 'circle',
         source: 'property-results',
+        filter: ['!', ['has', 'point_count']],
         paint: {
           'circle-radius': 6,
           'circle-color': '#5C2587',
@@ -1857,7 +1925,7 @@ function _fit_to_suburb_matches(suburbs) {
         source: 'suburb-results',
         layout: {
           visibility: 'none',
-          'text-field': ['get', 'name'],
+          'text-field': ['case', ['>', ['get', 'n'], 0], ['concat', ['get', 'name'], ' · ', ['to-string', ['get', 'n']]], ['get', 'name']],
           'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
           'text-size': 11,
           'text-allow-overlap': false
@@ -5296,18 +5364,12 @@ async function _send_mail_property(property_selected) {
 
     // /quickproperties (the anonymous variant) was removed from the API on
     // 2026-09-07; /app/ always has a logged-in user.
-    const api_url_path = '/properties';
+    const api_url_path = `${API_V2}/properties`;
 
     is_searching_main = true;
     search_aborted = false;
     search_abort_controller = new AbortController();
-    const properties_response = await fetch(`${api_domain}${api_url_path}`, {
-      method: 'POST',
-      cache: "no-cache",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(body),
-      signal: search_abort_controller.signal
-    }).then(r => r.ok ? r.json() : null).catch(function(){});
+    const properties_response = await _api_post(api_url_path, body, '/properties', search_abort_controller.signal);
     is_searching_main = false;
     search_abort_controller = null;
     // Escape was pressed while this request was in flight: leave the previous results
@@ -5340,21 +5402,9 @@ async function _send_mail_property(property_selected) {
       // 617 m north of a viewport centred on Third Ave, and the button still read
       // "NO MATCHES FOUND". Re-count the same criteria without bounds so the label can
       // distinguish "nothing qualifies" from "nothing qualifies *here*".
-      matches_outside_view = 0;
-      if (no_search_results && body.bounds) {
-        let unbounded_body = {... body};
-        unbounded_body.count = 1;
-        delete unbounded_body.bounds;
-
-        const unbounded_total = await fetch(`${api_domain}${api_url_path}`, {
-          method: 'POST',
-          cache: "no-cache",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(unbounded_body)
-        }).then(r => r.ok ? r.json() : null).catch(function(){});
-
-        matches_outside_view = Number(unbounded_total) || 0;
-      }
+      // The suburb aggregate for these criteria (fetched below on a fresh search, kept across
+      // bounded re-searches) already knows the statewide total: no extra count scan.
+      matches_outside_view = (no_search_results && body.bounds) ? (Number(suburb_total) || 0) : 0;
     }
 
     // Update can_load_more for infinite scroll - if we got fewer results than per_page, we've reached the end
@@ -5388,70 +5438,53 @@ async function _send_mail_property(property_selected) {
       }, 100);
     }
 
-    if (no_count === false) {
-      clearTimeout(counting_timeout);
-      counting_timeout = setTimeout(async function(){
-        let clone_body = {... body};
-        clone_body.count = 1;
-
-        const properties_count_response = await fetch(`${api_domain}${api_url_path}`, {
-          method: 'POST',
-          cache: "no-cache",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(clone_body)
-        }).then(r => r.ok ? r.json() : null).catch(function(){});
-        if (!properties_count_response) return;
-        objects_total = properties_count_response;
-
-        max_number_of_pages = Math.ceil(objects_total / per_page);
-
-        is_getting_total = false;
-        map_status = default_map_status;
-      }, 100);
+    // No count(*) scan per search any more (it cost as much as the search itself). The
+    // total comes from the suburb aggregate below; until it lands, paginate on what we have.
+    if (no_count === false && suburb_total == null) {
+      objects_total = Array.isArray(properties) ? properties.length : 0;
+      max_number_of_pages = Math.max(1, Math.ceil(objects_total / per_page));
+      is_getting_total = false;
     }
     
-    // The teal suburb overlay exists so a user can pick between matching suburbs and drill in.
-    // An unconstrained search resolves to every suburb in NSW (~4,430), which paints the whole
-    // state and offers no choice at all — that is what you see for a moment after toggling
-    // My Fav back off. Only fetch and draw the overlay when something actually narrows it.
-    const suburb_overlay_is_useful = Boolean(
-      (lga_names_selected && lga_names_selected.length) ||
-      (suburb_selected && suburb_selected.length) ||
-      (address_selected && address_selected.length) ||
-      (zone_selected && zone_selected.length) ||
-      (permissibleuse_selected && permissibleuse_selected.length) ||
-      isChecked            // My Fav — constrained to the favourited gurasids
-    );
-
-    if (!suburb_overlay_is_useful) {
-      clearSuburbMarkers();
-    }
-
-    if (suburb_overlay_is_useful) setTimeout(async function(){
+    // Suburb overview: one GROUP BY suburbname scan (/v2/properties/suburbs) gives every matching
+    // suburb with a real centroid and a count; the counts sum to the total. Fetched on a fresh
+    // search only — bounded map re-searches (reset 2/3) share the criteria and reuse it.
+    if (reset != 2 && reset != 3) setTimeout(async function(){
       let clone_body = {... body};
-      clone_body.get_suburb = 1;
       delete clone_body.bounds;
+      delete clone_body.radius;
+      delete clone_body.page;
+      delete clone_body.per_page;
 
-      const get_suburb_response = await fetch(`${api_domain}${api_url_path}`, {
-        method: 'POST',
-        cache: "no-cache",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(clone_body)
-      }).then(get_suburb_response => get_suburb_response.json()).catch(function(){});
+      suburb_total = null;
+      let suburbs = await _api_post(`${API_V2}/properties/suburbs`, clone_body, null);
+      if (suburbs === null) {
+        // v1 fallback: distinct suburbs without counts (the old get_suburb path).
+        suburbs = await _api_post('/properties', { ...clone_body, get_suburb: 1 }, null);
+        if (Array.isArray(suburbs)) suburbs = suburbs.map(x => ({ ...x, n: 0 }));
+      }
 
-      // console.log(get_suburb_response);
+      if (!Array.isArray(suburbs)) return;
+      const has_counts = suburbs.some(x => Number(x.n) > 0);
+      suburb_total = has_counts ? suburbs.reduce((t, x) => t + (Number(x.n) || 0), 0) : null;
+      if (has_counts) {
+        objects_total = suburb_total;
+        max_number_of_pages = Math.max(1, Math.ceil(objects_total / per_page));
+      }
+      is_getting_total = false;
+      map_status = default_map_status;
+
       if (!mapview_viewing_property) {
         clearSuburbMarkers();
-        addSuburbMarkers(get_suburb_response);
+        addSuburbMarkers(suburbs);
         // For a suburb search, frame all matching suburbs (zoomed out) so they show as teal and
         // the user can click one to drill in — instead of the property fit-bounds done below.
         if (frame_suburb_overview) {
-          _fit_to_suburb_matches(get_suburb_response);
+          _fit_to_suburb_matches(suburbs);
         }
       }
-
     }, 0);
-    
+
 
     if (reset == 3) {
       clearMarkers();
@@ -5503,6 +5536,13 @@ async function _send_mail_property(property_selected) {
 
     is_getting_total_on_demand = true;
     total_count_failed = false;
+
+    // The suburb aggregate of the last search already carries the total.
+    if (typeof suburb_total === 'number') {
+      objects_total_on_demand = suburb_total;
+      is_getting_total_on_demand = false;
+      return;
+    }
 
     // Create a body clone with count parameter
     let clone_body = {};
@@ -9206,7 +9246,7 @@ async function _send_mail_property(property_selected) {
             </div>
           {:else}
             <div class="padding-bottom">
-              {#each Array.from({ length: show_list && ! use_listview ? 8 : 3 }, (_, i) => i + 1) as item}
+              {#each Array.from({ length: show_list && ! use_listview ? 14 : 3 }, (_, i) => i + 1) as item}
                 <div class="padding-bottom">
                   <div class="flex container-thin property-container temp-container">
                     <!-- svelte-ignore a11y-missing-attribute -->

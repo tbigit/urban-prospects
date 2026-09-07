@@ -473,6 +473,34 @@ Uncached `/q/{lga_name,suburbname,zone}/search` calls used to scan the 47GB
   (`/var/www/html/{q,q2,p,p2}`). The DB live/standby swap already lives in `api.js`
   (`standby` file, `/standby/on|off`).
 
+## App search: v2 aggregate, no count scans, Mapbox clusters (2026-09-08)
+
+A search used to be three scans of `up_property_d_3` (page, `count(*)`, `get_suburb`), and the
+suburb overlay was skipped for slider-only searches, so a state-wide result showed nothing to
+click. Now:
+
+- `deploy/api/patch_api_v2.py` patches `api.js` on the API host (`upapi`,
+  `/srv/users/upapi/apps/api/api.js`; copy it over, back up, run it, `node --check`, `pm2
+  restart api`). It adds `requireSession` (reads the site's `up_session` cookie, checks
+  `sessions`/`users` in the same Postgres, 60s in-memory cache) and the routes
+  `/v2/app/me`, `/v2/app/properties` (page, same filters) and `/v2/app/properties/suburbs`
+  (one `GROUP BY suburbname` scan: `{suburbname, n, geom}` with a real centroid; memcached 10
+  min per body). `/v2/properties` **without** `/app` is the public bearer-key Planning Data
+  API; leave it alone. When every caller is on `/v2/app/*`, the unauthenticated v1 routes can go.
+- nginx: `location /q/v2/` forwards the Cookie header (v1 `/q/` still strips it). Vite dev
+  proxies `/q/v2` straight to `upapi.imtg.com.au` with the cookie; dev sessions live in the
+  same DB so they verify.
+- `routes/app/+page.svelte`: `_api_post()` tries the v2 path and falls back to v1 on 404, so the
+  app works before and after the API patch. The per-search `count(*)` and the "unbounded
+  count" on empty bounded results are gone; the total is the sum of the aggregate's `n`
+  (`suburb_total`), which also answers the Total Results button instantly. The aggregate
+  is fetched on fresh searches only (reset 1/0), never on bounded map re-searches.
+- Results source is a Mapbox cluster source (`clusterRadius` 48, `clusterMaxZoom` 16) with a
+  `suburb` cluster property that reduces to the suburb name while every point shares it,
+  else `MIXED`. Cluster labels show "SUBURB\n n" for single-suburb clusters of 10+ below
+  zoom 15, otherwise the count; clicking a cluster eases to its expansion zoom. Teal suburb
+  circles (zoomed out) now carry "NAME · n".
+
 ## Dev server note
 
 `vite.config.ts` ignores `build/**` and `.svelte-kit/output/**` in the file watcher. Without

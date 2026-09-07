@@ -58,6 +58,17 @@ export default defineConfig({
 		// blank for a minute waiting on /q/fav, /q/usersearch, /q/template. Nothing in
 		// the API needs that session, so strip the cookie in both directions.
 		proxy: {
+			// v2 is session-authenticated: go straight to the API host with the cookie kept.
+			// Local dev sessions live in the same Postgres the API checks, so they verify.
+			'/q/v2': {
+				target: 'https://upapi.imtg.com.au',
+				changeOrigin: true,
+				secure: true,
+				rewrite: (path) => path.replace(/^\/q\/v2/, '/v2'),
+				configure(proxy) {
+					proxy.on('proxyRes', (proxyRes) => { delete proxyRes.headers['set-cookie']; });
+				}
+			},
 			'/q': {
 				target: 'https://www.urbanprospects.com.au',
 				changeOrigin: true,

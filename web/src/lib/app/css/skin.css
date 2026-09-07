@@ -435,7 +435,7 @@
 .up-app .app.mapview .listing-container .search-result-parent-container {
   display: flex !important; flex-direction: column;
   position: fixed; top: 1em; right: 1em; bottom: 1em; z-index: 4;
-  width: 34rem; max-width: calc(100vw - 2em);
+  width: 38rem; max-width: calc(100vw - 2em);
   padding: 0 !important; margin: 0 !important;
   border-radius: .75rem; overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
@@ -457,11 +457,22 @@
 .up-app .list-panel-close { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent); color: var(--color-neutral-300); }
 .up-app .list-panel-close:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
 .up-app .list-panel-close i { font-size: 14px; line-height: 1; }
-/* cards in the panel: thumbnail column, the details take the rest */
-.up-app .app.mapview .search-result-container .property-container > .one-third.aspect-ratio-16x9 { width: 9rem !important; max-width: 9rem !important; flex: 0 0 9rem !important; }
-.up-app .app.mapview .search-result-container .property-container > .two-third { width: auto !important; max-width: none !important; flex: 1 1 0 !important; min-width: 0; padding-left: .75rem !important; padding-right: 0 !important; }
+/* cards in the panel: thumbnail column stretched to the card height, the details take the rest */
+.up-app .app.mapview .search-result-container .property-container { display: flex !important; flex-wrap: nowrap !important; align-items: stretch; padding: .5rem !important; border-radius: .6rem; background: color-mix(in srgb, var(--fg) 4%, transparent); }
+.up-app .app.mapview .search-result-container .property-container > .one-third.aspect-ratio-16x9 { position: relative; width: 10rem !important; max-width: 10rem !important; flex: 0 0 10rem !important; aspect-ratio: auto !important; align-self: stretch; overflow: hidden; }
+.up-app .app.mapview .search-result-container .property-container > .one-third.aspect-ratio-16x9 > a { position: absolute; inset: 0; display: block; }
+.up-app .app.mapview .search-result-container .property-container > .one-third.aspect-ratio-16x9 img { position: absolute; inset: 0; aspect-ratio: auto !important; width: 100% !important; height: 100% !important; object-fit: cover; display: block; }
+.up-app .app.mapview .search-result-container .property-container > .two-third { width: auto !important; max-width: none !important; flex: 1 1 0 !important; min-width: 0; padding: 0 0 0 .75rem !important; }
+.up-app .app.mapview .search-result-container .property-container > .two-third > .flex > .three-quarter { padding-top: 0 !important; }
+.up-app .app.mapview .search-result-container .property-container h5 { font-size: .8rem !important; line-height: 1.25em !important; margin: 0 !important; }
+/* spec grid: smaller type, tighter gap under the title, even rows */
+.up-app .app.mapview .search-result-container .property-container .span-info { padding-top: .35rem !important; }
+.up-app .app.mapview .search-result-container .property-container .span-info:first-of-type { padding-top: .35rem !important; }
+.up-app .app.mapview .search-result-container .property-container .span-info,
+.up-app .app.mapview .search-result-container .property-container .span-info h4 span { font-size: .68rem !important; line-height: 1.3em !important; }
+.up-app .app.mapview .search-result-container .property-container .span-info > .one-quarter { padding-right: .4rem; }
+.up-app .app.mapview .search-result-container .property-container .span-label { font-size: .48rem !important; line-height: 1.1em !important; margin-bottom: .12rem; letter-spacing: .04em; }
 .up-app .app.mapview .search-result-container .padding-bottom:has(> .property-container) { padding-bottom: .5rem !important; }
-.up-app .app.mapview .search-result-container .property-container { padding: .5rem !important; border-radius: .6rem; background: color-mix(in srgb, var(--fg) 4%, transparent); }
 @media (max-width: 60em) {
   .up-app .app.mapview .listing-container .search-result-parent-container { top: auto; left: .5em; right: .5em; bottom: .5em; width: auto; max-width: none; height: 60vh; transform: translateY(calc(100% + 1em)); }
 }
@@ -489,7 +500,8 @@
    token instead (dark: near-black purple) with a quiet camera glyph on top. */
 .up-app .app { --color-dark-overlay-lightest: var(--up-c-f1e9f7) !important; }
 .up-app .search-result-container .aspect-ratio-16x9.dark-overlay-lightest { background: color-mix(in srgb, var(--fg) 6%, transparent); }
-.up-app .search-result-container .aspect-ratio-16x9:has(img[src*="gif"])::after { color: var(--color-neutral-500) !important; }
+.up-app .search-result-container .aspect-ratio-16x9:has(img[src*="gif"])::after { display: none !important; content: none !important; }
+.up-app .search-result-container .aspect-ratio-16x9:has(img[src*="gif"]) img { opacity: 0; }
 
 /* ---- property panel: buttons and fields share the search panel's language ------
    Outline buttons: neutral hairline, .5rem radius, 13px/500, 2.4rem tall (the
