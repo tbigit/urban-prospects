@@ -373,7 +373,7 @@
 
 /* panel title row is 24px tall in both views (map view has the minimise button in that row,
    list view does not) so the Map/List toggle sits at the same height when switching */
-.up-app .search-panel-container h3.uppercases { line-height: 24px !important; min-height: 24px; margin-top: 4px !important; }
+.up-app .search-panel-container h3.uppercases { line-height: 24px !important; min-height: 24px; margin-top: 4px !important; margin-bottom: 4px !important; }
 
 /* Clear All / PDF / Save + Total Results row: wraps on narrow panels instead of overflowing */
 .up-app .map-search-btn-container > .flex { flex-wrap: wrap; gap: .25rem 0; }
