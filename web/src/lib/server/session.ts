@@ -10,6 +10,8 @@ const SESSION_DAYS = 30;
 
 export interface SessionUser {
 	id: number;
+	/** wp_users.ID for members migrated from WordPress; the app's per-user tables are keyed by it. */
+	wp_user_id: number | null;
 	email: string;
 	user_login: string;
 	display_name: string | null;
@@ -61,7 +63,7 @@ export async function loadSession(cookies: Cookies): Promise<{ user: SessionUser
 	if (!token) return null;
 	const idHash = sha256(token);
 	const rows = await query<SessionUser & { last_seen_at: Date }>(
-		`SELECT u.id, u.email, u.user_login, u.display_name, u.first_name, u.last_name, u.role, u.status,
+		`SELECT u.id, u.wp_user_id, u.email, u.user_login, u.display_name, u.first_name, u.last_name, u.role, u.status,
 		        u.stripe_customer_id, s.last_seen_at,
 		        us.plan, string_to_array(NULLIF(us.user_region, ''), ',') AS user_regions
 		   FROM sessions s

@@ -6,15 +6,19 @@ export const prerender = false;
 
 // Profile for the app at /app. Mirrors the query-string contract the WordPress
 // embed used (id, email, plan, first_name, last_name, regions) so upapp needs
-// one fetch, not a rewrite. The app's own tables are keyed by email, so `id`
-// is the email too — that is what WP passed.
+// one fetch, not a rewrite. The app's tables user_fav, user_search and
+// user_template are keyed by the WordPress numeric user id (WP passed
+// wp_users.ID as `id`), so members keep their favourites, saved searches and
+// mail templates only if we send the same number. Accounts that never existed
+// in WordPress have no wp_user_id; they get their email, which cannot collide
+// with a WordPress number. (user_subscriptions is keyed by email; unrelated.)
 export const GET: RequestHandler = async ({ locals }) => {
 	const u = locals.user;
 	if (!u) return json({ logged_in: false }, { status: 401, headers: { 'Cache-Control': 'no-store' } });
 	return json(
 		{
 			logged_in: true,
-			id: u.email,
+			id: u.wp_user_id != null ? String(u.wp_user_id) : u.email,
 			email: u.email,
 			plan: u.plan ?? '',
 			first_name: u.first_name ?? '',

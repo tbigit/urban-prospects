@@ -262,7 +262,11 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
 
 - PostgreSQL 14, extensions `postgis`, `pg_trgm`, `plpgsql`. Mostly spatial/planning layers; the
   member-facing tables are `user_subscriptions`, `user_api_key`, `user_fav`, `user_search`,
-  `user_template` — **all keyed by email** (`user_id` is the email string, not a numeric id).
+  `user_template`. `user_subscriptions.user_id` is the **email**; but `user_fav`, `user_search`
+  and `user_template` are keyed by the **WordPress numeric user id** as a string (`'55'` =
+  Stuart), because the WP embed passed `wp_users.ID` as `id`. `/auth/me` therefore returns
+  `users.wp_user_id` as `id` (email for accounts with no WordPress past). Corrected 2026-09-07
+  after favourites came back empty for every migrated member.
 - `user_subscriptions`: `payment_customer_id`/`payment_subscription_id`/`payment_price_id` are the
   Stripe `cus_`/`sub_`/`price_` ids; `plan` defaults `'Demo'`; `user_region` is a comma-joined list.
   No `plans` table exists yet (UP-026).
