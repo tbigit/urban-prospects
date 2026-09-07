@@ -4,6 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { renewalDue, renewalBasis, hasAccess, regionsOf, intervalOf, startRenewalCheckout, stripeConfigured, type DueSub } from '$lib/server/renewal';
 import { REGION_NAMES } from '$lib/server/stripe';
 import { DISPLAY_PRICES } from '$lib/server/stripe';
+import { seatsNeeded } from '$lib/server/billing';
 
 export const prerender = false;
 
@@ -30,7 +31,7 @@ export const actions: Actions = {
 		const email = locals.user.email;
 		if (!(await renewalDue(email)) && (await hasAccess(email))) redirect(303, '/account/');
 		try {
-			const checkoutUrl = await startRenewalCheckout(locals.user, await basisFor(email), env.PUBLIC_ORIGIN || url.origin);
+			const checkoutUrl = await startRenewalCheckout(locals.user, await basisFor(email), env.PUBLIC_ORIGIN || url.origin, await seatsNeeded(locals.user.id));
 			redirect(303, checkoutUrl);
 		} catch (e) {
 			if ((e as { status?: number }).status === 303) throw e;

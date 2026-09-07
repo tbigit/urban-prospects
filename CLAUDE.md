@@ -423,6 +423,33 @@ Decided 2026-09-06: members are never emailed or linked. `web/src/lib/server/ren
 - First live case: jai@definedplumbingcivil.com.au, monthly, Pin renews 9 Sep 2026 — bump his
   `current_period_end` to 9 Oct after confirming that charge; he becomes the first Stripe renewal.
 
+## Member self-service billing and child accounts (2026-09-07)
+
+`web/src/lib/server/billing.ts` backs the /account/ Billing and Users sections (actions in
+`account/+page.server.ts`: `cancel`, `resume`, `changePlan`, `addChild`, `removeChild`,
+`resendInvite`). Decided 2026-09-07: **the old Pin/WooCommerce billing is not self-managed** —
+any upgrade, downgrade, seat change or re-card on an imported row goes through Stripe Checkout
+(`startRenewalCheckout` with the chosen regions/cycle/seats; `/renew/success/` retires the
+imported row as before). Only live Stripe rows are changed in place:
+
+- **Change plan**: `updateSubscriptionPlan` swaps the single line item to
+  `STRIPE_PRICE_REGION_{N}{M|A}` with quantity = seats. Dearer per month ⇒
+  `always_invoice` (prorated difference charged now, `error_if_incomplete`); cheaper ⇒
+  `create_prorations` (credit on the next invoice). Metadata `regions/users/interval/user_id`
+  is rewritten so a webhook mirroring metadata stays consistent. The row's
+  `user_region/billing_cycle/plan/payment_price(_id)/seats/current_period_end` follow.
+- **Cancel** = `cancel_at_period_end=true` (access to period end), **Keep** = resume.
+  Stripe is called first; the row changes only on success. No "cancel now" for members.
+- **Child accounts** (migration `009_child_accounts_seats.sql`): `users.parent_user_id`
+  and `user_subscriptions.seats`. Prices are per user, so seats = Stripe item quantity =
+  1 + active children (`syncSeats`, called after add/remove; an add that Stripe refuses
+  deletes the child again). A child is a normal `users` row (own password, own favourites
+  keyed by its email) whose `billing_email` (new `SessionUser` field, parent's email) drives
+  plan, regions and `/auth/me.has_access`. Removing sets `status='inactive'`,
+  clears the parent and ends sessions. Invites reuse `password_reset_tokens` (7-day link,
+  `issueResetToken` in auth.ts). Children see a read-only Billing section and no Users
+  section. `MAX_SEATS` = 20. Adding children needs a live Stripe row.
+
 ## API list lookups: materialised views (2026-09-07)
 
 Uncached `/q/{lga_name,suburbname,zone}/search` calls used to scan the 47GB

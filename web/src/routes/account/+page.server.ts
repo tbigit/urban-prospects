@@ -4,10 +4,9 @@ import { changePassword, passwordProblem } from '$lib/server/auth';
 import { renewalDue } from '$lib/server/renewal';
 import { createApiKey, deleteApiKey, listApiKeys } from '$lib/server/api-keys';
 import { query } from '$lib/server/db';
-import { createBillingPortalSession, setDefaultPaymentMethod, stripeConfigured, stripePublishableKey } from '$lib/server/stripe';
-
-interface SubRow { plan: string | null; billing_cycle: string | null; payment_price: string | null; current_period_end: Date | null;
-	subscription_status: string | null; payment_customer_id: string | null; payment_subscription_id: string | null; cancel_at_period_end: boolean | null; }
+import { createBillingPortalSession, setDefaultPaymentMethod, stripeConfigured, stripePublishableKey, REGION_NAMES, DISPLAY_PRICES } from '$lib/server/stripe';
+import { env } from '$env/dynamic/private';
+import { MAX_SEATS, addChild, cancelMemberSub, changeMemberPlan, intervalOfSub, isLive, listChildren, memberSub, onStripe, parsePlanForm, regionsOfSub, removeChild, resendChildInvite, resumeMemberSub, seatsNeeded, syncSeats } from '$lib/server/billing';
 
 /** The prospect-email template the app merges with Handlebars (user_template,
  *  unique on user_id = the WordPress numeric id, or the email for newer accounts). */
@@ -30,13 +29,17 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	// Favourites are keyed by the WordPress numeric id (what the app sends as
 	// `id`); accounts with no WordPress past are keyed by email.
 	const favId = appUserId(locals.user);
-	const [[fav], [sub], [tpl]] = await Promise.all([
+	const isChild = locals.user.parent_user_id != null;
+	const [[fav], sub, [tpl], children, seatsUsed] = await Promise.all([
 		query<{ n: number }>(`SELECT count(*)::int AS n FROM user_fav WHERE user_id = $1`, [favId]),
-		query<SubRow>(`SELECT plan, billing_cycle, payment_price, current_period_end, subscription_status, payment_customer_id, payment_subscription_id, cancel_at_period_end
-		                 FROM user_subscriptions WHERE lower(user_email) = lower($1)
-		                ORDER BY (subscription_status IN ('Active','Trialing')) DESC, id DESC LIMIT 1`, [locals.user.email]),
-		query<TemplateRow>(`SELECT template, ${TEMPLATE_FIELDS.join(', ')} FROM user_template WHERE user_id = $1`, [favId])
+		memberSub(locals.user.billing_email),
+		query<TemplateRow>(`SELECT template, ${TEMPLATE_FIELDS.join(', ')} FROM user_template WHERE user_id = $1`, [favId]),
+		isChild ? Promise.resolve([]) : listChildren(locals.user.id),
+		isChild ? Promise.resolve(1) : seatsNeeded(locals.user.id)
 	]);
+	const parent = isChild
+		? (await query<{ email: string; first_name: string | null; last_name: string | null }>(`SELECT email, first_name, last_name FROM users WHERE id=$1`, [locals.user.parent_user_id]))[0] ?? null
+		: null;
 	const template: TemplateRow = {
 		template: tpl?.template || DEFAULT_TEMPLATE,
 		from_first_name: tpl?.from_first_name || locals.user.first_name || '',
@@ -53,13 +56,78 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		renewalDue: due ? due.current_period_end.toISOString() : null,
 		apiKeys: keys.map((k) => ({ ...k, created_on: k.created_on.toISOString() })),
 		favCount: fav?.n ?? 0,
-		sub: sub ? { ...sub, current_period_end: sub.current_period_end?.toISOString() ?? null } : null,
+		sub: sub ? { ...sub, current_period_end: sub.current_period_end?.toISOString() ?? null, live: isLive(sub), stripe: onStripe(sub) } : null,
 		template,
-		billing: { stripe: stripeConfigured(), publishableKey: stripePublishableKey(), onStripe: Boolean(sub?.payment_customer_id || locals.user.stripe_customer_id) }
+		billing: { stripe: stripeConfigured(), publishableKey: stripePublishableKey(), onStripe: Boolean(sub?.payment_customer_id || locals.user.stripe_customer_id) },
+		plan: { regions: [...REGION_NAMES], current: regionsOfSub(sub), interval: intervalOfSub(sub), prices: DISPLAY_PRICES, maxSeats: MAX_SEATS, seats: sub?.seats ?? 1, seatsUsed },
+		children: children.map((c) => ({ ...c, last_login_at: c.last_login_at?.toISOString() ?? null, created_at: c.created_at.toISOString() })),
+		parent
 	};
 };
 
+const notChild = (u: { parent_user_id: number | null }) => u.parent_user_id == null;
+const bill = (e: unknown, what: string) => { console.error(`[account ${what}]`, e); return fail(502, { billingError: `${(e as Error).message}` }); };
+
 export const actions: Actions = {
+	cancel: async ({ locals }) => {
+		if (!locals.user) redirect(303, '/login/');
+		if (!notChild(locals.user)) return fail(403, { billingError: 'Only the account holder can cancel the subscription.' });
+		try { await cancelMemberSub(locals.user.email); } catch (e) { return bill(e, 'cancel'); }
+		return { cancelled: true };
+	},
+	resume: async ({ locals }) => {
+		if (!locals.user) redirect(303, '/login/');
+		if (!notChild(locals.user)) return fail(403, { billingError: 'Only the account holder can change the subscription.' });
+		try { await resumeMemberSub(locals.user.email); } catch (e) { return bill(e, 'resume'); }
+		return { resumed: true };
+	},
+	changePlan: async ({ request, locals, url }) => {
+		if (!locals.user) redirect(303, '/login/');
+		if (!notChild(locals.user)) return fail(403, { billingError: 'Only the account holder can change the plan.' });
+		const plan = parsePlanForm(await request.formData());
+		if (typeof plan === 'string') return fail(400, { billingError: plan });
+		const needed = await seatsNeeded(locals.user.id);
+		if (plan.seats < needed) return fail(400, { billingError: `You have ${needed - 1} additional user${needed === 2 ? '' : 's'} on the account; remove some under Users before reducing seats below ${needed}.` });
+		let r: Awaited<ReturnType<typeof changeMemberPlan>>;
+		try { r = await changeMemberPlan(locals.user, plan, env.PUBLIC_ORIGIN || url.origin); } catch (e) { return bill(e, 'changePlan'); }
+		if (r.kind === 'checkout') redirect(303, r.url);
+		return { planChanged: true };
+	},
+	addChild: async ({ request, locals }) => {
+		if (!locals.user) redirect(303, '/login/');
+		if (!notChild(locals.user)) return fail(403, { childError: 'Additional users can only be added by the account holder.' });
+		const form = await request.formData();
+		const c = { email: String(form.get('email') ?? ''), first_name: String(form.get('first_name') ?? '').trim().slice(0, 100), last_name: String(form.get('last_name') ?? '').trim().slice(0, 100) };
+		const sub = await memberSub(locals.user.email);
+		if (!isLive(sub)) return fail(400, { childError: 'Start or renew your subscription before adding users.' });
+		if (!onStripe(sub)) return fail(400, { childError: 'Additional users are billed through Stripe. Move your subscription to Stripe under Billing first.' });
+		if ((await seatsNeeded(locals.user.id)) >= MAX_SEATS) return fail(400, { childError: `An account can have at most ${MAX_SEATS} users.` });
+		let childId: number;
+		try { childId = await addChild(locals.user, c); } catch (e) { return fail(400, { childError: (e as Error).message }); }
+		try { await syncSeats(locals.user); }
+		catch (e) {
+			// Stripe would not take the extra seat (card declined, plan not configured): undo the user.
+			console.error('[account addChild seats]', e);
+			await query(`DELETE FROM users WHERE id=$1 AND parent_user_id=$2`, [childId, locals.user.id]);
+			return fail(502, { childError: `Stripe could not add the seat: ${(e as Error).message}. The user was not added.` });
+		}
+		return { childAdded: c.email.trim().toLowerCase() };
+	},
+	removeChild: async ({ request, locals }) => {
+		if (!locals.user) redirect(303, '/login/');
+		if (!notChild(locals.user)) return fail(403, { childError: 'Only the account holder can remove users.' });
+		const id = Number((await request.formData()).get('id'));
+		try { await removeChild(locals.user.id, id); } catch (e) { return fail(404, { childError: (e as Error).message }); }
+		try { await syncSeats(locals.user); } catch (e) { console.error('[account removeChild seats]', e); return fail(502, { childError: `The user was removed but Stripe did not update the seat count: ${(e as Error).message}. Email info@urbanprospects.com.au.` }); }
+		return { childRemoved: true };
+	},
+	resendInvite: async ({ request, locals }) => {
+		if (!locals.user) redirect(303, '/login/');
+		if (!notChild(locals.user)) return fail(403, { childError: 'Only the account holder can do that.' });
+		const id = Number((await request.formData()).get('id'));
+		try { await resendChildInvite(locals.user, id); } catch (e) { return fail(404, { childError: (e as Error).message }); }
+		return { inviteSent: true };
+	},
 	billing: async ({ locals, url }) => {
 		if (!locals.user) redirect(303, '/login/');
 		const [sub] = await query<{ payment_customer_id: string | null }>(

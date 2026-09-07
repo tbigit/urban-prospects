@@ -5,11 +5,12 @@
 	let { data, form } = $props();
 	const u = $derived(data.user);
 
-	type Section = 'overview' | 'keys' | 'billing' | 'template' | 'password';
+	type Section = 'overview' | 'keys' | 'billing' | 'users' | 'template' | 'password';
 	const SECTIONS: { key: Section; label: string; hash: string; title: string }[] = [
 		{ key: 'overview', label: 'Overview', hash: 'overview', title: 'Overview' },
 		{ key: 'keys', label: 'API keys', hash: 'api-keys', title: 'API keys' },
 		{ key: 'billing', label: 'Billing', hash: 'billing', title: 'Billing' },
+		...(data.parent ? [] : [{ key: 'users' as Section, label: 'Users', hash: 'users', title: 'Additional users' }]),
 		{ key: 'template', label: 'Email template', hash: 'email-template', title: 'Email template' },
 		{ key: 'password', label: 'Password', hash: 'password', title: 'Change password' }
 	];
@@ -27,7 +28,8 @@
 	$effect(() => {
 		if (form?.keyCreated || form?.keyDeleted || form?.keyError) open = 'keys';
 		if (form?.changed || form?.error) open = 'password';
-		if (form?.billingError || form?.cardSaved) open = 'billing';
+		if (form?.billingError || form?.cardSaved || form?.cancelled || form?.resumed || form?.planChanged) open = 'billing';
+		if (form?.childError || form?.childAdded || form?.childRemoved || form?.inviteSent) open = 'users';
 		if (form?.templateSaved || form?.templateError) open = 'template';
 	});
 
@@ -152,6 +154,38 @@
 		{ label: 'API keys', value: String(data.apiKeys.length), note: extensions.length ? `${extensions.length} extensions` : 'Planning Data APIs' }
 	]);
 	const current = $derived(SECTIONS.find((s) => s.key === open)!);
+
+	// ---- Billing: plan editor (regions × cycle × seats). Prices are per user; the
+	// server re-derives everything from the form, this only drives the preview.
+	let planOpen = $state(false);
+	let pickRegions = $state<string[]>([]);
+	let pickInterval = $state<'month' | 'year'>('year');
+	let pickSeats = $state(1);
+	function openPlan() {
+		pickRegions = data.plan.current.length ? [...data.plan.current] : [data.plan.regions[0]];
+		pickInterval = data.plan.interval;
+		pickSeats = Math.max(data.plan.seats, data.plan.seatsUsed);
+		planOpen = true;
+	}
+	function toggleRegion(r: string) {
+		pickRegions = pickRegions.includes(r) ? pickRegions.filter((x) => x !== r) : [...pickRegions, r];
+	}
+	const unit = $derived(data.plan.prices[pickRegions.length]?.[pickInterval] ?? null);
+	const total = $derived(unit != null ? unit * pickSeats : null);
+	const currentUnit = $derived(data.plan.prices[data.plan.current.length]?.[data.plan.interval] ?? null);
+	const perMonth = (p: number | null, i: 'month' | 'year') => (p == null ? null : i === 'month' ? p : p / 12);
+	const dearer = $derived(
+		total != null && currentUnit != null && perMonth(total, pickInterval)! > perMonth(currentUnit * data.plan.seats, data.plan.interval)!
+	);
+	const samePlan = $derived(
+		pickInterval === data.plan.interval && pickSeats === data.plan.seats &&
+		pickRegions.length === data.plan.current.length && data.plan.current.every((r) => pickRegions.includes(r))
+	);
+	const planSummary = $derived(
+		data.plan.current.length ? `${data.plan.current.length} region${data.plan.current.length === 1 ? '' : 's'}${data.plan.seats > 1 ? ` · ${data.plan.seats} users` : ''}` : (sub?.plan ?? 'No plan')
+	);
+	let cancelOpen = $state(false);
+	let childBusy = $state(false);
 </script>
 
 <div class="acct-stage">
@@ -185,6 +219,7 @@
 						{#if s.key === 'overview'}{u.plan ?? 'No plan'}
 						{:else if s.key === 'keys'}{data.apiKeys.length}
 						{:else if s.key === 'billing'}{cycle ?? '—'}
+						{:else if s.key === 'users'}{data.children.length}
 						{:else if s.key === 'template'}{data.template.from_company_name || 'Prospect email'}
 						{:else}••••••{/if}
 					</span>
@@ -277,11 +312,75 @@
 			{:else if open === 'billing'}
 				{#if form?.billingError}<div class="acct-note bad" role="alert">{form.billingError}</div>{/if}
 				{#if form?.cardSaved}<div class="acct-note ok">Card updated. Your next renewal will charge the new card.</div>{/if}
+				{#if form?.cancelled}<div class="acct-note ok">Your subscription will not renew. You keep full access until {sub?.current_period_end ? fmtDay(sub.current_period_end, 'long') : 'the end of the current period'}.</div>{/if}
+				{#if form?.resumed}<div class="acct-note ok">Your subscription renews again as normal.</div>{/if}
+				{#if form?.planChanged}<div class="acct-note ok">Plan updated. Stripe has prorated the change against your current period.</div>{/if}
+				{#if data.parent}
+					<div class="acct-tiles three">
+						<div class="acct-tile"><p class="spec">Plan</p><p class="v">{u.plan ?? 'None'}</p><p class="n">{sub?.subscription_status ?? 'no subscription'}</p></div>
+						<div class="acct-tile"><p class="spec">Regions</p><p class="v">{u.user_regions.length}</p><p class="n">{u.user_regions.join(', ') || 'none'}</p></div>
+						<div class="acct-tile"><p class="spec">Plan ends</p><p class="v">{sub?.current_period_end ? fmtDay(sub.current_period_end) : '—'}</p><p class="n">{sub?.cancel_at_period_end ? 'does not renew' : 'renews automatically'}</p></div>
+					</div>
+					<div class="acct-field" style="margin-top:1.25rem">
+						<span class="acct-label">Account holder</span>
+						<p class="acct-value">{[data.parent.first_name, data.parent.last_name].filter(Boolean).join(' ') || data.parent.email}<small>Your access is part of {data.parent.email}'s subscription. Billing, regions and cancellation are managed from that account.</small></p>
+					</div>
+				{:else}
 				<div class="acct-tiles three">
-					<div class="acct-tile"><p class="spec">Plan</p><p class="v">{sub?.plan ?? u.plan ?? 'None'}</p><p class="n">{sub?.subscription_status ?? 'no subscription'}</p></div>
-					<div class="acct-tile"><p class="spec">Billing cycle</p><p class="v">{cycle ?? '—'}</p><p class="n">{money(sub?.payment_price ?? null) ? `${money(sub?.payment_price ?? null)} per ${cycle === 'Monthly' ? 'month' : 'year'}` : 'price on file'}</p></div>
-					<div class="acct-tile"><p class="spec">Next payment</p><p class="v">{sub?.current_period_end ? fmtDay(sub.current_period_end) : '—'}</p><p class="n">{sub?.cancel_at_period_end ? 'cancels at period end' : sub?.current_period_end ? 'end of current period' : 'nothing scheduled'}</p></div>
+					<div class="acct-tile"><p class="spec">Plan</p><p class="v">{planSummary}</p><p class="n">{sub?.subscription_status ?? 'no subscription'}{sub?.cancel_at_period_end ? ' · ends at period end' : ''}</p></div>
+					<div class="acct-tile"><p class="spec">Billing cycle</p><p class="v">{cycle ?? '—'}</p><p class="n">{money(sub?.payment_price ?? null) ? `${money(sub?.payment_price ?? null)}${data.plan.seats > 1 ? ' per user' : ''} per ${cycle === 'Monthly' ? 'month' : 'year'}` : 'price on file'}</p></div>
+					<div class="acct-tile"><p class="spec">{sub?.cancel_at_period_end ? 'Access until' : 'Next payment'}</p><p class="v">{sub?.current_period_end ? fmtDay(sub.current_period_end) : '—'}</p><p class="n">{sub?.cancel_at_period_end ? 'cancels at period end' : sub?.current_period_end ? 'end of current period' : 'nothing scheduled'}</p></div>
 				</div>
+
+				<div class="acct-field" style="margin-top:1.25rem">
+					<span class="acct-label">Plan</span>
+					{#if data.plan.current.length}
+						<div class="acct-chips" style="margin-bottom:.5rem">{#each data.plan.regions as r (r)}<span class="acct-chip" class:on={data.plan.current.includes(r)}>{r}</span>{/each}</div>
+					{/if}
+					{#if planOpen}
+						<form method="POST" action="?/changePlan" class="acct-plan" use:enhance={() => { return async ({ update }) => { planOpen = false; await update(); }; }}>
+							<span class="acct-label">Regions</span>
+							<div class="acct-chips" role="group" aria-label="Regions">
+								{#each data.plan.regions as r (r)}
+									<label class="acct-chip pick" class:on={pickRegions.includes(r)}>
+										<input type="checkbox" name="regions" value={r} checked={pickRegions.includes(r)} onchange={() => toggleRegion(r)} /> {r}
+									</label>
+								{/each}
+							</div>
+							<div class="acct-grid" style="margin-top:.9rem">
+								<div>
+									<span class="acct-label">Billing cycle</span>
+									<div class="acct-seg" role="radiogroup" aria-label="Billing cycle">
+										<label class:on={pickInterval === 'year'}><input type="radio" name="interval" value="year" bind:group={pickInterval} /> Yearly</label>
+										<label class:on={pickInterval === 'month'}><input type="radio" name="interval" value="month" bind:group={pickInterval} /> Monthly</label>
+									</div>
+								</div>
+								<div>
+									<label class="acct-label" for="seats">Users (you + additional)</label>
+									<input id="seats" class="acct-input" type="number" name="seats" min={data.plan.seatsUsed} max={data.plan.maxSeats} bind:value={pickSeats} />
+								</div>
+							</div>
+							<p class="acct-value" style="margin-top:.9rem">
+								{#if total != null}
+									<strong>${total.toLocaleString('en-AU')}</strong> per {pickInterval} · {pickRegions.length} region{pickRegions.length === 1 ? '' : 's'}{pickSeats > 1 ? ` × ${pickSeats} users at $${unit!.toLocaleString('en-AU')}` : ''}
+									<small>{#if !sub?.stripe || !sub?.live}You'll confirm the card on Stripe's checkout page; the new plan starts today.{:else if samePlan}This is your current plan.{:else if dearer}Charged today for the rest of the current period, then {pickInterval === 'month' ? 'monthly' : 'yearly'} at the new price.{:else}Applies now; the unused part of what you've paid is credited against your next invoice.{/if}</small>
+								{:else}
+									<small>Pick at least one region.</small>
+								{/if}
+							</p>
+							<div class="acct-actions" style="margin-top:1rem">
+								<button type="submit" class="acct-btn" disabled={!data.billing.stripe || total == null || samePlan}>{sub?.stripe && sub?.live ? 'Update plan' : 'Continue to checkout'}</button>
+								<button type="button" class="acct-btn alt" onclick={() => (planOpen = false)}>Cancel</button>
+							</div>
+						</form>
+					{:else}
+						<div class="acct-actions" style="margin-top:.5rem">
+							<button type="button" class="acct-btn" disabled={!data.billing.stripe} title={data.billing.stripe ? undefined : 'Stripe is not switched on yet'} onclick={openPlan}>{sub?.live ? 'Change regions or plan' : 'Subscribe'}</button>
+						</div>
+					{/if}
+					{#if !data.billing.stripe}<p class="acct-value" style="margin-top:.5rem"><small>Stripe billing is not switched on for this site yet. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your plan.</small></p>{/if}
+				</div>
+
 				<div class="acct-field" style="margin-top:1.25rem">
 					<span class="acct-label">Payment method</span>
 					{#if data.billing.onStripe}
@@ -304,11 +403,81 @@
 						{/if}
 						{#if !data.billing.stripe || !data.billing.publishableKey}<p class="acct-value" style="margin-top:.5rem"><small>Stripe billing is not switched on for this site yet. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your card.</small></p>{/if}
 					{:else if sub}
-						<p class="acct-value">Card on file with our previous billing provider.<small>To change the card, move your subscription to Stripe: you'll enter the new card once and it renews there from then on.</small></p>
-						<a href="{base}/renew/" class="acct-btn" style="margin-top:1rem">Update card and continue</a>
+						<p class="acct-value">Card on file with our previous billing provider.<small>Changing the card, regions, plan or users moves your subscription to Stripe: use "Change regions or plan" above, enter the card once, and it renews there from then on.</small></p>
 					{:else}
-						<p class="acct-value">No payment method on file.<small>Start a subscription to add one.</small></p>
-						<a href="{base}/renew/" class="acct-btn" style="margin-top:1rem">Subscribe</a>
+						<p class="acct-value">No payment method on file.<small>Subscribe above to add one.</small></p>
+					{/if}
+				</div>
+
+				{#if sub?.live && sub.stripe}
+					<div class="acct-field" style="margin-top:1.5rem">
+						<span class="acct-label">Cancel subscription</span>
+						{#if sub.cancel_at_period_end}
+							<p class="acct-value">Your subscription is set to end on {sub.current_period_end ? fmtDay(sub.current_period_end, 'long') : 'the period end'}.<small>Nothing more will be charged. Change your mind any time before then.</small></p>
+							<form method="POST" action="?/resume" use:enhance><button type="submit" class="acct-btn alt" style="margin-top:.75rem">Keep my subscription</button></form>
+						{:else if cancelOpen}
+							<p class="acct-value">End your subscription at the end of the current period?<small>You keep full access until {sub.current_period_end ? fmtDay(sub.current_period_end, 'long') : 'the period end'}. After that, searching still works but property details, favourites and reports are locked until you subscribe again.{#if data.children.length} Your {data.children.length} additional user{data.children.length === 1 ? '' : 's'} lose access at the same time.{/if}</small></p>
+							<div class="acct-actions" style="margin-top:.75rem">
+								<form method="POST" action="?/cancel" use:enhance={() => { return async ({ update }) => { cancelOpen = false; await update(); }; }}><button type="submit" class="acct-btn danger">Yes, cancel at period end</button></form>
+								<button type="button" class="acct-btn alt" onclick={() => (cancelOpen = false)}>Keep it</button>
+							</div>
+						{:else}
+							<p class="acct-value"><small>Stops the next renewal. Access continues until the end of what you've already paid for.</small></p>
+							<button type="button" class="acct-mini bad" style="margin-top:.5rem" onclick={() => (cancelOpen = true)}>Cancel subscription…</button>
+						{/if}
+					</div>
+				{/if}
+				{/if}
+
+			{:else if open === 'users'}
+				{#if form?.childError}<div class="acct-note bad" role="alert">{form.childError}</div>{/if}
+				{#if form?.childAdded}<div class="acct-note ok">{form.childAdded} has been added. They'll get an email with a link to choose their password.</div>{/if}
+				{#if form?.childRemoved}<div class="acct-note ok">User removed. Their access ended and your seat count has been updated.</div>{/if}
+				{#if form?.inviteSent}<div class="acct-note ok">Invitation sent again.</div>{/if}
+				<div class="acct-tiles three">
+					<div class="acct-tile"><p class="spec">Users</p><p class="v">{data.children.length + 1}</p><p class="n">you + {data.children.length} additional</p></div>
+					<div class="acct-tile"><p class="spec">Per user</p><p class="v">{currentUnit != null ? `$${currentUnit.toLocaleString('en-AU')}` : '—'}</p><p class="n">{currentUnit != null ? `per ${data.plan.interval} · ${data.plan.current.length} region${data.plan.current.length === 1 ? '' : 's'}` : 'no plan'}</p></div>
+					<div class="acct-tile"><p class="spec">Total</p><p class="v">{currentUnit != null ? `$${(currentUnit * (data.children.length + 1)).toLocaleString('en-AU')}` : '—'}</p><p class="n">{currentUnit != null ? `per ${data.plan.interval}` : 'no plan'}</p></div>
+				</div>
+				<p class="acct-value" style="margin-top:1rem"><small>Additional users log in with their own email and password and share your regions and plan. Each one is a seat on your subscription at the same per-user price, prorated from the day they're added.</small></p>
+
+				{#if data.children.length}
+					<table class="acct-table" style="margin-top:1rem">
+						<thead><tr><th>User</th><th>Status</th><th>Last login</th><th></th></tr></thead>
+						<tbody>
+							{#each data.children as c (c.id)}
+								<tr>
+									<td><span class="acct-value">{[c.first_name, c.last_name].filter(Boolean).join(' ') || c.email}<small>{c.email}</small></span></td>
+									<td class="muted">{c.last_login_at ? 'active' : 'invited'}</td>
+									<td class="muted">{c.last_login_at ? fmtDay(c.last_login_at) : `added ${fmtDay(c.created_at)}`}</td>
+									<td class="acts">
+										{#if !c.last_login_at}<form method="POST" action="?/resendInvite" use:enhance><input type="hidden" name="id" value={c.id} /><button type="submit" class="acct-mini muted">Resend invite</button></form>{/if}
+										<form method="POST" action="?/removeChild" use:enhance={({ cancel }) => { if (!confirm(`Remove ${c.email}? Their access ends immediately.`)) cancel(); return async ({ update }) => update(); }}><input type="hidden" name="id" value={c.id} /><button type="submit" class="acct-mini bad">Remove</button></form>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/if}
+
+				<div class="acct-field" style="margin-top:1.5rem">
+					<span class="acct-label">Add a user</span>
+					{#if !sub?.live}
+						<p class="acct-value"><small>Start or renew your subscription under Billing before adding users.</small></p>
+					{:else if !sub.stripe}
+						<p class="acct-value"><small>Additional users are billed through Stripe. Move your subscription to Stripe under Billing (Change regions or plan) first.</small></p>
+					{:else if data.children.length + 1 >= data.plan.maxSeats}
+						<p class="acct-value"><small>An account can have at most {data.plan.maxSeats} users. Email info@urbanprospects.com.au for more.</small></p>
+					{:else}
+						<form method="POST" action="?/addChild" class="acct-form wide" use:enhance={() => { childBusy = true; return async ({ update }) => { childBusy = false; await update(); }; }}>
+							<div class="acct-grid three">
+								<div><label class="acct-label" for="c-first">First name</label><input id="c-first" class="acct-input" name="first_name" maxlength="100" /></div>
+								<div><label class="acct-label" for="c-last">Last name</label><input id="c-last" class="acct-input" name="last_name" maxlength="100" /></div>
+								<div><label class="acct-label" for="c-email">Email</label><input id="c-email" class="acct-input" type="email" name="email" required /></div>
+							</div>
+							<p class="acct-value" style="margin-top:.75rem"><small>{currentUnit != null ? `Adds $${currentUnit.toLocaleString('en-AU')} per ${data.plan.interval} to your subscription, prorated for the current period and charged to your card now.` : ''}</small></p>
+							<div class="acct-actions" style="margin-top:.75rem"><button type="submit" class="acct-btn" disabled={childBusy || !data.billing.stripe}>{childBusy ? 'Adding…' : 'Add user'}</button></div>
+						</form>
 					{/if}
 				</div>
 

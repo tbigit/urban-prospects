@@ -46,6 +46,14 @@ export async function login(identifier: string, password: string): Promise<Login
 }
 
 // Always resolves without revealing whether the address exists.
+/** Mint a reset token for a user id; the caller sends the email. */
+export async function issueResetToken(userId: number, minutes = RESET_MINUTES) {
+	const token = randomBytes(32).toString('base64url');
+	await query(`INSERT INTO password_reset_tokens (token_hash, user_id, expires_at) VALUES ($1, $2, now() + ($3 || ' minutes')::interval)`,
+		[sha256(token), userId, String(minutes)]);
+	return token;
+}
+
 export async function requestPasswordReset(email: string) {
 	const rows = await query<{ id: number; email: string }>(
 		`SELECT id, email FROM users WHERE lower(email) = lower($1) AND status = 'active' LIMIT 1`,

@@ -22,6 +22,10 @@ export interface SessionUser {
 	plan: string | null;
 	user_regions: string[];
 	stripe_customer_id: string | null;
+	/** Set on child accounts: the paying member's users.id. */
+	parent_user_id: number | null;
+	/** Email the subscription is keyed on: the parent's for a child account, else the user's own. */
+	billing_email: string;
 }
 
 const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
@@ -64,11 +68,12 @@ export async function loadSession(cookies: Cookies): Promise<{ user: SessionUser
 	const idHash = sha256(token);
 	const rows = await query<SessionUser & { last_seen_at: Date }>(
 		`SELECT u.id, u.wp_user_id, u.email, u.user_login, u.display_name, u.first_name, u.last_name, u.role, u.status,
-		        u.stripe_customer_id, s.last_seen_at,
+		        u.stripe_customer_id, s.last_seen_at, u.parent_user_id, COALESCE(p.email, u.email) AS billing_email,
 		        us.plan, string_to_array(NULLIF(us.user_region, ''), ',') AS user_regions
 		   FROM sessions s
 		   JOIN users u ON u.id = s.user_id
-		   LEFT JOIN user_subscriptions us ON lower(us.user_id) = lower(u.email)
+		   LEFT JOIN users p ON p.id = u.parent_user_id AND p.status = 'active'
+		   LEFT JOIN user_subscriptions us ON lower(us.user_id) = lower(COALESCE(p.email, u.email))
 		  WHERE s.id_hash = $1 AND s.expires_at > now() AND u.status = 'active'
 		  LIMIT 1`,
 		[idHash]

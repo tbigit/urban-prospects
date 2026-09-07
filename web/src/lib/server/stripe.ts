@@ -113,6 +113,43 @@ export async function createBillingPortalSession(customerId: string, returnUrl: 
 }
 export const stripeConfigured = () => Boolean(env.STRIPE_SECRET_KEY);
 
+/** Undo "cancel at period end": the subscription renews again. */
+export async function resumeSubscription(subscriptionId: string) {
+	if (!/^sub_[A-Za-z0-9]+$/.test(subscriptionId)) throw new Error('bad subscription id');
+	return (await stripePost(`/subscriptions/${subscriptionId}`, { cancel_at_period_end: false })) as unknown as { id: string; status: string; cancel_at_period_end: boolean };
+}
+
+export interface StripeSubscription {
+	id: string; status: string; customer: string; cancel_at_period_end: boolean; current_period_end?: number;
+	metadata?: Record<string, string>;
+	items: { data: { id: string; quantity: number; current_period_end?: number; price: { id: string; unit_amount: number | null; recurring?: { interval: string } } }[] };
+}
+export async function getSubscription(subscriptionId: string): Promise<StripeSubscription> {
+	const key = env.STRIPE_SECRET_KEY;
+	if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+	if (!/^sub_[A-Za-z0-9]+$/.test(subscriptionId)) throw new Error('bad subscription id');
+	const res = await fetch(`https://api.stripe.com/v1/subscriptions/${subscriptionId}`, { headers: { Authorization: `Bearer ${key}` } });
+	const json = (await res.json()) as StripeSubscription & { error?: { message: string } };
+	if (!res.ok) throw new Error(json.error?.message ?? `Stripe ${res.status}`);
+	return json;
+}
+
+/** Swap the single line item to another price and/or quantity (regions, cycle,
+ *  seats). `always_invoice` charges the prorated difference now (upgrades);
+ *  `create_prorations` books a credit against the next invoice (downgrades). */
+export async function updateSubscriptionPlan(subscriptionId: string, opts: { priceId: string; quantity: number; metadata: Record<string, string | number>; proration: 'always_invoice' | 'create_prorations' | 'none' }) {
+	const sub = await getSubscription(subscriptionId);
+	const item = sub.items.data[0];
+	if (!item) throw new Error('subscription has no line item');
+	const body: Record<string, unknown> = {
+		items: [{ id: item.id, price: opts.priceId, quantity: opts.quantity }],
+		proration_behavior: opts.proration,
+		metadata: opts.metadata
+	};
+	if (opts.proration === 'always_invoice') body.payment_behavior = 'error_if_incomplete';
+	return (await stripePost(`/subscriptions/${subscriptionId}`, body)) as unknown as StripeSubscription;
+}
+
 /** Publishable key for Stripe.js on the client (card element on /account/). */
 export const stripePublishableKey = () => env.STRIPE_PUBLISHABLE_KEY || null;
 

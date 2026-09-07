@@ -26,7 +26,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 			regions: u.user_regions,
 			// Entitlement for the property details panel. false => show the
 			// subscribe page (renew_url) in the panel; search stays available.
-			has_access: u.role === 'administrator' ? true : await hasAccess(u.email),
+			has_access: u.role === 'administrator' ? true : await hasAccess(u.billing_email),
 			renew_url: '/renew/'
 		},
 		{ headers: { 'Cache-Control': 'no-store' } }

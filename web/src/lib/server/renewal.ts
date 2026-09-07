@@ -81,8 +81,9 @@ export function intervalOf(sub: DueSub): Interval {
 	return sub.billing_cycle === 'Monthly' ? 'month' : 'year';
 }
 
-export async function startRenewalCheckout(user: { id: number; email: string }, sub: DueSub, origin: string) {
+export async function startRenewalCheckout(user: { id: number; email: string }, sub: DueSub, origin: string, seats = 1) {
 	const regions = regionsOf(sub);
+	seats = Math.max(1, Math.min(50, Math.floor(seats)));
 	const interval = intervalOf(sub);
 	const priceId = priceIdFor(regions.length, interval);
 	if (!priceId) throw new Error('Subscription checkout is not configured for this plan yet');
@@ -91,10 +92,10 @@ export async function startRenewalCheckout(user: { id: number; email: string }, 
 	const session = await createCheckoutSession({
 		mode: 'subscription',
 		customer_email: user.email,
-		line_items: [{ price: priceId, quantity: 1 }],
-		subscription_data: { metadata: { regions: regionList, users: 1, interval, renewal_of: renewalOf, user_id: user.id } },
+		line_items: [{ price: priceId, quantity: seats }],
+		subscription_data: { metadata: { regions: regionList, users: seats, interval, renewal_of: renewalOf, user_id: user.id } },
 		payment_method_collection: 'always',
-		metadata: { price_id: priceId, regions: regionList, users: 1, interval, renewal_of: renewalOf, user_id: user.id },
+		metadata: { price_id: priceId, regions: regionList, users: seats, interval, renewal_of: renewalOf, user_id: user.id },
 		success_url: `${origin}/renew/success/?session_id={CHECKOUT_SESSION_ID}`,
 		cancel_url: `${origin}/renew/`
 	});
@@ -120,17 +121,17 @@ export async function completeRenewal(user: { id: number; email: string }, sessi
 
 	await query(`
 		INSERT INTO user_subscriptions (subscription_status,user_id,user_email,payment_subscription_id,payment_price_id,payment_customer_id,
-		                                payment_price,billing_cycle,user_region,default_payment_method,plan,current_period_end,admin_note)
-		VALUES ($1,$2,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+		                                payment_price,billing_cycle,user_region,default_payment_method,plan,current_period_end,admin_note,seats)
+		VALUES ($1,$2,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
 		ON CONFLICT (payment_subscription_id) DO UPDATE
 		   SET subscription_status=EXCLUDED.subscription_status, payment_price_id=EXCLUDED.payment_price_id,
 		       payment_customer_id=EXCLUDED.payment_customer_id, payment_price=EXCLUDED.payment_price,
 		       billing_cycle=EXCLUDED.billing_cycle, user_region=EXCLUDED.user_region, plan=EXCLUDED.plan,
-		       current_period_end=EXCLUDED.current_period_end,
+		       current_period_end=EXCLUDED.current_period_end, seats=EXCLUDED.seats,
 		       admin_note=COALESCE(user_subscriptions.admin_note, EXCLUDED.admin_note)`,
 		[status, user.email, sub.id, item?.price.id ?? null, sub.customer, price, interval, regions,
 		 typeof sub.default_payment_method === 'string' ? sub.default_payment_method : null, plan, periodEnd,
-		 renewalOf ? `Renewal of imported subscription #${renewalOf}` : null]);
+		 renewalOf ? `Renewal of imported subscription #${renewalOf}` : null, Math.max(1, item?.quantity ?? 1)]);
 	await query(`UPDATE users SET stripe_customer_id = COALESCE(stripe_customer_id, $2) WHERE id = $1`, [user.id, sub.customer]);
 	if (renewalOf) {
 		await query(`UPDATE user_subscriptions SET subscription_status='Expired',

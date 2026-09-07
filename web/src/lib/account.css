@@ -179,3 +179,15 @@ select.acct-input { appearance: none; -webkit-appearance: none; background-image
 .acct-editor-body .tiptap ul, .acct-editor-body .tiptap ol { padding-left: 1.4rem; margin: 0 0 .6em; }
 .acct-editor-body .tiptap ul { list-style: disc; } .acct-editor-body .tiptap ol { list-style: decimal; }
 .acct-editor-body .tiptap strong { font-weight: 600; }
+
+/* ---- plan editor (billing) ------------------------------------------------------ */
+.acct-plan { max-width: 32rem; margin-top: .25rem; }
+.acct-chip.pick { cursor: pointer; user-select: none; }
+.acct-chip.pick input { position: absolute; opacity: 0; width: 0; height: 0; }
+.acct-chip.pick:hover { border-color: color-mix(in srgb, var(--fg) 30%, transparent); }
+.acct-seg { display: inline-flex; padding: .2rem; border-radius: .6rem; border: 1px solid var(--color-line); background: color-mix(in srgb, var(--bg) 60%, transparent); }
+.acct-seg label { padding: .3rem .8rem; border-radius: .45rem; font-size: 12.5px; cursor: pointer; color: var(--color-neutral-300); }
+.acct-seg label.on { background: var(--color-brand-purple); color: #fff; }
+.acct-seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+.acct-btn.danger { background: #e5484d; }
+.acct-table td .acct-value small { margin-top: 0; }
