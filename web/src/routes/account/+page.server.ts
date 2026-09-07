@@ -100,7 +100,7 @@ export const actions: Actions = {
 		const c = { email: String(form.get('email') ?? ''), first_name: String(form.get('first_name') ?? '').trim().slice(0, 100), last_name: String(form.get('last_name') ?? '').trim().slice(0, 100) };
 		const sub = await memberSub(locals.user.email);
 		if (!isLive(sub)) return fail(400, { childError: 'Start or renew your subscription before adding users.' });
-		if (!onStripe(sub)) return fail(400, { childError: 'Additional users are billed through Stripe. Move your subscription to Stripe under Billing first.' });
+		if (!onStripe(sub)) return fail(400, { childError: 'Use "Change regions or plan" under Billing before adding users.' });
 		if ((await seatsNeeded(locals.user.id)) >= MAX_SEATS) return fail(400, { childError: `An account can have at most ${MAX_SEATS} users.` });
 		let childId: number;
 		try { childId = await addChild(locals.user, c); } catch (e) { return fail(400, { childError: (e as Error).message }); }
@@ -109,7 +109,7 @@ export const actions: Actions = {
 			// Stripe would not take the extra seat (card declined, plan not configured): undo the user.
 			console.error('[account addChild seats]', e);
 			await query(`DELETE FROM users WHERE id=$1 AND parent_user_id=$2`, [childId, locals.user.id]);
-			return fail(502, { childError: `Stripe could not add the seat: ${(e as Error).message}. The user was not added.` });
+			return fail(502, { childError: `The extra seat could not be billed: ${(e as Error).message}. The user was not added.` });
 		}
 		return { childAdded: c.email.trim().toLowerCase() };
 	},
@@ -118,7 +118,7 @@ export const actions: Actions = {
 		if (!notChild(locals.user)) return fail(403, { childError: 'Only the account holder can remove users.' });
 		const id = Number((await request.formData()).get('id'));
 		try { await removeChild(locals.user.id, id); } catch (e) { return fail(404, { childError: (e as Error).message }); }
-		try { await syncSeats(locals.user); } catch (e) { console.error('[account removeChild seats]', e); return fail(502, { childError: `The user was removed but Stripe did not update the seat count: ${(e as Error).message}. Email info@urbanprospects.com.au.` }); }
+		try { await syncSeats(locals.user); } catch (e) { console.error('[account removeChild seats]', e); return fail(502, { childError: `The user was removed but the seat count could not be updated: ${(e as Error).message}. Email info@urbanprospects.com.au.` }); }
 		return { childRemoved: true };
 	},
 	resendInvite: async ({ request, locals }) => {
@@ -133,10 +133,10 @@ export const actions: Actions = {
 		const [sub] = await query<{ payment_customer_id: string | null }>(
 			`SELECT payment_customer_id FROM user_subscriptions WHERE lower(user_email) = lower($1) AND payment_customer_id IS NOT NULL ORDER BY id DESC LIMIT 1`, [locals.user.email]);
 		const customer = sub?.payment_customer_id ?? locals.user.stripe_customer_id;
-		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes through Stripe are not available for this account yet.' });
+		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes are temporarily disabled for this account.' });
 		let portal: string;
 		try { portal = await createBillingPortalSession(customer, `${url.origin}/account/#billing`); }
-		catch { return fail(502, { billingError: 'Stripe did not answer. Please try again shortly.' }); }
+		catch { return fail(502, { billingError: 'The billing service did not answer. Please try again shortly.' }); }
 		redirect(303, portal);
 	},
 	// The card element confirmed a SetupIntent client-side (see ./card/+server.ts);
@@ -148,9 +148,9 @@ export const actions: Actions = {
 		const [sub] = await query<{ payment_customer_id: string | null; payment_subscription_id: string | null }>(
 			`SELECT payment_customer_id, payment_subscription_id FROM user_subscriptions WHERE lower(user_email) = lower($1) AND payment_customer_id IS NOT NULL ORDER BY id DESC LIMIT 1`, [locals.user.email]);
 		const customer = sub?.payment_customer_id ?? locals.user.stripe_customer_id;
-		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes through Stripe are not available for this account yet.' });
+		if (!customer || !stripeConfigured()) return fail(400, { billingError: 'Card changes are temporarily disabled for this account.' });
 		try { await setDefaultPaymentMethod(customer, sub?.payment_subscription_id ?? null, pm); }
-		catch (e) { return fail(502, { billingError: `Stripe did not accept the card: ${(e as Error).message}` }); }
+		catch (e) { return fail(502, { billingError: `The card was not accepted: ${(e as Error).message}` }); }
 		return { cardSaved: true };
 	},
 	template: async ({ request, locals }) => {

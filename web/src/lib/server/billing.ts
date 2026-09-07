@@ -54,8 +54,8 @@ export function parsePlanForm(form: FormData): { regions: Region[]; interval: In
  *  change to them goes through Checkout and lands on Stripe. */
 export async function cancelMemberSub(email: string) {
 	const s = await memberSub(email);
-	if (!isLive(s) || !s.payment_subscription_id) throw new Error('There is no Stripe subscription to cancel. Email info@urbanprospects.com.au.');
-	if (!stripeConfigured()) throw new Error('Stripe billing is not switched on yet.');
+	if (!isLive(s) || !s.payment_subscription_id) throw new Error('There is no subscription to cancel here. Email info@urbanprospects.com.au.');
+	if (!stripeConfigured()) throw new Error('Billing changes are temporarily disabled.');
 	if (s.cancel_at_period_end) return s;
 	const r = await cancelSubscription(s.payment_subscription_id, true);
 	const endUnix = r.items?.data?.[0]?.current_period_end ?? r.current_period_end;
@@ -69,7 +69,7 @@ export async function cancelMemberSub(email: string) {
 export async function resumeMemberSub(email: string) {
 	const s = await memberSub(email);
 	if (!isLive(s) || !s.payment_subscription_id || !s.cancel_at_period_end) throw new Error('Nothing to resume.');
-	if (!stripeConfigured()) throw new Error('Stripe billing is not switched on yet.');
+	if (!stripeConfigured()) throw new Error('Billing changes are temporarily disabled.');
 	await resumeSubscription(s.payment_subscription_id);
 	await query(`UPDATE user_subscriptions SET cancel_at_period_end=false, admin_note=concat_ws(' · ', admin_note, 'Member resumed ' || to_char(now(),'YYYY-MM-DD')) WHERE id=$1`, [s.id]);
 }
@@ -81,7 +81,7 @@ export async function resumeMemberSub(email: string) {
  *    the success page writes the Stripe row and retires the imported one. */
 export async function changeMemberPlan(user: { id: number; email: string }, plan: { regions: Region[]; interval: Interval; seats: number }, origin: string)
 	: Promise<{ kind: 'updated' } | { kind: 'checkout'; url: string }> {
-	if (!stripeConfigured()) throw new Error('Stripe billing is not switched on yet.');
+	if (!stripeConfigured()) throw new Error('Billing changes are temporarily disabled.');
 	const priceId = priceIdFor(plan.regions.length, plan.interval);
 	if (!priceId) throw new Error('That plan is not available for checkout yet.');
 	const s = await memberSub(user.email);

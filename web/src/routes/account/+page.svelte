@@ -314,7 +314,7 @@
 				{#if form?.cardSaved}<div class="acct-note ok">Card updated. Your next renewal will charge the new card.</div>{/if}
 				{#if form?.cancelled}<div class="acct-note ok">Your subscription will not renew. You keep full access until {sub?.current_period_end ? fmtDay(sub.current_period_end, 'long') : 'the end of the current period'}.</div>{/if}
 				{#if form?.resumed}<div class="acct-note ok">Your subscription renews again as normal.</div>{/if}
-				{#if form?.planChanged}<div class="acct-note ok">Plan updated. Stripe has prorated the change against your current period.</div>{/if}
+				{#if form?.planChanged}<div class="acct-note ok">Plan updated. The change has been prorated against your current period.</div>{/if}
 				{#if data.parent}
 					<div class="acct-tiles three">
 						<div class="acct-tile"><p class="spec">Plan</p><p class="v">{u.plan ?? 'None'}</p><p class="n">{sub?.subscription_status ?? 'no subscription'}</p></div>
@@ -363,7 +363,7 @@
 							<p class="acct-value" style="margin-top:.9rem">
 								{#if total != null}
 									<strong>${total.toLocaleString('en-AU')}</strong> per {pickInterval} · {pickRegions.length} region{pickRegions.length === 1 ? '' : 's'}{pickSeats > 1 ? ` × ${pickSeats} users at $${unit!.toLocaleString('en-AU')}` : ''}
-									<small>{#if !sub?.stripe || !sub?.live}You'll confirm the card on Stripe's checkout page; the new plan starts today.{:else if samePlan}This is your current plan.{:else if dearer}Charged today for the rest of the current period, then {pickInterval === 'month' ? 'monthly' : 'yearly'} at the new price.{:else}Applies now; the unused part of what you've paid is credited against your next invoice.{/if}</small>
+									<small>{#if !sub?.stripe || !sub?.live}You'll confirm your card on the secure checkout page; the new plan starts today.{:else if samePlan}This is your current plan.{:else if dearer}Charged today for the rest of the current period, then {pickInterval === 'month' ? 'monthly' : 'yearly'} at the new price.{:else}Applies now; the unused part of what you've paid is credited against your next invoice.{/if}</small>
 								{:else}
 									<small>Pick at least one region.</small>
 								{/if}
@@ -375,16 +375,16 @@
 						</form>
 					{:else}
 						<div class="acct-actions" style="margin-top:.5rem">
-							<button type="button" class="acct-btn" disabled={!data.billing.stripe} title={data.billing.stripe ? undefined : 'Stripe is not switched on yet'} onclick={openPlan}>{sub?.live ? 'Change regions or plan' : 'Subscribe'}</button>
+							<button type="button" class="acct-btn" disabled={!data.billing.stripe} title={data.billing.stripe ? undefined : 'Plan changes are temporarily disabled'} onclick={openPlan}>{sub?.live ? 'Change regions or plan' : 'Subscribe'}</button>
 						</div>
 					{/if}
-					{#if !data.billing.stripe}<p class="acct-value" style="margin-top:.5rem"><small>Stripe billing is not switched on for this site yet. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your plan.</small></p>{/if}
+					{#if !data.billing.stripe}<p class="acct-value" style="margin-top:.5rem"><small>Plan changes are temporarily disabled. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your plan.</small></p>{/if}
 				</div>
 
 				<div class="acct-field" style="margin-top:1.25rem">
 					<span class="acct-label">Payment method</span>
 					{#if data.billing.onStripe}
-						<p class="acct-value">Card on file with Stripe.<small>Enter a new card below to use it for every renewal from now on. Card details go straight to Stripe and never pass through this site.</small></p>
+						<p class="acct-value">Card on file.<small>Enter a new card below to use it for every renewal from now on. Card details go straight to our payment provider and never pass through this site.</small></p>
 						{#if cardOpen}
 							<form method="POST" action="?/card" class="acct-card" bind:this={cardForm} use:enhance={() => { return async ({ update }) => { cardBusy = false; cardOpen = false; await update(); }; }} onsubmit={(e) => { if (!pmId) saveCard(e); }}>
 								<input type="hidden" name="payment_method" value={pmId} />
@@ -397,13 +397,13 @@
 							</form>
 						{:else}
 							<div class="acct-actions" style="margin-top:1rem">
-								<button type="button" class="acct-btn" disabled={!data.billing.stripe || !data.billing.publishableKey} title={data.billing.stripe && data.billing.publishableKey ? undefined : 'Stripe is not switched on yet'} onclick={() => { pmId = ''; cardOpen = true; }}>Update card</button>
+								<button type="button" class="acct-btn" disabled={!data.billing.stripe || !data.billing.publishableKey} title={data.billing.stripe && data.billing.publishableKey ? undefined : 'Card changes are temporarily disabled'} onclick={() => { pmId = ''; cardOpen = true; }}>Update card</button>
 								<form method="POST" action="?/billing"><button type="submit" class="acct-btn alt" disabled={!data.billing.stripe}>Invoices and billing details</button></form>
 							</div>
 						{/if}
-						{#if !data.billing.stripe || !data.billing.publishableKey}<p class="acct-value" style="margin-top:.5rem"><small>Stripe billing is not switched on for this site yet. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your card.</small></p>{/if}
+						{#if !data.billing.stripe || !data.billing.publishableKey}<p class="acct-value" style="margin-top:.5rem"><small>Card changes are temporarily disabled. Email <a href="mailto:info@urbanprospects.com.au" style="text-decoration:underline">info@urbanprospects.com.au</a> to change your card.</small></p>{/if}
 					{:else if sub}
-						<p class="acct-value">Card on file with our previous billing provider.<small>Changing the card, regions, plan or users moves your subscription to Stripe: use "Change regions or plan" above, enter the card once, and it renews there from then on.</small></p>
+						<p class="acct-value">Card on file with our previous billing provider.<small>To change the card, regions, plan or users, use "Change regions or plan" above: you enter the card once and it renews from there.</small></p>
 					{:else}
 						<p class="acct-value">No payment method on file.<small>Subscribe above to add one.</small></p>
 					{/if}
@@ -465,7 +465,7 @@
 					{#if !sub?.live}
 						<p class="acct-value"><small>Start or renew your subscription under Billing before adding users.</small></p>
 					{:else if !sub.stripe}
-						<p class="acct-value"><small>Additional users are billed through Stripe. Move your subscription to Stripe under Billing (Change regions or plan) first.</small></p>
+						<p class="acct-value"><small>Additional users need your subscription on our current billing. Use "Change regions or plan" under Billing first.</small></p>
 					{:else if data.children.length + 1 >= data.plan.maxSeats}
 						<p class="acct-value"><small>An account can have at most {data.plan.maxSeats} users. Email info@urbanprospects.com.au for more.</small></p>
 					{:else}
