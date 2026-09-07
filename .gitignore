@@ -12,3 +12,5 @@ web/node_modules/
 wp-credentials.md
 # Demo film ladder (~250MB of HLS segments). Deployed separately by web/deploy/deploy-media.sh.
 web/static/media/demo/
+web/static/media/platform/
+web/static/media/data-apis/

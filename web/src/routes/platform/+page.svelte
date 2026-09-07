@@ -4,6 +4,7 @@
 	import TrialCta from '$lib/components/TrialCta.svelte';
 	import Button from '$lib/components/ui/button.svelte';
 	import { advantageStats, capabilities, caseStudies } from '$lib/content/site';
+	import PlatformLoop from '$lib/components/PlatformLoop.svelte';
 	import { base } from '$app/paths';
 </script>
 
@@ -25,22 +26,17 @@
 	<Button href="{base}/demo/" size="lg" variant="outline">Book a Demo</Button>
 </PageHeader>
 
-<!-- The platform's own material is planning data, so the page's one large
-     image is a real LEP zoning extract rather than a product mock. -->
+<!-- The page's one large visual is the platform itself: a silent looping screen
+     recording (web/static/media/platform/, built with the film-ladder skill from a
+     screenproof take; git-ignored and deployed by deploy/deploy-media.sh platform). -->
 <section class="border-b border-[var(--color-line)]">
 	<div class="mx-auto max-w-[1400px] px-5 py-14 sm:py-20">
 		<Reveal>
-			<img
-				src="{base}/media/maps/zoning-parramatta.jpg"
-				alt="LEP land zoning map extract of the Parramatta CBD"
-				loading="eager"
-				fetchpriority="high"
-				decoding="async"
-				class="aspect-[21/9] w-full rounded-2xl object-cover"
-			/>
+			<PlatformLoop class="aspect-[16/10] w-full rounded-2xl bg-[var(--color-subtle)] object-cover" />
 			<p class="mt-4 text-[13.5px] text-[var(--color-neutral-500)]">
-				Land zoning across the Parramatta CBD, one of 34 planning layers behind every search
-				result. Map: NSW ePlanning over the Spatial Services base map, CC BY 4.0.
+				A saved site in Castle Hill opened from My Favourites, with the Land Zoning and
+				Development Applications by Type layers switched on. Two of 34 planning layers behind
+				every search result.
 			</p>
 		</Reveal>
 	</div>
