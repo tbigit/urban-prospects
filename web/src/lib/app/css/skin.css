@@ -595,3 +595,7 @@
 .up-app .cluster-picker button:hover { background: color-mix(in srgb, var(--color-brand-purple) 14%, transparent); }
 .up-app .cluster-picker button .addr { display: block; }
 .up-app .cluster-picker button .detail { display: block; margin-top: .1rem; font-size: 11px; color: var(--color-neutral-400); }
+
+/* 3D / Mono / 45° / Spin: the buttons sat edge to edge; give the row a gap */
+.up-app .design-controls .row.right { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: flex-end; }
+.up-app .design-controls .row.right .btn { margin: 0 !important; }

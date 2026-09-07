@@ -36,6 +36,7 @@
   import PropertySpec from '$lib/app/PropertySpec.svelte';
   import AddressAutocomplete from '$lib/app/AddressAutocomplete.svelte';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+  import { swatch as layer_swatch, themedExpression, themedOpacity, currentTheme, RESULT_LAYER_PAINT } from '$lib/app/layer-colours.js';
 
   // let myFontBinaryString;
   // let get_suburbs = [];
@@ -452,10 +453,48 @@
   // pre-paint script and the theme toggle): Mapbox Standard's 'night' preset in
   // dark mode, 'day' in light, same monochrome theme either way. Satellite is
   // photography and has no dark variant.
-  const _map_light_preset = () =>
-    (typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark') ? 'night' : 'day';
+  // Dark mode uses Standard's 'dusk' preset rather than 'night': night is near-black and
+  // swallows the planning overlays even at 80% opacity; dusk keeps the ground readable.
+  const DARK_LIGHT_PRESET = 'dusk';
+  const _map_light_preset = () => (currentTheme() === 'dark' ? DARK_LIGHT_PRESET : 'day');
+  // Theme the custom layers are painted for; drives the toggle swatches too (lib/app/layer-colours.js).
+  let layer_theme = currentTheme();
+  // Light expressions as registered by addCustomLayers(), keyed by layer name, so they can be
+  // re-themed with setPaintProperty without re-adding the layer.
+  const layer_colour_exprs = {};
+  const layer_opacity_light = {};  // as added (light values), captured on first apply
+  const LAYER_COLOUR_PROP = { fill: 'fill-color', line: 'line-color', circle: 'circle-color' };
+  function _apply_layer_colours() {
+    if (!map) return;
+    for (const name in layer_colour_exprs) {
+      const id = `custom-layer-${name}`;
+      let layer;
+      try { layer = map.getLayer(id); } catch (e) { continue; }
+      const prop = layer && LAYER_COLOUR_PROP[layer.type];
+      if (!prop) continue;
+      const oprop = `${layer.type}-opacity`;
+      try {
+        // Mapbox Standard lights every layer by the basemap's lightPreset; without full emissive
+        // strength the overlays are shaded near-black under 'dusk'/'night'.
+        map.setPaintProperty(id, `${layer.type}-emissive-strength`, 1);
+        map.setPaintProperty(id, prop, themedExpression(name, layer_colour_exprs[name], layer_theme));
+        if (!(name in layer_opacity_light)) layer_opacity_light[name] = map.getPaintProperty(id, oprop);
+        map.setPaintProperty(id, oprop, themedOpacity(name, layer.type, layer_opacity_light[name], layer_theme));
+      } catch (e) { /* style reloading */ }
+    }
+    for (const id in RESULT_LAYER_PAINT) {
+      if (!map.getLayer(id)) continue;
+      const paint = RESULT_LAYER_PAINT[id][layer_theme] || RESULT_LAYER_PAINT[id].light;
+      const type = map.getLayer(id).type;
+      if (type !== 'symbol') { try { map.setPaintProperty(id, `${type}-emissive-strength`, 1); } catch (e) { /* ignore */ } }
+      for (const prop in paint) { try { map.setPaintProperty(id, prop, paint[prop]); } catch (e) { /* ignore */ } }
+    }
+  }
   function _apply_map_theme() {
-    if (!map || satellite) return;
+    layer_theme = currentTheme();
+    if (!map) return;
+    _apply_layer_colours();
+    if (satellite) return;
     try { map.setConfigProperty('basemap', 'lightPreset', _map_light_preset()); } catch (e) { /* style still loading */ }
   }
 
@@ -956,6 +995,10 @@ function _fit_to_suburb_matches(suburbs) {
   }
 
   function _add_individual_layer(name, source, colours) {
+    if (name !== 'lot-fill') {  // lot-fill's expression is a placeholder (click target only), not a colour
+      layer_colour_exprs[name] = colours;
+      colours = themedExpression(name, colours, layer_theme);
+    }
 
     if (name == 'lot') {
       // The Lot tileset is only generated at native zoom 15 (higher zooms return 204 No Content).
@@ -1371,7 +1414,7 @@ function _fit_to_suburb_matches(suburbs) {
           'visibility': 'visible'
         },
         'paint': {
-          'line-color': 'rgba(0,0,0,1)',
+          'line-color': colours,  // #010101 in light, palette override in dark
           'line-opacity': 0.5,
           'line-width': 1
         }
@@ -1814,6 +1857,8 @@ function _fit_to_suburb_matches(suburbs) {
 
 
 
+    _apply_layer_colours();
+
     // sym_code to colour code zone
     // https://www.mapbox.com/maps/satellite    
     // --- Property results: GPU circle layer (replaces per-result DOM markers) ---
@@ -2011,6 +2056,7 @@ function _fit_to_suburb_matches(suburbs) {
       });
     }
     // suburb-results-circles click/hover handlers are bound once above (see _resultClickHandlersBound)
+    _apply_layer_colours();
 
   }
 
@@ -2281,6 +2327,7 @@ function _fit_to_suburb_matches(suburbs) {
 
     // Re-apply the light preset whenever the site theme changes (toggle or OS).
     new MutationObserver(_apply_map_theme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', _apply_map_theme);
 
     // Define a new custom mode for drawing circles
     var CircleMode = {};
@@ -6925,8 +6972,8 @@ async function _send_mail_property(property_selected) {
     font-size: 1rem;
     color: var(--up-c-82669d);
     background-color: currentColor;
-    -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='6' width='20' height='12' rx='6'/><circle cx='8' cy='12' r='2'/></svg>") no-repeat center / contain;
-    mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='6' width='20' height='12' rx='6'/><circle cx='8' cy='12' r='2'/></svg>") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='6' width='20' height='12' rx='6' fill='none' stroke='black' stroke-width='1.5'/><circle cx='8' cy='12' r='3' fill='black'/></svg>") no-repeat center / contain;
+    mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='6' width='20' height='12' rx='6' fill='none' stroke='black' stroke-width='1.5'/><circle cx='8' cy='12' r='3' fill='black'/></svg>") no-repeat center / contain;
     cursor: pointer;
     margin-top: 3.5px;
     top: 0;
@@ -7405,8 +7452,8 @@ async function _send_mail_property(property_selected) {
     font-size: 1rem;
     color: var(--up-c-82669d);
     background-color: currentColor;
-    -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='6' width='20' height='12' rx='6'/><circle cx='8' cy='12' r='2'/></svg>") no-repeat center / contain;
-    mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='6' width='20' height='12' rx='6'/><circle cx='8' cy='12' r='2'/></svg>") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='6' width='20' height='12' rx='6' fill='none' stroke='black' stroke-width='1.5'/><circle cx='8' cy='12' r='3' fill='black'/></svg>") no-repeat center / contain;
+    mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='6' width='20' height='12' rx='6' fill='none' stroke='black' stroke-width='1.5'/><circle cx='8' cy='12' r='3' fill='black'/></svg>") no-repeat center / contain;
     cursor: pointer;
     margin-top: 4.5px;
     top: 0;
@@ -8224,13 +8271,13 @@ async function _send_mail_property(property_selected) {
                       <h6 class="uppercase"><strong>Key Layers</strong></h6>
                     </div>
                     <div class="collapsible-content animate-fade-out">
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ffa6a3);"><div><input bind:checked={mapping_layers.zoning} type="checkbox" value="1" name="mapping_layer_zoning" id="mapping_layer_zoning" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_zoning">Land Zoning</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-010101);"><div><input bind:checked={mapping_layers.lot} type="checkbox" value="1" name="mapping_layer_lot" id="mapping_layer_lot" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_lot">Lots</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-d1c2fc);"><div><input bind:checked={mapping_layers.contour} type="checkbox" value="1" name="mapping_layer_contour" id="mapping_layer_contour" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_contour">Contour</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ff9800);"><div><input bind:checked={mapping_layers.slope} type="checkbox" value="1" name="mapping_layer_slope" id="mapping_layer_slope" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_slope">Slope</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ff0000)"><div><input bind:checked={mapping_layers.suburbs} type="checkbox" value="1" name="mapping_layer_suburbs" id="mapping_layer_suburbs" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_suburbs">Suburbs</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-388e3c);"><div><input bind:checked={mapping_layers.da_applications_lot} type="checkbox" value="1" name="mapping_layer_da_tracking" id="mapping_layer_da_tracking" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_da_tracking">Development Applications by Status</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-26a69a);"><div><input bind:checked={mapping_layers.da_applications_lot_by_application_type} type="checkbox" value="1" name="mapping_layer_da_tracking_by_type" id="mapping_layer_da_tracking_by_type" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_da_tracking_by_type">Development Applications by Type</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('zoning', layer_theme)};"><div><input bind:checked={mapping_layers.zoning} type="checkbox" value="1" name="mapping_layer_zoning" id="mapping_layer_zoning" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_zoning">Land Zoning</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('lot', layer_theme)};"><div><input bind:checked={mapping_layers.lot} type="checkbox" value="1" name="mapping_layer_lot" id="mapping_layer_lot" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_lot">Lots</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('contour', layer_theme)};"><div><input bind:checked={mapping_layers.contour} type="checkbox" value="1" name="mapping_layer_contour" id="mapping_layer_contour" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_contour">Contour</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('slope', layer_theme)};"><div><input bind:checked={mapping_layers.slope} type="checkbox" value="1" name="mapping_layer_slope" id="mapping_layer_slope" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_slope">Slope</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('suburbs', layer_theme)}"><div><input bind:checked={mapping_layers.suburbs} type="checkbox" value="1" name="mapping_layer_suburbs" id="mapping_layer_suburbs" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_suburbs">Suburbs</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('da_applications_lot', layer_theme)};"><div><input bind:checked={mapping_layers.da_applications_lot} type="checkbox" value="1" name="mapping_layer_da_tracking" id="mapping_layer_da_tracking" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_da_tracking">Development Applications by Status</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('da_applications_lot_by_application_type', layer_theme)};"><div><input bind:checked={mapping_layers.da_applications_lot_by_application_type} type="checkbox" value="1" name="mapping_layer_da_tracking_by_type" id="mapping_layer_da_tracking_by_type" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_da_tracking_by_type">Development Applications by Type</label></div></div>
                     </div>
                   </div>
 
@@ -8241,34 +8288,34 @@ async function _send_mail_property(property_selected) {
                       <h6 class="uppercase"><strong>Planning Layers</strong></h6>
                     </div>
                     <div class="collapsible-content animate-fade-out">
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-fd32c5);"><div><input bind:checked={mapping_layers.ass} type="checkbox" value="1" name="mapping_layer_ass" id="mapping_layer_ass" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_ass">Acid Sulfate Soil</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ff0000);"><div><input bind:checked={mapping_layers.frontage} type="checkbox" value="1" name="mapping_layer_frontage" id="mapping_layer_frontage" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_frontage">Active Street Frontages</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-fdca78);"><div><input bind:checked={mapping_layers.airport} type="checkbox" value="1" name="mapping_layer_airport" id="mapping_layer_airport" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_airport">Airport Noise</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-e88b91);"><div><input bind:checked={mapping_layers.bushfire} type="checkbox" value="1" name="mapping_layer_bushfire" id="mapping_layer_bushfire" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_bushfire">Bushfire Prone</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-9d56f6)"><div><input bind:checked={mapping_layers.coastalmanagement} type="checkbox" value="1" name="mapping_layer_coastalmanagement" id="mapping_layer_coastalmanagement" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_coastalmanagement">Coastal Management</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ffb300)"><div><input bind:checked={mapping_layers.contaminationsites} type="checkbox" value="1" name="mapping_layer_contaminationsites" id="mapping_layer_contaminationsites" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_contaminationsites">Contamination Sites</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-98cb72)"><div><input bind:checked={mapping_layers.declaredwildness} type="checkbox" value="1" name="mapping_layer_declaredwildness" id="mapping_layer_declaredwildness" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_declaredwildness">Declared Wildness</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-000000)"><div><input bind:checked={mapping_layers.developmentcontrolplan} type="checkbox" value="1" name="mapping_layer_developmentcontrolplan" id="mapping_layer_developmentcontrolplan" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_developmentcontrolplan">Development Control Plan (LGA-Based)</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-00bfff)"><div><input bind:checked={mapping_layers.drinking_water_catchment} type="checkbox" value="1" name="mapping_layer_drinking_water_catchment" id="mapping_layer_drinking_water_catchment" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_drinking_water_catchment">Drinking Water Catchment</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-a0522d)"><div><input bind:checked={mapping_layers.environmentally_sensitive_land} type="checkbox" value="1" name="mapping_layer_environmentally_sensitive_land" id="mapping_layer_environmentally_sensitive_land" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_environmentally_sensitive_land">Environmentally Sensitive Land</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-00bce7);"><div><input bind:checked={mapping_layers.floodplanning} type="checkbox" value="1" name="mapping_layer_floodplanning" id="mapping_layer_floodplanning" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_floodplanning">Flood Planning</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-c595e8);"><div><input bind:checked={mapping_layers.fsr} type="checkbox" value="1" name="mapping_layer_fsr" id="mapping_layer_fsr" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_fsr">Floor Space Ratios</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-99fffd)"><div><input bind:checked={mapping_layers.groundwatervulnerability} type="checkbox" value="1" name="mapping_layer_groundwatervulnerability" id="mapping_layer_groundwatervulnerability" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_groundwatervulnerability">Ground Water Vulnerability</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-b3e096);"><div><input bind:checked={mapping_layers.hob} type="checkbox" value="1" name="mapping_layer_hob" id="mapping_layer_hob" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_hob">Height of Building</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-f3c944);"><div><input bind:checked={mapping_layers.heritage} type="checkbox" value="1" name="mapping_layer_heritage" id="mapping_layer_heritage" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_heritage">Heritage</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ff0000)"><div><input bind:checked={mapping_layers.landsliderisk} type="checkbox" value="1" name="mapping_layer_landsliderisk" id="mapping_layer_landsliderisk" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_landsliderisk">Land Slide Risk</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-be51f0);"><div><input bind:checked={mapping_layers.lowmidrise_development} type="checkbox" value="1" name="mapping_layer_lowmidrise_development" id="mapping_layer_lowmidrise_development" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_lowmidrise_development">Low and Mid-Rise Development (LMR)</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ffa500)"><div><input bind:checked={mapping_layers.mine_subsidence_district} type="checkbox" value="1" name="mapping_layer_mine_subsidence_district" id="mapping_layer_mine_subsidence_district" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_mine_subsidence_district">Mine Subsidence District</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ff776e)"><div><input bind:checked={mapping_layers.lsz} type="checkbox" value="1" name="mapping_layer_lsz" id="mapping_layer_lsz" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_lsz">Minimum Lot Size</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ffd700)"><div><input bind:checked={mapping_layers.mineralresourceland} type="checkbox" value="1" name="mapping_layer_mineralresourceland" id="mapping_layer_mineralresourceland" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_mineralresourceland">Mineral Resource Land</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-c0c0c0)"><div><input bind:checked={mapping_layers.obstaclelimitationsurface} type="checkbox" value="1" name="mapping_layer_obstaclelimitationsurface" id="mapping_layer_obstaclelimitationsurface" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_obstaclelimitationsurface">Obstacle Limitation Surface</label></div></div>
-                      <div class="full checkbox-group hide" style="--checkbox-color: var(--up-c-fd32c5)"><div><input bind:checked={mapping_layers.regionalgrowthboundary} type="checkbox" value="1" name="mapping_layer_regionalgrowthboundary" id="mapping_layer_regionalgrowthboundary" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_regionalgrowthboundary">Regional Growth Boundary</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-008000)"><div><input bind:checked={mapping_layers.riparianlandwatercourse} type="checkbox" value="1" name="mapping_layer_riparianlandwatercourse" id="mapping_layer_riparianlandwatercourse" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_riparianlandwatercourse">Riparian Land Water Course</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-ffff00)"><div><input bind:checked={mapping_layers.salinity} type="checkbox" value="1" name="mapping_layer_salinity" id="mapping_layer_salinity" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_salinity">Salinity</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-8b4513)"><div><input bind:checked={mapping_layers.scenicprotectionland} type="checkbox" value="1" name="mapping_layer_scenicprotectionland" id="mapping_layer_scenicprotectionland" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_scenicprotectionland">Scenic Protection Land</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-32cd32)"><div><input bind:checked={mapping_layers.terrestrialbiodiversity} type="checkbox" value="1" name="mapping_layer_terrestrialbiodiversity" id="mapping_layer_terrestrialbiodiversity" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_terrestrialbiodiversity">Terrestrial Biodiversity</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-33daff);"><div><input bind:checked={mapping_layers.transport_oriented_development} type="checkbox" value="1" name="mapping_layer_transport_oriented_development" id="mapping_layer_transport_oriented_development" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_transport_oriented_development">Transport Oriented Development (TOD)</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-66f2ff)"><div><input bind:checked={mapping_layers.wetlands} type="checkbox" value="1" name="mapping_layer_wetlands" id="mapping_layer_wetlands" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_wetlands">Wetlands</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('ass', layer_theme)};"><div><input bind:checked={mapping_layers.ass} type="checkbox" value="1" name="mapping_layer_ass" id="mapping_layer_ass" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_ass">Acid Sulfate Soil</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('frontage', layer_theme)};"><div><input bind:checked={mapping_layers.frontage} type="checkbox" value="1" name="mapping_layer_frontage" id="mapping_layer_frontage" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_frontage">Active Street Frontages</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('airport', layer_theme)};"><div><input bind:checked={mapping_layers.airport} type="checkbox" value="1" name="mapping_layer_airport" id="mapping_layer_airport" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_airport">Airport Noise</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('bushfire', layer_theme)};"><div><input bind:checked={mapping_layers.bushfire} type="checkbox" value="1" name="mapping_layer_bushfire" id="mapping_layer_bushfire" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_bushfire">Bushfire Prone</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('coastalmanagement', layer_theme)}"><div><input bind:checked={mapping_layers.coastalmanagement} type="checkbox" value="1" name="mapping_layer_coastalmanagement" id="mapping_layer_coastalmanagement" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_coastalmanagement">Coastal Management</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('contaminationsites', layer_theme)}"><div><input bind:checked={mapping_layers.contaminationsites} type="checkbox" value="1" name="mapping_layer_contaminationsites" id="mapping_layer_contaminationsites" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_contaminationsites">Contamination Sites</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('declaredwildness', layer_theme)}"><div><input bind:checked={mapping_layers.declaredwildness} type="checkbox" value="1" name="mapping_layer_declaredwildness" id="mapping_layer_declaredwildness" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_declaredwildness">Declared Wildness</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('developmentcontrolplan', layer_theme)}"><div><input bind:checked={mapping_layers.developmentcontrolplan} type="checkbox" value="1" name="mapping_layer_developmentcontrolplan" id="mapping_layer_developmentcontrolplan" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_developmentcontrolplan">Development Control Plan (LGA-Based)</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('drinking_water_catchment', layer_theme)}"><div><input bind:checked={mapping_layers.drinking_water_catchment} type="checkbox" value="1" name="mapping_layer_drinking_water_catchment" id="mapping_layer_drinking_water_catchment" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_drinking_water_catchment">Drinking Water Catchment</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('environmentally_sensitive_land', layer_theme)}"><div><input bind:checked={mapping_layers.environmentally_sensitive_land} type="checkbox" value="1" name="mapping_layer_environmentally_sensitive_land" id="mapping_layer_environmentally_sensitive_land" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_environmentally_sensitive_land">Environmentally Sensitive Land</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('floodplanning', layer_theme)};"><div><input bind:checked={mapping_layers.floodplanning} type="checkbox" value="1" name="mapping_layer_floodplanning" id="mapping_layer_floodplanning" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_floodplanning">Flood Planning</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('fsr', layer_theme)};"><div><input bind:checked={mapping_layers.fsr} type="checkbox" value="1" name="mapping_layer_fsr" id="mapping_layer_fsr" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_fsr">Floor Space Ratios</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('groundwatervulnerability', layer_theme)}"><div><input bind:checked={mapping_layers.groundwatervulnerability} type="checkbox" value="1" name="mapping_layer_groundwatervulnerability" id="mapping_layer_groundwatervulnerability" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_groundwatervulnerability">Ground Water Vulnerability</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('hob', layer_theme)};"><div><input bind:checked={mapping_layers.hob} type="checkbox" value="1" name="mapping_layer_hob" id="mapping_layer_hob" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_hob">Height of Building</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('heritage', layer_theme)};"><div><input bind:checked={mapping_layers.heritage} type="checkbox" value="1" name="mapping_layer_heritage" id="mapping_layer_heritage" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_heritage">Heritage</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('landsliderisk', layer_theme)}"><div><input bind:checked={mapping_layers.landsliderisk} type="checkbox" value="1" name="mapping_layer_landsliderisk" id="mapping_layer_landsliderisk" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_landsliderisk">Land Slide Risk</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('lowmidrise_development', layer_theme)};"><div><input bind:checked={mapping_layers.lowmidrise_development} type="checkbox" value="1" name="mapping_layer_lowmidrise_development" id="mapping_layer_lowmidrise_development" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_lowmidrise_development">Low and Mid-Rise Development (LMR)</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('mine_subsidence_district', layer_theme)}"><div><input bind:checked={mapping_layers.mine_subsidence_district} type="checkbox" value="1" name="mapping_layer_mine_subsidence_district" id="mapping_layer_mine_subsidence_district" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_mine_subsidence_district">Mine Subsidence District</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('lsz', layer_theme)}"><div><input bind:checked={mapping_layers.lsz} type="checkbox" value="1" name="mapping_layer_lsz" id="mapping_layer_lsz" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_lsz">Minimum Lot Size</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('mineralresourceland', layer_theme)}"><div><input bind:checked={mapping_layers.mineralresourceland} type="checkbox" value="1" name="mapping_layer_mineralresourceland" id="mapping_layer_mineralresourceland" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_mineralresourceland">Mineral Resource Land</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('obstaclelimitationsurface', layer_theme)}"><div><input bind:checked={mapping_layers.obstaclelimitationsurface} type="checkbox" value="1" name="mapping_layer_obstaclelimitationsurface" id="mapping_layer_obstaclelimitationsurface" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_obstaclelimitationsurface">Obstacle Limitation Surface</label></div></div>
+                      <div class="full checkbox-group hide" style="--checkbox-color: {layer_swatch('regionalgrowthboundary', layer_theme)}"><div><input bind:checked={mapping_layers.regionalgrowthboundary} type="checkbox" value="1" name="mapping_layer_regionalgrowthboundary" id="mapping_layer_regionalgrowthboundary" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_regionalgrowthboundary">Regional Growth Boundary</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('riparianlandwatercourse', layer_theme)}"><div><input bind:checked={mapping_layers.riparianlandwatercourse} type="checkbox" value="1" name="mapping_layer_riparianlandwatercourse" id="mapping_layer_riparianlandwatercourse" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_riparianlandwatercourse">Riparian Land Water Course</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('salinity', layer_theme)}"><div><input bind:checked={mapping_layers.salinity} type="checkbox" value="1" name="mapping_layer_salinity" id="mapping_layer_salinity" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_salinity">Salinity</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('scenicprotectionland', layer_theme)}"><div><input bind:checked={mapping_layers.scenicprotectionland} type="checkbox" value="1" name="mapping_layer_scenicprotectionland" id="mapping_layer_scenicprotectionland" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_scenicprotectionland">Scenic Protection Land</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('terrestrialbiodiversity', layer_theme)}"><div><input bind:checked={mapping_layers.terrestrialbiodiversity} type="checkbox" value="1" name="mapping_layer_terrestrialbiodiversity" id="mapping_layer_terrestrialbiodiversity" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_terrestrialbiodiversity">Terrestrial Biodiversity</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('transport_oriented_development', layer_theme)};"><div><input bind:checked={mapping_layers.transport_oriented_development} type="checkbox" value="1" name="mapping_layer_transport_oriented_development" id="mapping_layer_transport_oriented_development" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_transport_oriented_development">Transport Oriented Development (TOD)</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('wetlands', layer_theme)}"><div><input bind:checked={mapping_layers.wetlands} type="checkbox" value="1" name="mapping_layer_wetlands" id="mapping_layer_wetlands" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_wetlands">Wetlands</label></div></div>
                     </div>
                   </div>
 
@@ -8281,8 +8328,8 @@ async function _send_mail_property(property_selected) {
                       <h6 class="uppercase"><strong>Crime</strong></h6>
                     </div>
                     <div class="collapsible-content animate-fade-out">
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-b90023);"><div><input bind:checked={mapping_layers.property_crime} type="checkbox" value="1" name="mapping_layer_property_crime" id="mapping_layer_property_crime" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_property_crime">Property Crime</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-f32a21);"><div><input bind:checked={mapping_layers.violent_crime} type="checkbox" value="1" name="mapping_layer_violent_crime" id="mapping_layer_violent_crime" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_violent_crime">Violent Crime</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('property_crime', layer_theme)};"><div><input bind:checked={mapping_layers.property_crime} type="checkbox" value="1" name="mapping_layer_property_crime" id="mapping_layer_property_crime" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_property_crime">Property Crime</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('violent_crime', layer_theme)};"><div><input bind:checked={mapping_layers.violent_crime} type="checkbox" value="1" name="mapping_layer_violent_crime" id="mapping_layer_violent_crime" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_violent_crime">Violent Crime</label></div></div>
                     </div>
                   </div>
 
@@ -8294,12 +8341,12 @@ async function _send_mail_property(property_selected) {
                       <h6 class="uppercase"><strong>Infrastructure</strong></h6>
                     </div>
                     <div class="collapsible-content animate-fade-out">
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-00bfff);"><div><input bind:checked={mapping_layers.electricity_transmission_substations} type="checkbox" value="1" name="mapping_layer_electricity_transmission_substations" id="mapping_layer_electricity_transmission_substations" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_electricity_transmission_substations">Electricity Transmission Substations</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-00bfff);"><div><input bind:checked={mapping_layers.electricity_transmission_lines} type="checkbox" value="1" name="mapping_layer_electricity_transmission_lines" id="mapping_layer_electricity_transmission_lines" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_electricity_transmission_lines">Electricity Transmission Lines</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-32cd32);"><div><input bind:checked={mapping_layers.gas_pipelines} type="checkbox" value="1" name="mapping_layer_gas_pipelines" id="mapping_layer_gas_pipelines" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_gas_pipelines">Gas Pipelines</label></div></div>
-                      <div class="full hide checkbox-group" style="--checkbox-color: var(--up-c-965fe0);"><div><input bind:checked={mapping_layers.oil_pipelines} type="checkbox" value="1" name="mapping_layer_oil_pipelines" id="mapping_layer_oil_pipelines" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_oil_pipelines">Oil Pipelines</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-000000);"><div><input bind:checked={mapping_layers.liquid_fuel} type="checkbox" value="1" name="mapping_layer_liquid_fuel" id="mapping_layer_liquid_fuel" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_liquid_fuel">Liquid Fuel</label></div></div>
-                      <div class="full checkbox-group" style="--checkbox-color: var(--up-c-1234de);"><div><input bind:checked={mapping_layers.petrol_stations} type="checkbox" value="1" name="mapping_layer_petrol_stations" id="mapping_layer_petrol_stations" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_petrol_stations">Petrol Stations</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('electricity_transmission_substations', layer_theme)};"><div><input bind:checked={mapping_layers.electricity_transmission_substations} type="checkbox" value="1" name="mapping_layer_electricity_transmission_substations" id="mapping_layer_electricity_transmission_substations" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_electricity_transmission_substations">Electricity Transmission Substations</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('electricity_transmission_lines', layer_theme)};"><div><input bind:checked={mapping_layers.electricity_transmission_lines} type="checkbox" value="1" name="mapping_layer_electricity_transmission_lines" id="mapping_layer_electricity_transmission_lines" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_electricity_transmission_lines">Electricity Transmission Lines</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('gas_pipelines', layer_theme)};"><div><input bind:checked={mapping_layers.gas_pipelines} type="checkbox" value="1" name="mapping_layer_gas_pipelines" id="mapping_layer_gas_pipelines" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_gas_pipelines">Gas Pipelines</label></div></div>
+                      <div class="full hide checkbox-group" style="--checkbox-color: {layer_swatch('oil_pipelines', layer_theme)};"><div><input bind:checked={mapping_layers.oil_pipelines} type="checkbox" value="1" name="mapping_layer_oil_pipelines" id="mapping_layer_oil_pipelines" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_oil_pipelines">Oil Pipelines</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('liquid_fuel', layer_theme)};"><div><input bind:checked={mapping_layers.liquid_fuel} type="checkbox" value="1" name="mapping_layer_liquid_fuel" id="mapping_layer_liquid_fuel" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_liquid_fuel">Liquid Fuel</label></div></div>
+                      <div class="full checkbox-group" style="--checkbox-color: {layer_swatch('petrol_stations', layer_theme)};"><div><input bind:checked={mapping_layers.petrol_stations} type="checkbox" value="1" name="mapping_layer_petrol_stations" id="mapping_layer_petrol_stations" on:change={_handle_change_mapping_layer}/> <label for="mapping_layer_petrol_stations">Petrol Stations</label></div></div>
                     </div>
                   </div>
                 </div>
