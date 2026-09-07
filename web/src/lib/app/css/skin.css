@@ -585,7 +585,7 @@
 .up-app .search-form .collapsible-content h6:not(.uppercase):not(.info-type) { font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; }
 
 /* ---- cluster picker: the units stacked on one strata lot ------------------------------ */
-.up-app .cluster-picker-popup .mapboxgl-popup-content { padding: 0 !important; border-radius: .6rem !important; background: var(--bg) !important; color: var(--fg) !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent); box-shadow: 0 12px 40px rgba(0,0,0,.25) !important; font-family: var(--font-sans); overflow: hidden; }
+.up-app .cluster-picker-popup .mapboxgl-popup-content { padding: 0 !important; border-radius: .6rem !important; background: var(--bg) !important; color: var(--fg) !important; box-shadow: 0 12px 40px rgba(0,0,0,.25) !important; font-family: var(--font-sans); overflow: hidden; }
 .up-app .cluster-picker-popup .mapboxgl-popup-tip { border-top-color: var(--bg) !important; border-bottom-color: var(--bg) !important; }
 .up-app .cluster-picker-popup .mapboxgl-popup-close-button { color: var(--color-neutral-400) !important; font-size: 18px; padding: .1rem .5rem; }
 .up-app .cluster-picker { max-height: 18rem; overflow-y: auto; min-width: 14rem; }
