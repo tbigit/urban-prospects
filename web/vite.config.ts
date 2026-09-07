@@ -1,11 +1,47 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
+import postcss from 'postcss';
+
+// The property app's legacy stylesheets (src/lib/app/css/*, ex-upapp) are written
+// against :root / body / bare element selectors. They are imported from the app
+// layout so Vite bundles and hot-reloads them, but Vite-imported CSS stays in the
+// document after a client-side navigation (link tags in <svelte:head> used to be
+// removed on leaving the route), so /account etc. picked up the app's mono font.
+// This plugin rewrites every selector in those files to live under .up-app, the
+// app layout's wrapper, so the rules cannot reach the rest of the site.
+function scopeAppCss(): Plugin {
+	const SCOPE = '.up-app';
+	const isTarget = (id: string) => /\/src\/lib\/app\/css\/(?!skin\.css)[^/]+\.css(\?|$)/.test(id);
+	const scopeSelector = (sel: string) => {
+		const t = sel.trim();
+		if (!t || t.includes(SCOPE)) return t;
+		if (/^(:root|html|body)$/.test(t)) return SCOPE;
+		// :root[data-theme=dark] X / :root:not(...) X -> keep the root qualifier, scope the rest
+		const m = t.match(/^(:root|html)([:\[][^\s]*)\s*(.*)$/);
+		if (m) return `:root${m[2]} ${SCOPE}${m[3] ? ' ' + m[3] : ''}`;
+		return t.replace(/^(:root|html|body)\s+/, SCOPE + ' ').replace(/^(?!\.up-app)/, SCOPE + ' ');
+	};
+	return {
+		name: 'scope-app-css',
+		enforce: 'pre',
+		transform(code, id) {
+			if (!isTarget(id)) return null;
+			const root = postcss.parse(code, { from: id });
+			root.walkRules((rule) => {
+				const parent = rule.parent as postcss.AtRule | undefined;
+				if (parent && parent.type === 'atrule' && /keyframes|font-face/i.test(parent.name)) return;
+				rule.selectors = rule.selectors.map(scopeSelector);
+			});
+			return { code: root.toString(), map: null };
+		}
+	};
+}
 
 // PORT is assigned by the Claude Code preview harness (autoPort); defaults keep
 // plain `npm run dev` / `npm run preview` on their usual ports.
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
+	plugins: [scopeAppCss(), tailwindcss(), sveltekit()],
 	server: {
 		port: Number(process.env.PORT) || 5173,
 		// `npm run build` writes build/ (and .svelte-kit/output) while the dev server

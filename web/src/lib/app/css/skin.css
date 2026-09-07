@@ -324,7 +324,7 @@
 
 /* info icon: a stroked "i" ring (lucide info) drawn from a mask, so it takes
    currentColor and works in both themes — replaces the filled grey disc glyph */
-.up-app i.circle { width: 14px !important; height: 14px !important; font-size: 0 !important; color: transparent !important; border-radius: 0 !important; background: color-mix(in srgb, var(--fg) 40%, transparent) !important; -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; vertical-align: middle !important; transform: translateY(-1px) !important; margin-left: 3px !important; }
+.up-app i.circle { width: 12px !important; height: 12px !important; font-size: 0 !important; color: transparent !important; border-radius: 0 !important; background: color-mix(in srgb, var(--fg) 40%, transparent) !important; -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>") center / contain no-repeat; vertical-align: middle !important; transform: translateY(-1px) !important; margin-left: 3px !important; }
 .up-app i.circle:hover { background: var(--fg) !important; }
 
 /* address card (property details) sits flush under the photo: no rounded corners, no outline */
@@ -373,4 +373,27 @@
 /* Clear All / PDF / Save + Total Results row: wraps on narrow panels instead of overflowing */
 .up-app .map-search-btn-container > .flex { flex-wrap: wrap; gap: .25rem 0; }
 .up-app .map-search-btn-container > .flex > .full { flex: 1 1 auto !important; width: auto !important; min-width: 0; }
-.up-app .map-search-btn-container #btn-calculate-total { min-width: 0 !important; white-space: nowrap; }
+.up-app .map-search-btn-container #btn-calculate-total { width: auto !important; min-width: 0 !important; white-space: nowrap; padding-left: .6rem !important; padding-right: .6rem !important; }
+
+/* map-layers header: the Legend / recentre buttons become quiet round icon buttons
+   (not the app's square purple-outlined .btn) and the empty spacer row collapses */
+.up-app .filter-container-map-layers .flex:has(> .full > .row > .btn-reset) { padding-top: 0 !important; padding-bottom: .25rem !important; align-items: center; }
+.up-app .filter-container-map-layers .flex:has(> .full > .row > .btn-reset) > .one-third { display: none; }
+.up-app .filter-container-map-layers .row:has(> .btn-reset) { display: flex; justify-content: flex-end; gap: .35rem; }
+.up-app .filter-container-map-layers .btn.btn-reset { width: 28px !important; height: 28px !important; padding: 0 !important; margin: 0 !important; display: inline-flex !important; align-items: center; justify-content: center; border-radius: 999px !important; border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent) !important; background: transparent !important; color: var(--color-neutral-300) !important; box-shadow: none !important; line-height: 1 !important; }
+.up-app .filter-container-map-layers .btn.btn-reset i { font-size: 13px; line-height: 1; }
+.up-app .filter-container-map-layers .btn.btn-reset:hover { background: color-mix(in srgb, var(--fg) 8%, transparent) !important; color: var(--fg) !important; }
+
+/* theme toggle (bottom-right map control): keep the component's own pressed state — the
+   generic .custom-control button reset above would otherwise flatten it */
+.up-app .custom-control button[aria-pressed="true"] { background: color-mix(in srgb, var(--fg) 10%, transparent) !important; color: var(--fg) !important; }
+
+/* range-value chips ("Any", "300+ sqm", the LGA/suburb "Selected:" readouts): the box hugs the
+   text — 2px above and below — instead of inheriting the 24px body line-height */
+.up-app .container-thinner.light-overlay { display: inline-flex !important; align-items: center; padding: 2px 6px !important; line-height: 1 !important; border-radius: .35rem !important; }
+.up-app .container-thinner.light-overlay code { line-height: 1.2 !important; display: inline-block; }
+/* the toggle's track matches its segments' .55rem corners (plus the 2px inset) rather than a full pill */
+.up-app .custom-control.custom-control-bottom > .rounded-full { border-radius: .7rem !important; }
+/* debug readouts ("Selected: ...") stay hidden unless Ctrl+Shift+D turns .debug on — the chip
+   rule above sets display !important and must not resurrect them */
+.up-app .debug-container:not(.debug), .up-app .test-container:not(.debug) { display: none !important; }
