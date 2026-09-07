@@ -81,6 +81,7 @@ export const caseStudies = [
 	{
 		i: 'S',
 		name: 'Sarah',
+		photo: '/testimonials/sarah.jpg',
 		role: 'Real Estate Agent',
 		h: 'Won the listing advantage',
 		d: 'Confirmed dual occupancy permissibility, assessed feasibility and found 20 comparable sites nearby. Her data-backed campaign delivered a premium sale price for her client.',
@@ -89,6 +90,7 @@ export const caseStudies = [
 	{
 		i: 'A',
 		name: 'Alex',
+		photo: '/testimonials/alex.jpg',
 		role: 'Property Developer',
 		h: 'Secured a site with zero competition',
 		d: 'Located off-market townhouse sites within a 20-minute radius, ran automated yield and residual land value analysis, and went straight to the owner.',
@@ -97,6 +99,7 @@ export const caseStudies = [
 	{
 		i: 'M',
 		name: 'Maya',
+		photo: '/testimonials/maya.jpg',
 		role: 'Architect',
 		h: 'Cut early-stage design time by 70%',
 		d: 'Tested Pattern Book designs across multiple sites with 3D models and instant feasibility checks, delivering faster, more accurate advice on every engagement.',

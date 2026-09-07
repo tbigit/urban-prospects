@@ -201,10 +201,15 @@
 				<Reveal delay={i * 90}>
 					<div class="h-full rounded-xl border border-[var(--color-line)] bg-[var(--color-subtle)] p-7">
 						<div class="flex items-center gap-3">
-							<span
-								class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--color-brand-purple)] text-[14px] font-semibold text-[var(--color-brand-teal)]"
-								>{c.i}</span
-							>
+							<img
+								src="{base}{c.photo}"
+								alt="{c.name}, {c.role}"
+								width="40"
+								height="40"
+								loading="lazy"
+								decoding="async"
+								class="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-[var(--color-line)]"
+							/>
 							<div>
 								<div class="text-[14px] font-semibold text-[var(--fg)]">{c.name}</div>
 								<div class="text-[12.5px] text-[var(--color-neutral-500)]">{c.role}</div>
