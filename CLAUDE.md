@@ -338,9 +338,10 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
   vhost" below). Still open: the `/pricing` and `/property?pid=` WordPress URLs the app links
   to need routes or redirects.
 - `users.is_test` (added by `004_users_is_test.sql`) and `wp_import_subscriptions.is_test` flag the
-  11 non-customer accounts Danny identified on 2026-09-06: urbanperspectives.com.au staff (Stuart,
-  Mary, Tony, Wassef), the imtg dev-agency accounts, kheradmandi.m@gmail.com, and mitch@partridgebuilding.com (has a Pin token but confirmed test). They keep login access;
-  exclude them from customer counts and billing. That leaves 10 real paying members, 1 monthly.
+  10 non-customer accounts Danny identified on 2026-09-06: urbanperspectives.com.au staff (Stuart,
+  Mary, Tony, Wassef), the imtg dev-agency accounts, and kheradmandi.m@gmail.com (mitch@partridgebuilding.com was flagged too but
+  unflagged 2026-09-08: a real Pin subscriber). They keep login access;
+  exclude them from customer counts and billing. That leaves 11 real paying members, 1 monthly.
 
 ## Admin console (`/admin/`)
 
