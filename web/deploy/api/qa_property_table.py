@@ -365,13 +365,24 @@ def check_indexes(rep, old, new, apply=False, concurrently=True, min_scans=1):
         print()
 
     if apply:
+        built = 0
         for i, stmt in enumerate(ddl, 1):
             print(f"  [{i}/{len(ddl)}] {stmt[:100]}…")
             t0 = time.time()
-            # CONCURRENTLY cannot run inside a transaction block; -c sends each on its own.
-            psql(stmt, timeout=14400, tuples=False)
+            try:
+                # CONCURRENTLY cannot run in a transaction block; -c sends each on its own.
+                psql(stmt, timeout=14400, tuples=False)
+            except RuntimeError as exc:
+                # One index over a column the new load dropped must not abandon the rest.
+                # Report Postgres's reason, not the echoed statement.
+                reason = next((l for l in str(exc).splitlines() if l.startswith("ERROR:")),
+                              str(exc).splitlines()[0])
+                rep.add("FAIL", "indexes", f"could not create on {new}: {reason[:110]}")
+                continue
+            built += 1
             print(f"        done in {time.time() - t0:.0f}s")
-        rep.add("PASS", "indexes", f"created {len(ddl)} index(es) on {new}")
+        rep.add("PASS" if built == len(ddl) else "WARN", "indexes",
+                f"created {built} of {len(ddl)} index(es) on {new}")
     return ddl
 
 

@@ -77,11 +77,14 @@ speed check only fires above 2 s absolute for that reason.
   156 scans and `idx_d3_rule_ids` has 1. The other 22 — every `cdc_*` and pattern-book
   partial GiST index — have **`idx_scan = 0`**: the planner has never once chosen them, and
   since the search moved to `mv_property_search` it never will. Build the two, skip the rest.
-- Related, on `up_property_d_3` itself: **4,216 MB of indexes have never been scanned**
-  (`idx_d3_suburb_region_addr` 1102 MB, `idx_d3_address_trgm_gin` 369 MB,
-  `idx_d3_postcode_region` 495 MB, `idx_d3_property_description_trgm` 484 MB, the 22 partials,
-  …). Dropping them would give back real cache on a 15 GB box. Verify against a longer window
-  before acting — a rarely-used index still shows 0 in a short one.
+- **Done 2026-09-08:** `drop_unused_indexes.py` dropped the 36 never-scanned indexes from
+  `up_property_d_3` — 6,435 MB of indexes down to 2,219 MB, in 2 seconds. The `CREATE`
+  statements were saved first and are checked in at
+  `web/deploy/sql/restore-up_property_d_3-indexes-2026-09-08.sql`; one `psql -f` puts them
+  all back. `idx_d4_lga_lzn` was built on `up_property_d_4` (78 s).
+- `idx_d4_rule_ids` cannot be built until the column comes back — `CREATE INDEX` fails with
+  `column "rule_ids" does not exist`, which the script now reports and steps past rather than
+  abandoning the rest of the run.
 - **`rule_ids` was dropped.** `api.js` reads it for the planning-rules panel
   (`up_property_d_3.rule_ids` → `up_planning_code_full.rule_id`). Either the new load must
   carry it or that feature has to move to another source — this is a blocker.
