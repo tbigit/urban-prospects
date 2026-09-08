@@ -19,7 +19,11 @@ Marketing pages are still prerendered; only the auth routes run at request time.
 
 ```sh
 cd web && npm ci && npm run build
-rsync -avz --delete --exclude .env build/ root@143.42.46.116:/opt/www/upweb-node/
+# node_modules/, package.json and .env live in the deploy dir but not in build/,
+# so --delete removes them unless they are excluded: without this the service
+# dies on "Cannot find package 'clsx'" until npm ci runs again.
+rsync -avz --delete --exclude '.env*' --exclude node_modules --exclude 'package*.json' \
+  build/ root@143.42.46.116:/opt/www/upweb-node/
 rsync -avz package.json package-lock.json root@143.42.46.116:/opt/www/upweb-node/
 ssh root@143.42.46.116 'cd /opt/www/upweb-node && npm ci --omit=dev && systemctl restart upweb'
 
