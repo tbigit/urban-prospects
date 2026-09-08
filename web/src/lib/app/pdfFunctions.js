@@ -2394,8 +2394,8 @@ export async function createPdf(gurasid_or_obj, api_domain, pdf_config, custom_l
         overview_title: "PROPERTY OVERVIEW",
 
         // Row 1
-        overview_row1_col1: "WIDTH",
-        overview_row1_col2: `${property.width || '--'} m`,
+        overview_row1_col1: "FRONTAGE WIDTH",
+        overview_row1_col2: `${property.primary_frontage_length_m ?? property.width ?? '--'} m`,
         overview_row1_col3: "DEPTH",
         overview_row1_col4: `${property.depth || '--'} m`,
         overview_row1_col5: "PERMISSIBLE HEIGHT",
