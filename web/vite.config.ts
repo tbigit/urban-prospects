@@ -79,6 +79,17 @@ export default defineConfig({
 						delete proxyRes.headers['set-cookie'];
 					});
 				}
+			},
+			// GIS vector tiles. Same-origin in production (nginx -> upstream upgis); in dev the
+			// app's /p URLs need a proxy too, or every mapping layer 404s against the dev server.
+			'/p': {
+				target: 'https://www.urbanprospects.com.au',
+				changeOrigin: true,
+				secure: true,
+				configure(proxy) {
+					proxy.on('proxyReq', (proxyReq) => proxyReq.removeHeader('cookie'));
+					proxy.on('proxyRes', (proxyRes) => { delete proxyRes.headers['set-cookie']; });
+				}
 			}
 		}
 	},

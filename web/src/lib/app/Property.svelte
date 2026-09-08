@@ -271,7 +271,7 @@
             hiddenMap.addSource('custom-tiles-lot-fill', {
               type: 'vector',
               tiles: [
-                'https://urbanprospects.com.au/p/Lot/{z}/{x}/{y}'
+                '/p/Lot/{z}/{x}/{y}'
               ],
               promoteId: 'id',
               minzoom: 15
@@ -458,7 +458,7 @@
           daMap.addSource('custom-tiles-lot-fill', {
             type: 'vector',
             tiles: [
-              'https://urbanprospects.com.au/p/Lot/{z}/{x}/{y}'
+              '/p/Lot/{z}/{x}/{y}'
             ],
             promoteId: 'id',
             minzoom: 15

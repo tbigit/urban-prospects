@@ -31,8 +31,10 @@
   let api_url = 'https://urbanprospects.com.au/q/properties';
   let img_placeholder = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-  // http://172.105.184.178:3000
-  let geo_server_url_with_http = 'https://urbanprospects.com.au/p';
+  // http://172.105.184.178:3000 — nginx proxies /p to it (upstream upgis).
+  // Relative, like api_domain above: the apex 301s to www, and nginx's 301 carries no
+  // CORS headers, so an absolute apex URL made every tile a blocked cross-origin redirect.
+  let geo_server_url_with_http = '/p';
 
   const initialState = {
     center: [151.2120881644596, -33.88465867322051],

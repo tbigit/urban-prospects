@@ -330,7 +330,10 @@
 
   // let api_domain = 'https://upapi.imtg.com.au';
   let api_domain = '/q';
-  let geo_server_url_with_http = 'https://urbanprospects.com.au/p';
+  // Relative, like api_domain above: nginx proxies /p to the GIS server (upstream upgis).
+  // An absolute apex URL made every tile a cross-origin redirect — the apex 301s to www and
+  // nginx's 301 carries no CORS headers, so the browser blocked the lot.
+  let geo_server_url_with_http = '/p';
 
   let map;
   let markers = [];
