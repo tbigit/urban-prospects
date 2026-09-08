@@ -8,6 +8,48 @@
 	import { base } from '$app/paths';
 
 	const latest = posts.slice(0, 3);
+
+	const teamGroups = [
+		{
+			label: 'Director',
+			people: [
+				{
+					name: 'Stuart Wilmot',
+					photo: 'stuart-wilmot.jpg',
+					quals: [
+						'Bachelor of Science, Macquarie University',
+						'Master in Urban and Regional Planning, University of Sydney',
+						'Registered Environmental Assessment Practitioner'
+					]
+				}
+			]
+		},
+		{
+			label: 'Software development team',
+			people: [
+				{
+					name: 'Danny Liang',
+					photo: 'danny-liang.jpg',
+					quals: ['PhD, Computer Science — Western Sydney University']
+				},
+				{
+					name: 'Jared Mateo',
+					photo: 'jared-mateo.jpg',
+					quals: ['Bachelor of Science (Computers) — University of NSW']
+				},
+				{
+					name: 'Sean Tan',
+					photo: 'sean-tan.jpg',
+					quals: ['Bachelor of Science (Honours) — University of Sydney']
+				},
+				{
+					name: 'Mitchell Mai',
+					photo: 'mitchaell-mai.jpg',
+					quals: ['Bachelor of Science (Computers) — University of NSW']
+				}
+			]
+		}
+	];
 </script>
 
 <svelte:head>
@@ -66,6 +108,63 @@
 				</p>
 			</Reveal>
 		</div>
+	</div>
+</section>
+
+<!-- MEET THE TEAM: carried over from the WordPress /about-us/ page (2026-09-08).
+     Anthony Nigro was on that page and is deliberately left off this one. -->
+<section class="border-b border-[var(--color-line)]">
+	<div class="mx-auto max-w-[1400px] px-5 py-14 sm:py-20">
+		<Reveal>
+			<div class="spec text-[var(--color-neutral-500)]">Meet the team</div>
+			<h2 class="mt-3 text-[28px] leading-tight font-semibold tracking-tight text-[var(--fg)]">
+				Planners, developers and support — in one team.
+			</h2>
+			<p class="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-[var(--color-neutral-400)]">
+				Urban Prospects is a next-generation proptech platform revolutionising how developers
+				discover, evaluate, and secure sites across New South Wales. Founded by leading NSW town
+				planning consultants with over 20 years of experience, our team combines deep planning
+				expertise, software development, and commercial insight to create a smarter, more strategic
+				approach to site acquisition.
+			</p>
+			<p class="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-[var(--color-neutral-400)]">
+				Our growing team includes town planners, in-house software developers, sales specialists, and
+				customer support experts, all committed to continuous innovation and user-driven design.
+				Together, we’re building the tools that are reshaping property development — and helping
+				drive greater productivity across NSW.
+			</p>
+		</Reveal>
+
+		{#each teamGroups as g (g.label)}
+			<Reveal>
+				<div class="spec mt-12 text-[var(--color-neutral-500)]">{g.label}</div>
+			</Reveal>
+			<div class="mt-6 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+				{#each g.people as p, i (p.name)}
+					<Reveal delay={i * 70}>
+						<div class="overflow-hidden rounded-xl border border-[var(--color-line)]">
+							<img
+								src="{base}/team/{p.photo}"
+								alt="{p.name}, {g.label}, Urban Prospects"
+								loading="lazy"
+								decoding="async"
+								width="640"
+								height="640"
+								class="aspect-square w-full object-cover"
+							/>
+						</div>
+						<h3 class="mt-4 text-[17px] leading-tight font-semibold tracking-tight text-[var(--fg)]">
+							{p.name}
+						</h3>
+						<ul class="mt-2 space-y-1">
+							{#each p.quals as q (q)}
+								<li class="text-[13.5px] leading-relaxed text-[var(--color-neutral-400)]">{q}</li>
+							{/each}
+						</ul>
+					</Reveal>
+				{/each}
+			</div>
+		{/each}
 	</div>
 </section>
 

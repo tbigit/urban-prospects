@@ -676,7 +676,19 @@ it is the client's legal copy, last reviewed 1 August 2024, so reword nothing wi
 Ordering a Property Intelligence Report is held behind `COMING_SOON` in
 `web/src/routes/report/+page.svelte` (greyed button, inert form, email/phone fallback), the same
 holding pattern as the app's `PURCHASES_PAUSED`; flip that one constant to re-enable Stripe
-Checkout. WordPress also had a `/terms-of-use` page that has no equivalent here yet.
+Checkout. `/terms-of-use/` was brought across on the same day, at the same path WordPress used, and is
+linked beside the privacy policy in the footer. Its text (including the original's typos —
+"Polices", "cancelled of suspended", and clause cross-references that no longer line up) is
+verbatim client legal copy last updated 8 July 2024, plus Annexure A's Hazlett / NSW LRS terms;
+reword nothing without them. The `/about/` page carries the WordPress `/about-us/` "Meet the
+team" content (director + the four software developers, photos in `web/static/team/`);
+Anthony Nigro was on the WordPress page and is deliberately left off.
+
+`/sitemap.xml` is generated, not hand-listed: `web/src/routes/sitemap.xml/+server.ts` derives
+the URL set from `import.meta.glob('/src/routes/**/+page.svelte')` at build time, expands
+`[slug]` from the `posts`/`regions` arrays, and drops anything under the `EXCLUDE` prefixes
+(authenticated areas, the app, redirects, `/report/success`). A new marketing route therefore
+appears automatically; only `EXCLUDE` and the `PRIORITY` map need editing by hand.
 
 ### Origin TLS
 

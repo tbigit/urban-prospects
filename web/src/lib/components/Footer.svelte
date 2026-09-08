@@ -114,6 +114,10 @@
 				>&copy; {new Date().getFullYear()} Urban Prospects. All rights reserved. <a
 					href="{base}/privacy-policy/"
 					class="transition-colors hover:text-[var(--fg)]">Privacy Policy</a
+				>
+				&middot;
+				<a href="{base}/terms-of-use/" class="transition-colors hover:text-[var(--fg)]"
+					>Terms of Use</a
 				></span
 			>
 			<ThemeToggle />
