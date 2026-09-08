@@ -595,7 +595,9 @@ def run_sanity(rep, old, new, lga, tolerance):
             delta = f"{d:+.1%}"
             level = "FAIL" if abs(d) > tolerance else "PASS"
         elif o != n:
-            level = "WARN"
+            # A textual probe (the per-region breakdown) differs as soon as any one count
+            # moves, which the numeric probes already judge — report it, do not flag it.
+            level = "INFO"
 
         print(f"  {name:<26} {str(o)[:14]:>14} {str(n)[:14]:>14} {delta:>8}  "
               f"{secs['old']:>7.1f} {secs['new']:>7.1f}")
