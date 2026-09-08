@@ -552,6 +552,46 @@ click. Now:
   near-boundary fit to `zoom_boundary + 0.5` the same way. Previously the circle click flew to
   the centroid at zoom 18, which showed neither of two favourites 1 km apart.
 
+## Search performance: `mv_property_search` (2026-09-08)
+
+A statewide search cost **220 s**. `_search_property` runs
+`select DISTINCT ON (coalesce(propid, gurasid)) t1.*` over `up_property_d_3`, so a 4,422-byte
+row (308 columns) goes through a sort that only needs the dedup key: EXPLAIN ANALYZE showed
+~120 s of parallel seq scan reading 17 GB off disk and ~90 s of dedup sort spilling **7.5 GB**
+to temp. The DB box has 15 GB of RAM against a 41 GB table, so nothing over that table was
+ever going to be fast.
+
+`mv_property_search` (`web/deploy/api/build_mv_property_search.py`) is the same rows with the
+dedup applied and only the 87 columns the search filters on or the result list renders:
+2,768,833 rows, 1.27 GB heap + 1.55 GB indexes — small enough to stay cached. Its column set
+is **derived**, not hand-listed (api.js's `where_clause_array` pushes, the cdc/pattern-book/
+exclusion arrays, and the app's own `property.<field>` reads), and a column missing from the
+source is skipped with a warning rather than failing the build. Rebuild it with `--drop
+--apply` after adding a column; `refresh-lookups.sh` refreshes it concurrently, first.
+
+`web/deploy/api/patch_search_use_mv.py` points api.js at it by rewriting the finished SQL
+(table name -> view, drop the `DISTINCT ON`, **drop the inner `order by` that drove it** —
+leaving that in re-sorts the whole result set and gives the entire gain back, `count(DISTINCT
+...)` -> `count(*)`) rather than editing each of the six assembly branches. `USE_SEARCH_MV=0`
+in the environment reverts without a code change.
+
+    statewide school slider   219,572 ms -> 2 ms SQL, 1.3 s end to end
+    LGA + two pattern books                      1.0 s
+
+Two behaviour changes to know: search result rows carry 87 columns, not 308 (the detail panel
+loads via `/property/<id>` and is untouched — a field the list needs but the view lacks reads
+as undefined, so add it and rebuild); and dedup now happens before the filter rather than
+within each result set, which moves the statewide school count by 0.1%.
+
+Also fixed the same day: pattern-book and complying-development flags were **AND**ed, so
+ticking two designs asked for a lot eligible for both at once — they now group into one OR
+clause (`patch_pattern_books_or.py`, `patch_cdc_or_and_farmstay.py`). The CDC list also said
+`cdc_farmsta`; the column is `cdc_farmstay`, so that tickbox had never matched anything.
+
+`rule_ids` (the planning-rules panel) covers **27,101 of 5.39M properties** across 8 LEPs —
+inner Sydney plus Hornsby. Worth knowing before treating its absence from `up_property_d_4`
+as a hard blocker.
+
 ## Property table cutovers (`up_property_d_3` -> `up_property_d_4` -> ...)
 
 Each data load lands as a **new table**, so `db_propery_table_name` in `api.js` has to move —

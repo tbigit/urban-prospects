@@ -32,9 +32,10 @@
   let img_placeholder = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
   // http://172.105.184.178:3000 — nginx proxies /p to it (upstream upgis).
-  // Relative, like api_domain above: the apex 301s to www, and nginx's 301 carries no
-  // CORS headers, so an absolute apex URL made every tile a blocked cross-origin redirect.
-  let geo_server_url_with_http = '/p';
+  // Absolute same-origin: not the apex (301 breaks CORS), not relative (Mapbox GL's worker
+  // has no document base and cannot parse a relative tile URL). See app/+page.svelte.
+  let geo_server_url_with_http =
+    (typeof window !== 'undefined' ? window.location.origin : '') + '/p';
 
   const initialState = {
     center: [151.2120881644596, -33.88465867322051],

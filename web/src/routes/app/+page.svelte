@@ -330,10 +330,14 @@
 
   // let api_domain = 'https://upapi.imtg.com.au';
   let api_domain = '/q';
-  // Relative, like api_domain above: nginx proxies /p to the GIS server (upstream upgis).
-  // An absolute apex URL made every tile a cross-origin redirect — the apex 301s to www and
-  // nginx's 301 carries no CORS headers, so the browser blocked the lot.
-  let geo_server_url_with_http = '/p';
+  // Same-origin, but ABSOLUTE. nginx proxies /p to the GIS server (upstream upgis).
+  // Two things this has to satisfy at once:
+  //  - not the apex (https://urbanprospects.com.au/p): that 301s to www, and nginx's 301
+  //    carries no CORS headers, so every tile became a blocked cross-origin redirect.
+  //  - not a bare relative '/p': Mapbox GL builds tile Requests inside a web worker, which
+  //    has no document base, so a relative URL throws "Failed to parse URL" once per tile.
+  let geo_server_url_with_http =
+    (typeof window !== 'undefined' ? window.location.origin : '') + '/p';
 
   let map;
   let markers = [];

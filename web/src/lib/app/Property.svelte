@@ -271,7 +271,7 @@
             hiddenMap.addSource('custom-tiles-lot-fill', {
               type: 'vector',
               tiles: [
-                '/p/Lot/{z}/{x}/{y}'
+                `${typeof window !== 'undefined' ? window.location.origin : ''}/p/Lot/{z}/{x}/{y}`
               ],
               promoteId: 'id',
               minzoom: 15
@@ -458,7 +458,7 @@
           daMap.addSource('custom-tiles-lot-fill', {
             type: 'vector',
             tiles: [
-              '/p/Lot/{z}/{x}/{y}'
+              `${typeof window !== 'undefined' ? window.location.origin : ''}/p/Lot/{z}/{x}/{y}`
             ],
             promoteId: 'id',
             minzoom: 15
