@@ -343,6 +343,27 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
   unflagged 2026-09-08: a real Pin subscriber). They keep login access;
   exclude them from customer counts and billing. That leaves 11 real paying members, 1 monthly.
 
+## Outbound mail: Postmark (2026-09-08)
+
+`web/src/lib/server/mail.ts` prefers Postmark's HTTP API (`POSTMARK_TOKEN`, no SDK — just
+`fetch`), falls back to nodemailer/SMTP, and with neither set logs the message to stdout, so dev
+and staging never send. Postmark answers HTTP 200 with a non-zero `ErrorCode` on failure, so both
+are checked.
+
+- **The verified sender domain is `app.urbanprospects.com.au`, not the root domain.** Cloudflare
+  carries Postmark's DKIM (`…pm._domainkey.app.urbanprospects.com.au`) and return-path
+  (`pm-bounces.app.urbanprospects.com.au`) for the subdomain; the root domain's matching records
+  are not confirmed on this Postmark account, and every `From: …@urbanprospects.com.au` is
+  rejected with "not a Sender Signature". Verification is at domain level, so any local part on
+  the subdomain sends. `MAIL_FROM` is therefore
+  `Urban Prospects <no-reply@app.urbanprospects.com.au>` with `MAIL_REPLY_TO=info@urbanprospects.com.au`
+  so replies reach a real inbox. `_dmarc` is `p=none; aspf=r; adkim=r` — relaxed alignment, so the
+  subdomain DKIM aligns with the org domain.
+- `requestPasswordReset` catches and logs a send failure rather than throwing: `/forgot-password/`
+  must answer identically whether or not the address exists.
+- Delivery to `danny@moble.com.au` confirmed 2026-09-08 (Google `250 2.0.0 OK`). **Standing rule:
+  never send test mail to that address** — ask Danny for a throwaway first.
+
 ## Admin console (`/admin/`)
 
 Server-rendered, DB-backed, gated in `web/src/routes/admin/+layout.server.ts` to `users.role =
