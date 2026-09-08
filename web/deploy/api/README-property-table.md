@@ -55,7 +55,7 @@ Then copy the patched `api.js` back, `node --check`, `pm2 restart api`, and run
 |---|---|
 | `table` | either table is missing, the new one has never been `ANALYZE`d, or the row count moved more than ±20% (a broken load, not a change in NSW) |
 | `columns` | a column the API reads exists on the old table but not the new one, a type changed incompatibly, or a type no longer satisfies `expectedSchema` in api.js. Likely renames are surfaced as `WARN` so a rename is not read as a deletion. A column missing from *both* tables is a pre-existing api.js bug — `WARN`, not a blocker |
-| `indexes` | the new table has no equivalent of an index on the old one. Comparison is by normalised definition, not by name, so a differently-named but identical index passes. Prints ready-to-run DDL with the names bumped (`idx_d3_…` → `idx_d4_…`) |
+| `indexes` | the new table has no equivalent of an index the old one **actually uses**. Comparison is by normalised definition, not by name, so a differently-named but identical index passes. An index the source table has scanned fewer than `--min-scans` times (default 1, i.e. never) is reported as a `WARN` and left out of the DDL — building it costs hours of `CONCURRENTLY` on 41 GB for something no query has picked. Usage comes from `pg_stat_user_indexes` since the last stats reset, which the report prints. `--min-scans 0` includes everything |
 | `matviews` | any matview still reads the old table. The set is the full dependency closure — `mv_region_lga_suburb` is built off `mv_d3_zone_lookup`, not off the table, and a `CASCADE` drop would destroy it silently. Views are dropped dependants-first, recreated bases-first, no `CASCADE`, one transaction. Names are kept (api.js queries `mv_d3_zone_lookup` by name) |
 | `code` | a hardcoded `up_property_d_N` remains in real code (comments are `INFO`) |
 | `sanity` | a parity count differs by more than `--tolerance` (default 20%), **or a hard query is more than `--speed-tolerance` (default 1.5×) slower on the new table** — the real symptom of a missing index is minutes, not percentages |
@@ -72,8 +72,16 @@ speed check only fires above 2 s absolute for that reason.
 ## Known state of `up_property_d_4` (checked 2026-09-08)
 
 - 5,408,169 rows (+0.3% vs `d_3`), 41 GB, last analyzed 2026-09-04.
-- **24 of the 51 indexes are missing** — every `cdc_*`/pattern-book partial GiST index,
-  `idx_d3_lga_lzn`, `idx_d3_rule_ids`.
+- **24 of the 51 indexes are missing, but only 2 matter.** Measured over 5.5 days of
+  production traffic (`pg_stat_user_indexes`, stats reset 2026-09-03): `idx_d3_lga_lzn` has
+  156 scans and `idx_d3_rule_ids` has 1. The other 22 — every `cdc_*` and pattern-book
+  partial GiST index — have **`idx_scan = 0`**: the planner has never once chosen them, and
+  since the search moved to `mv_property_search` it never will. Build the two, skip the rest.
+- Related, on `up_property_d_3` itself: **4,216 MB of indexes have never been scanned**
+  (`idx_d3_suburb_region_addr` 1102 MB, `idx_d3_address_trgm_gin` 369 MB,
+  `idx_d3_postcode_region` 495 MB, `idx_d3_property_description_trgm` 484 MB, the 22 partials,
+  …). Dropping them would give back real cache on a 15 GB box. Verify against a longer window
+  before acting — a rarely-used index still shows 0 in a short one.
 - **`rule_ids` was dropped.** `api.js` reads it for the planning-rules panel
   (`up_property_d_3.rule_ids` → `up_planning_code_full.rule_id`). Either the new load must
   carry it or that feature has to move to another source — this is a blocker.

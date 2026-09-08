@@ -283,6 +283,20 @@ def index_defs(table):
     return {r[0]: r[1] for r in rows}
 
 
+def index_usage(table):
+    """indexname -> (scans since the last stats reset, size). An index the old table has
+    never used is not worth hours of CONCURRENTLY on the new one."""
+    rows = psql(f"""select indexrelname, idx_scan,
+                           pg_size_pretty(pg_relation_size(indexrelid))
+                      from pg_stat_user_indexes where relname='{table}'""")
+    return {r[0]: (int(r[1]), r[2]) for r in rows}
+
+
+def stats_window():
+    return q1("select coalesce(stats_reset::date::text,'unknown') "
+              "from pg_stat_database where datname = current_database()")
+
+
 def normalise_index(defn, table, other):
     """Strip the index name and rewrite the table name so two tables' indexes compare."""
     body = INDEX_NAME_RE.sub("CREATE INDEX ON ", defn)
@@ -300,8 +314,9 @@ def rename_index(name, old, new):
     return f"{name}_{short_n}"
 
 
-def check_indexes(rep, old, new, apply=False, concurrently=True):
+def check_indexes(rep, old, new, apply=False, concurrently=True, min_scans=1):
     old_idx, new_idx = index_defs(old), index_defs(new)
+    usage = index_usage(old)
     have = {normalise_index(d, new, new) for d in new_idx.values()}
 
     missing = []
@@ -309,14 +324,30 @@ def check_indexes(rep, old, new, apply=False, concurrently=True):
         if normalise_index(defn, old, new) not in have:
             missing.append((name, defn))
 
-    rep.add("INFO", "indexes", f"{old}: {len(old_idx)} indexes, {new}: {len(new_idx)}")
+    rep.add("INFO", "indexes", f"{old}: {len(old_idx)} indexes, {new}: {len(new_idx)}; "
+                               f"usage counted since {stats_window()}")
 
     if not missing:
         rep.add("PASS", "indexes", f"{new} has an equivalent of every index on {old}")
         return []
 
+    # An index the source table has never once used does not justify hours of
+    # CONCURRENTLY on a 41GB table — and after the search moved to mv_property_search,
+    # most of the cdc_*/pattern-book partials on the base table are exactly that.
+    used = [(n, d) for n, d in missing if usage.get(n, (0, ""))[0] >= min_scans]
+    unused = [(n, d) for n, d in missing if usage.get(n, (0, ""))[0] < min_scans]
+
+    for name, _ in used:
+        scans, size = usage.get(name, (0, "?"))
+        rep.add("FAIL", "indexes", f"missing on {new}: {name} ({scans:,} scans on {old}, {size})")
+    if unused:
+        rep.add("WARN", "indexes",
+                f"{len(unused)} index(es) missing on {new} that {old} has never used — "
+                f"skip them unless a query needs one: "
+                + ", ".join(n for n, _ in unused[:6]) + (" …" if len(unused) > 6 else ""))
+
     ddl = []
-    for name, defn in missing:
+    for name, defn in (used if not apply else used):
         stmt = defn.replace(f"public.{old}", f"public.{new}")
         stmt = stmt.replace(f" ON {old} ", f" ON {new} ")
         stmt = stmt.replace(f" INDEX {name} ", f" INDEX {rename_index(name, old, new)} ")
@@ -324,14 +355,14 @@ def check_indexes(rep, old, new, apply=False, concurrently=True):
             stmt = stmt.replace("CREATE INDEX ", "CREATE INDEX CONCURRENTLY ", 1)
             stmt = stmt.replace("CREATE UNIQUE INDEX ", "CREATE UNIQUE INDEX CONCURRENTLY ", 1)
         ddl.append(stmt + ";")
-        rep.add("FAIL", "indexes", f"missing on {new}: {name}")
 
-    print()
-    print(f"{DIM}--- DDL for the {len(ddl)} missing index(es) "
-          f"(run with `indexes --apply`) ---{RESET}")
-    for stmt in ddl:
-        print(stmt)
-    print()
+    if ddl:
+        print()
+        print(f"{DIM}--- DDL for the {len(ddl)} index(es) {old} actually uses "
+              f"(run with `indexes --apply`; --min-scans 0 to include the unused ones) ---{RESET}")
+        for stmt in ddl:
+            print(stmt)
+        print()
 
     if apply:
         for i, stmt in enumerate(ddl, 1):
@@ -656,6 +687,9 @@ def main():
                     help="path to a copy of api.js (enables the column contract and code checks)")
     ap.add_argument("--apply", action="store_true",
                     help="indexes/matviews: actually run the DDL instead of just printing it")
+    ap.add_argument("--min-scans", type=int, default=1,
+                    help="an index the old table scanned fewer times than this is reported "
+                         "but not required (default 1: never used = not required)")
     ap.add_argument("--no-concurrently", action="store_true",
                     help="build indexes with a table lock (faster, blocks writers)")
     ap.add_argument("--sanity-lga", default="HORNSBY",
@@ -694,12 +728,12 @@ def main():
 
     if args.command in ("check", "cutover"):
         check_columns(rep, old, new, api_js)
-        check_indexes(rep, old, new, apply=False)
+        check_indexes(rep, old, new, apply=False, min_scans=args.min_scans)
         check_matviews(rep, old, new, rebuild=False)
         check_code_refs(rep, old, args.api_js, api_js)
     elif args.command == "indexes":
         check_indexes(rep, old, new, apply=args.apply,
-                      concurrently=not args.no_concurrently)
+                      concurrently=not args.no_concurrently, min_scans=args.min_scans)
     elif args.command == "matviews":
         check_matviews(rep, old, new, rebuild=args.apply)
     elif args.command == "sanity":
