@@ -9363,7 +9363,7 @@ async function _send_mail_property(property_selected) {
 
 
             {/if}
-          {:else if body && !is_getting_total}
+          {:else if body && !is_getting_total && !is_searching_main}
             <div class="padding-bottom">
               <div class="container dark-overlay-lightest padding-top-wide padding-bottom-wide border-round">
                 {#if isChecked}
