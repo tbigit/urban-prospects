@@ -1208,9 +1208,14 @@
     padding-top: 0.5px;
   }
 
-  :root {
-    --checkbox-color: var(--up-c-31144d);
-  }
+  /* The --up-c-* tokens are defined on .up-app (see lib/app/css/theme.css), not on
+     :root, so a `:root { --checkbox-color: var(--up-c-31144d) }` rule referenced an
+     undefined variable: the declaration was invalid at computed-value time, every
+     toggle inherited the guaranteed-invalid value, and `background-color:
+     var(--checkbox-color)` fell back to transparent — an invisible "on" state on
+     every toggle except the mapping layers, which set the variable inline. The
+     default now lives in the var() fallback at the point of use, inside .up-app
+     where the token resolves. */
 
   /* Active toggle: solid pill with punched-out knob (lucide has no filled toggle glyph) */
   .checkbox-group input[type="checkbox"]:checked + label::before {
@@ -1219,14 +1224,14 @@
     height: 1em;
     padding: 0;
     margin-top: 5.5px;
-    background-color: var(--checkbox-color);
+    background-color: var(--checkbox-color, var(--up-c-31144d));
     -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill-rule='evenodd' d='M8 6h8a6 6 0 0 1 0 12H8A6 6 0 0 1 8 6Zm8 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'/></svg>") no-repeat center / contain;
     mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill-rule='evenodd' d='M8 6h8a6 6 0 0 1 0 12H8A6 6 0 0 1 8 6Zm8 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'/></svg>") no-repeat center / contain;
   }
 
   .checkbox-group input[type="checkbox"]:hover + label::before,
   .checkbox-group input[type="checkbox"] + label::before {
-    color: var(--checkbox-color);
+    color: var(--checkbox-color, var(--up-c-31144d));
   }
 
   .checkbox-group input[type="checkbox"] + label {
