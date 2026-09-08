@@ -40,6 +40,12 @@
 .up-app .search-form h5 { font-size: 12px !important; font-weight: 500 !important; color: var(--color-neutral-300) !important; letter-spacing: 0; }
 .up-app .checkbox-group label, .up-app .my-account-link, .up-app .checkbox-fav label { color: var(--color-neutral-300) !important; font-size: 13px; }
 .up-app .my-account-link:hover { color: var(--fg) !important; }
+/* Pattern Books / Site Attributes / Layers rows: no hover feedback existed (the app's own
+   `.checkbox-group > div:hover label` rule has no !important, so the line above always won).
+   Darken the row's text on hover so it's clear which row the pointer is over; the resting
+   colour above is untouched. */
+.up-app .checkbox-group > div { cursor: pointer; }
+.up-app .checkbox-group > div:hover label { color: var(--fg) !important; }
 
 /* ---- controls ---------------------------------------------------------- */
 .up-app .btn-group { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--fg) 4%, transparent); }
