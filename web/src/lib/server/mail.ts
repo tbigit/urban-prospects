@@ -11,7 +11,11 @@ import { env } from '$env/dynamic/private';
 const POSTMARK_URL = 'https://api.postmarkapp.com/email';
 
 export async function sendMail(to: string, subject: string, text: string) {
-	const from = env.MAIL_FROM || 'Urban Prospects <no-reply@urbanprospects.com.au>';
+	// The From domain must be a verified Postmark sender signature. Only
+	// app.urbanprospects.com.au is DKIM-verified on the account, so replies are
+	// pointed at the real inbox on the root domain instead.
+	const from = env.MAIL_FROM || 'Urban Prospects <no-reply@app.urbanprospects.com.au>';
+	const replyTo = env.MAIL_REPLY_TO || 'info@urbanprospects.com.au';
 
 	if (env.POSTMARK_TOKEN) {
 		const res = await fetch(POSTMARK_URL, {
@@ -26,6 +30,7 @@ export async function sendMail(to: string, subject: string, text: string) {
 				To: to,
 				Subject: subject,
 				TextBody: text,
+				ReplyTo: replyTo,
 				MessageStream: env.POSTMARK_STREAM || 'outbound'
 			})
 		});
@@ -48,5 +53,5 @@ export async function sendMail(to: string, subject: string, text: string) {
 		secure: Number(env.SMTP_PORT) === 465,
 		auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined
 	});
-	await transport.sendMail({ from, to, subject, text });
+	await transport.sendMail({ from, to, subject, text, replyTo });
 }
