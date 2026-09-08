@@ -105,7 +105,6 @@
   let is_print = false;
   let pdf_property;
 
-  let generating_pdf = false;
 
 
   let default_map_status = '';
@@ -350,13 +349,12 @@
   let suburb_total = null;
   // v2 routes carry the session cookie and are the ones that survive the v1 deprecation.
   const API_V2 = '/v2/app'; // /v2/properties (no /app) is the public bearer-key Planning Data API
-  // POST to a v2 route; while the API host has not been given the v2 routes yet (404) fall
-  // back to the v1 path so the app keeps working through the cutover. 401 is a real
-  // "not logged in" and is not retried.
-  async function _api_post(path, body, v1_path, signal) {
+  // POST to a v2 route. The v1 fallback this used to carry is gone with the v1 routes
+  // themselves (removed 2026-09-08): everything the app searches now goes through
+  // /v2/app/*, which carries the session cookie. 401 is a real "not logged in".
+  async function _api_post(path, body, signal) {
     const opts = { method: 'POST', cache: 'no-cache', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal };
-    let r = await fetch(`${api_domain}${path}`, opts).catch(() => null);
-    if (r && r.status === 404 && v1_path) r = await fetch(`${api_domain}${v1_path}`, opts).catch(() => null);
+    const r = await fetch(`${api_domain}${path}`, opts).catch(() => null);
     return r && r.ok ? r.json().catch(() => null) : null;
   }
   let suburb_matches = [];                       // last get_suburb response (name + centroid)
@@ -4119,51 +4117,12 @@ async function _send_mail_property(property_selected) {
     }
   }
 
-  async function downloadPdf() {
-
-    generating_pdf = true;
-
-    let search_body = {
-      "per_page": 1, 
-      "page": 60
-    };
-
-    _build_body(search_body);
-
-    
-    let targetUrl = 'https://io.imsstratus.com.au/upapp/?print=1&action=1&search=' + encodeURIComponent(JSON.stringify(search_body)) + '&id=55&email=stuart%40urbanperspectives.com.au&first_name=Stuart&last_name=Wilmot&plan=Enterprise%205%20regions&regions=Sydney%2C%20Western%2C%20Southern%2C%20Northern%2C%20Central%20and%20Hunter';
-
-    try {
-      const response = await fetch(api_domain + '/pdf/property', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ url: targetUrl })
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch PDF");
-      }
-
-      // Get the PDF as a blob
-      const blob = await response.blob();
-
-      // Create a link to download the PDF
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "Sixty Site Search.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      generating_pdf = false;
-    } catch (error) {
-      alert(error.message);
-    }
-    return false;
-  }
+  // The "Sixty Site Search" PDF is gone (deprecated 2026-09-08). It never rendered here: it
+  // asked /pdf/property to drive Playwright against a legacy standalone deployment of this
+  // app on io.imsstratus.com.au, with Stuart's user id and email hardcoded into the URL.
+  // That host now redirects to its bare origin and drops the query string, so print mode
+  // never started, no search ran, and the endpoint timed out waiting for a download it was
+  // never going to get. Rebuild it against this deployment if it is ever wanted again.
 
   function changePage(pageNumber, event) {
     if (event && event.preventDefault) {
@@ -5500,7 +5459,7 @@ async function _send_mail_property(property_selected) {
     is_searching_main = true;
     search_aborted = false;
     search_abort_controller = new AbortController();
-    const properties_response = await _api_post(api_url_path, body, '/properties', search_abort_controller.signal);
+    const properties_response = await _api_post(api_url_path, body, search_abort_controller.signal);
     is_searching_main = false;
     search_abort_controller = null;
     // Escape was pressed while this request was in flight: leave the previous results
@@ -5588,12 +5547,7 @@ async function _send_mail_property(property_selected) {
       delete clone_body.per_page;
 
       suburb_total = null;
-      let suburbs = await _api_post(`${API_V2}/properties/suburbs`, clone_body, null);
-      if (suburbs === null) {
-        // v1 fallback: distinct suburbs without counts (the old get_suburb path).
-        suburbs = await _api_post('/properties', { ...clone_body, get_suburb: 1 }, null);
-        if (Array.isArray(suburbs)) suburbs = suburbs.map(x => ({ ...x, n: 0 }));
-      }
+      const suburbs = await _api_post(`${API_V2}/properties/suburbs`, clone_body);
 
       if (!Array.isArray(suburbs)) return;
       const has_counts = suburbs.some(x => Number(x.n) > 0);
@@ -9242,9 +9196,6 @@ async function _send_mail_property(property_selected) {
               <div class="flex padding-top-thinnest">
                 <div class="full">
                   <a class="btn-reset-search" href="?" on:click={_handle_reset_search}>CLEAR ALL</a>
-                  {#if is_logged_in && user_email && user_email.match('@urbanperspectives.com.au')}
-                  <a class="btn btn-save-search {generating_pdf ? 'unclickable': ''}" href="?" on:click={downloadPdf}><i class=" {generating_pdf ? 'icon-loader-circle icon-spin': 'icon-file-text'}"></i> PDF</a>
-                  {/if}
                   {#if is_logged_in && user_email}
                     <a class="btn btn-save-search {has_ran_search ? '' : 'unclickable'}" href="?" on:click={_handle_save_search}><i class=" icon-zoom-in"></i> SAVE</a>
                   {/if}
