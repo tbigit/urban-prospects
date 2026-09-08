@@ -1,5 +1,13 @@
 <script lang="ts">
 	import '../app.css';
+	// Hashed URLs for the three faces that carry first paint, so they can be
+	// preloaded in <head> — the browser would otherwise only discover them
+	// after parsing the CSS, which is what made text flash in the fallback
+	// font on a fresh (uncached) load. See the font-display: block block in
+	// app.css.
+	import geistSans400 from '@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2?url';
+	import geistSans600 from '@fontsource/geist-sans/files/geist-sans-latin-600-normal.woff2?url';
+	import geistMono400 from '@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2?url';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { page } from '$app/state';
@@ -58,6 +66,9 @@
 </script>
 
 <svelte:head>
+	<link rel="preload" as="font" type="font/woff2" href={geistSans400} crossorigin="anonymous" />
+	<link rel="preload" as="font" type="font/woff2" href={geistSans600} crossorigin="anonymous" />
+	<link rel="preload" as="font" type="font/woff2" href={geistMono400} crossorigin="anonymous" />
 	<link rel="canonical" href={canonical} />
 	<meta property="og:site_name" content="Urban Prospects" />
 	{#if !isEntry}<meta property="og:type" content="website" />{/if}

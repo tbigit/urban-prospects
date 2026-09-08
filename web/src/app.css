@@ -7,6 +7,41 @@
 @import '@fontsource/geist-mono/500.css';
 @import '@fontsource/geist-mono/600.css';
 
+/* The three faces that carry first paint (body sans, semibold headings, the
+   .spec mono labels) are re-declared here with `font-display: block` and are
+   <link rel=preload>ed in +layout.svelte. Fontsource ships `swap`, so on an
+   uncached load the whole page painted once in the system fallback and then
+   reflowed into Geist — the split-second "unstyled black text" flash. A later
+   @font-face for the same family/weight/style wins, so these override the
+   imports above without editing the package. Everything else stays on `swap`. */
+@font-face {
+	font-family: 'Geist Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	src:
+		url('@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2') format('woff2'),
+		url('@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff') format('woff');
+}
+@font-face {
+	font-family: 'Geist Sans';
+	font-style: normal;
+	font-weight: 600;
+	font-display: block;
+	src:
+		url('@fontsource/geist-sans/files/geist-sans-latin-600-normal.woff2') format('woff2'),
+		url('@fontsource/geist-sans/files/geist-sans-latin-600-normal.woff') format('woff');
+}
+@font-face {
+	font-family: 'Geist Mono';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	src:
+		url('@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2') format('woff2'),
+		url('@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff') format('woff');
+}
+
 /* Cloned from blipton.com's "spec label" language (near-black under a whisper
    of film grain, monospaced technical labels, generous negative space) but
    re-themed for Urban Prospects: dark mode is a true near-black tuned faintly
