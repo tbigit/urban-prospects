@@ -702,8 +702,60 @@ so the existing `acme.sh --cron` renews it unattended and `--reloadcmd` reloads 
 token is ever revoked, renewal fails silently — reissue with a fresh DNS:Edit token. The vhost
 points at `/opt/www/ssl/urbanprospects.com.au.{cer,key}`; the old `preview.*` pair is dead.
 
-Because the origin cert is now publicly valid for every name on the box, the zone can be moved
-to **Full (strict)**. That is a dashboard change (SSL/TLS → Overview) — a DNS-scoped API token
-cannot set it.
+The zone was moved to **Full (strict)** on 2026-09-08, which validates the origin cert on every
+proxied hostname — not just this box's. That immediately 526'd `v1`, whose ServerPilot vhost was
+sharing a cert that only covered `u.imtg.com.au`. Fixed by giving `v1` its own certbot cert and
+its own 443 server block in `/etc/nginx-sp/vhosts.d/urbanprospects-test.conf` (backup
+`*.bak-2026-09-08-pre-strict`); `v1` stays in the **port 80** block's `server_name` so certbot's
+webroot renewal keeps working. Anything else pointed at this zone needs a publicly valid origin
+cert before it is proxied.
+
+`autoconfig`, `ftp`, `mail` and `ssh` still 526 — they are legacy A records aimed at
+35.213.253.188, an old host that no longer completes a TLS handshake at all, so they were
+already dead under Full and strict only changed the error number. Mail is unaffected: delivery
+runs on the unproxied Outlook MX, and Postmark's DKIM
+(`20260804081136pm._domainkey.app.urbanprospects.com.au`) and return-path are unproxied TXT/CNAME
+records. The `s1`/`s2._domainkey` SendGrid CNAMEs are proxied, which breaks them as DKIM lookups
+— stale from a previous provider, worth deleting.
 
 Still open: `STRIPE_PUBLISHABLE_KEY` is unset, so /account/'s "Update card" stays disabled.
+
+## Pin/WooCommerce billing after the cutover (decided 2026-09-08: leave it running)
+
+The 11 real members are all still billed by **Pin Payments through WooCommerce on v1**, not
+Stripe. Their `user_subscriptions` rows have `payment_subscription_id` NULL. **Decision: leave
+Pin billing alone.** Each member migrates to Stripe at their own renewal via `/renew/` (which
+retires the imported row and sets `wp_import_subscriptions.woo_cancel_due_at`). Do not
+bulk-cancel the Woo subscriptions — Pin bills regardless of what the new site thinks, and
+cancelling early throws away the paid term the member already holds.
+
+- Moving WordPress to `v1.` does not affect the charge. The Pin gateway holds a card token and
+  charges Pin's API server-to-server; nothing in the renewal path reads the public hostname, and
+  `WP_HOME`/`WP_SITEURL` in `wp-config.php` keep links and receipts resolving.
+- **What did break: WP-Cron.** That box had no cron entry and no `DISABLE_WP_CRON`, so the
+  scheduler only ran on page loads — and `v1.` gets no traffic. Renewals would have fired
+  whenever someone happened to load a page. Fixed 2026-09-08 on `upapi` (`45.79.118.32`):
+  root crontab runs `wp-cron.php` every 5 minutes and `DISABLE_WP_CRON` is set in wp-config
+  (backup `wp-config.php.bak-2026-09-08-pre-cron`, inside the container). The curl **must**
+  carry `-H "Host: v1.urbanprospects.com.au"` — ServerPilot's nginx routes by Host and has no
+  default port-80 vhost, so a bare `http://localhost/wp-cron.php` returns `000` and the cron
+  line is a silent no-op. Verify with `grep wp-cron /var/log/cron` plus a manual curl, not by
+  watching for new completed actions (the queue is often idle for hours).
+- **The rows go out of sync.** A Pin charge advances Woo's own `next_payment`; nothing updates
+  `user_subscriptions.current_period_end`. The stale date then trips `renewal.ts`'s 7-day
+  window and pushes a member who just paid to `/renew/` — and Stripe **is** fully configured on
+  the live box (`STRIPE_SECRET_KEY` and all ten `STRIPE_PRICE_REGION_*` are set; only
+  `STRIPE_PUBLISHABLE_KEY` is missing, which just disables /account/'s "Update card"), so that
+  page will happily take a second payment. Until a sync exists, **bump `current_period_end` by
+  hand in `/admin/subscriptions/[id]/` after each Pin charge clears.** Only four renewals fall
+  before January 2027, so this is cheap: jai 9 Sep (monthly, the only one), jason 10 Sep, phil
+  26 Sep, tai 30 Oct — then nothing until anthony on 13 Jan 2027.
+- Deferred, not rejected: a nightly job joining `wp_import_subscriptions.wp_subscription_id` to
+  the Woo `shop_subscription` `next_payment` meta and writing it into `current_period_end` would
+  remove the drift permanently (~1h of work). Worth building if the hand-bumping is missed once.
+- Handy: the Woo queue lives in `wp_actionscheduler_actions`
+  (`hook='woocommerce_scheduled_subscription_payment'`, args `{"subscription_id":N}`). Reach the
+  DB with `cd /opt/urbanprospects-test && set -a && . ./.env && docker exec
+  urbanprospects-test-db mariadb -u$WORDPRESS_DB_USER -p$WORDPRESS_DB_PASSWORD $WORDPRESS_DB_NAME`
+  — the client is `mariadb`, not `mysql`. Check for overdue payment actions before triggering
+  wp-cron by hand; a catch-up run charges real cards.
