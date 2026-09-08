@@ -642,3 +642,34 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
   `--bg`/`--fg`. Map tiles and photos are untouched. A shadcn/Tailwind rewrite of the app
   (2,300 usages of `incremental.css` grid/spacing utilities across a 9.4k-line page) remains
   a separate decision under UP-031.
+
+## Go-live: the 2026-09-08 domain cutover
+
+`www.urbanprospects.com.au` now serves this site; the old WordPress moved to
+`v1.urbanprospects.com.au`. DNS is Cloudflare (zone `5aad106d849cda1cde08d59b7ff8896b`), every
+record proxied:
+
+- `www` and `@` → `143.42.46.116` (the Node site). `preview` stays on the same box and is
+  still a valid hostname on the vhost.
+- `v1` → `45.79.118.32` — the ServerPilot/Docker WordPress box, which was always the live
+  origin (`/opt/urbanprospects-test` is production, despite the `-test` name). Its vhost
+  `/etc/nginx-sp/vhosts.d/urbanprospects-test.conf` gained `v1.` in both `server_name`s, and
+  `wp-config.php` inside `urbanprospects-test-web` has `WP_HOME`/`WP_SITEURL` set to
+  `https://v1.urbanprospects.com.au/`. The LE cert there only covers `u.imtg.com.au`; that is
+  fine because Cloudflare's SSL mode does not validate the origin cert.
+- The site vhost's `X-Robots-Tag: noindex` is now driven by a `map $host $up_robots` — preview
+  stays out of the index, `www`/apex are indexable. Do not reinstate the server-wide header.
+- The apex 301s to `www` inside the 443 block; `/opt/www/upweb-redirects.conf` (from
+  `web/deploy/redirects.conf`) carries `/blog` → `/insights/` and `/about-us/` → `/about/`.
+- `ORIGIN`/`PUBLIC_ORIGIN` in `/opt/www/upweb-node/.env` are `https://www.urbanprospects.com.au`.
+  adapter-node CSRF-rejects form POSTs whose Origin does not match, so these must track the
+  canonical host, and `systemctl restart upweb` is required after changing them.
+- Backups from the cutover: `*.conf.bak-2026-09-08-pre-golive` (site vhost),
+  `*.conf.bak-2026-09-08-pre-v1` (WP vhost), `wp-config.php.bak-2026-09-08-pre-v1`,
+  `.env.bak-2026-09-08-pre-golive`.
+
+Still open: `/contact`, `/faq` and `/privacy-policy` were indexed WordPress pages with no
+equivalent on the new site and now 404 — they need pages or 301s. The origin TLS cert on
+`143.42.46.116` is self-signed and expired (20 Aug 2026); it works only because Cloudflare is
+not in Full (strict) mode. `STRIPE_PUBLISHABLE_KEY` is still unset, so /account/'s "Update card"
+stays disabled.
