@@ -529,7 +529,11 @@ click. Now:
   proxies `/q/v2` straight to `upapi.imtg.com.au` with the cookie; dev sessions live in the
   same DB so they verify.
 - `routes/app/+page.svelte`: `_api_post()` tries the v2 path and falls back to v1 on 404, so the
-  app works before and after the API patch. The per-search `count(*)` and the "unbounded
+  app works before and after the API patch. **Superseded 2026-09-08:** v1 `POST /properties`
+  now answers **410 Gone** and the client fallback is removed — everything the app searches
+  goes through `/v2/app/*`. The last unauthenticated property route is `GET /property/<id>`;
+  gating it needs a `/v2/app/property/<id>` twin *and* an nginx change, since the Cookie
+  header is stripped on `/q/` and forwarded only on `/q/v2/`. The per-search `count(*)` and the "unbounded
   count" on empty bounded results are gone; the total is the sum of the aggregate's `n`
   (`suburb_total`), which also answers the Total Results button instantly. The aggregate
   is fetched on fresh searches only (reset 1/0), never on bounded map re-searches.
@@ -657,6 +661,12 @@ site + app. Nothing was rewritten: Svelte 5 compiles the Svelte 4 components in 
 - Svelte 5 compile fixes applied to the copy: `<div>` inside `<p>` in `Design.svelte`
   (tooltip now a `<span>`), `;;` in three `<style>` blocks. The rest compiles as-is; the 186
   remaining `svelte-check` warnings are a11y/unused-CSS in the app and are pre-existing.
+- The "Sixty Site Search" PDF button is gone (2026-09-08). It drove Playwright, via
+  `/pdf/property`, against a legacy standalone deployment of this app on
+  `io.imsstratus.com.au` with Stuart's user id hardcoded in the URL; that host now redirects
+  to its bare origin and drops the query string, so print mode never started and the endpoint
+  timed out waiting for a download. Single-property PDFs are unaffected — they all resolve
+  through `GET /property/<id>`, which still reads the full 308-column base table.
 - Debug shortcut kept from upapp: Ctrl+Shift+P opens property 1645912 directly — handy for
   testing the panel without a search.
 - nginx: `deploy/nginx-site.conf` no longer aliases `/app/` to `/opt/www/upapp` or uses
