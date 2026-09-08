@@ -68,13 +68,19 @@ export async function requestPasswordReset(email: string) {
 		[sha256(token), user.id, String(RESET_MINUTES)]
 	);
 	const origin = env.PUBLIC_ORIGIN || 'https://www.urbanprospects.com.au';
-	await sendMail(
-		user.email,
-		'Reset your Urban Prospects password',
-		`Someone asked to reset the password for this Urban Prospects account.\n\n` +
-			`Set a new password here (link valid for ${RESET_MINUTES} minutes):\n${origin}/reset-password/${token}/\n\n` +
-			`If that was not you, ignore this email and your password stays the same.`
-	);
+	// The page answers the same whether or not the address exists, so a provider
+	// failure must not change the response either — log it and move on.
+	try {
+		await sendMail(
+			user.email,
+			'Reset your Urban Prospects password',
+			`Someone asked to reset the password for this Urban Prospects account.\n\n` +
+				`Set a new password here (link valid for ${RESET_MINUTES} minutes):\n${origin}/reset-password/${token}/\n\n` +
+				`If that was not you, ignore this email and your password stays the same.`
+		);
+	} catch (e) {
+		console.error('[password-reset] send failed for', user.email, e);
+	}
 }
 
 export async function validateResetToken(token: string): Promise<number | null> {
