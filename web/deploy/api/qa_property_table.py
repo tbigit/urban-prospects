@@ -667,6 +667,9 @@ def main():
                     help="fractional difference in a parity count that fails (default 0.20)")
     args = ap.parse_args()
 
+    # Probes take minutes each; without this a redirected run shows nothing until the end.
+    sys.stdout.reconfigure(line_buffering=True)
+
     api_js = None
     if args.api_js:
         with open(args.api_js) as fh:
