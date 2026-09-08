@@ -552,6 +552,25 @@ click. Now:
   near-boundary fit to `zoom_boundary + 0.5` the same way. Previously the circle click flew to
   the centroid at zoom 18, which showed neither of two favourites 1 km apart.
 
+## Property table cutovers (`up_property_d_3` -> `up_property_d_4` -> ...)
+
+Each data load lands as a **new table**, so `db_propery_table_name` in `api.js` has to move —
+and the new table arrives with none of the ~50 indexes the search needs, possibly missing a
+column the code reads, and with the lookup matviews still pointing at the old table.
+`web/deploy/api/qa_property_table.py` gates that switch: column/type diff against api.js's
+own `expectedSchema` contract, index-by-definition comparison (emits and optionally applies
+the missing DDL), matview rebuild in dependency order, parity + **hard-query timing** against
+both tables, and a `cutover` that only rewrites api.js when every check is green. Runbook and
+the current state of `up_property_d_4`: `web/deploy/api/README-property-table.md`.
+
+Two traps it exists to catch: `mv_region_lga_suburb` is built off `mv_d3_zone_lookup`, not off
+the property table, so a `CASCADE` drop of the base destroys it silently; and `api.js` has
+hardcoded `up_property_d_3` literals (`expectedSchema` key, `queryCDCProperties`) that do not
+move with the constant.
+
+As found 2026-09-08, `up_property_d_4` is **not ready**: 24 indexes missing, `rule_ids`
+dropped (the planning-rules panel reads it), all three matviews still on `d_3`.
+
 ## Dev server note
 
 `vite.config.ts` ignores `build/**` and `.svelte-kit/output/**` in the file watcher. Without
