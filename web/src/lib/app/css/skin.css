@@ -684,3 +684,24 @@
 .up-app .app.mapview.viewing-property .map-view-detail .skeleton-close:hover {
   background: rgba(20, 13, 31, .78) !important; color: #fff !important;
 }
+
+/* Range sliders (@bulatdashiev/svelte-slider). The app hardcodes
+   --track-bg/--progress-bg to #F1E9F7 in an inline style="" on .app, which on
+   the dark panel reads as a bright lavender bar — the loudest thing in the
+   search panel. Dim both to the panel's own ink; the purple thumb stays the
+   only saturated mark. !important is required: these override an inline
+   custom property on the same element. Light mode keeps the original tint. */
+.up-app .app {
+  --track-bg: color-mix(in srgb, var(--fg) 13%, transparent) !important;
+  --progress-bg: color-mix(in srgb, var(--fg) 26%, transparent) !important;
+}
+:root[data-theme='light'] .up-app .app {
+  --track-bg: #F1E9F7 !important;
+  --progress-bg: #F1E9F7 !important;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .up-app .app {
+    --track-bg: #F1E9F7 !important;
+    --progress-bg: #F1E9F7 !important;
+  }
+}
