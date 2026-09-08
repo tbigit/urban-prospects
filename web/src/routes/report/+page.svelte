@@ -6,6 +6,12 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import { base } from '$app/paths';
 
+	// Report ordering is not switched on yet: the button greys out to "Coming
+	// Soon" and the form is inert. Same holding-notice pattern as the app's
+	// PURCHASES_PAUSED / TRIAL_LINKS_PAUSED constants — flip this one back to
+	// false to re-enable Stripe Checkout, nothing else needs changing.
+	const COMING_SOON = true;
+
 	const PRICE = 250;
 	const includes = [
 		'Zoning, permissible uses and Schedule 1 additional uses',
@@ -91,6 +97,7 @@
 								bind:value={address}
 								required
 								minlength="6"
+								disabled={COMING_SOON}
 								autocomplete="street-address"
 								placeholder="7 Onslow Avenue, Elizabeth Bay NSW 2011"
 								class="h-11 rounded-md border border-[var(--color-line)] bg-[var(--bg)] px-3 text-[15px] text-[var(--fg)] placeholder:text-[var(--color-neutral-600)]"
@@ -102,6 +109,7 @@
 								type="email"
 								bind:value={email}
 								autocomplete="email"
+								disabled={COMING_SOON}
 								placeholder="you@company.com.au"
 								class="h-11 rounded-md border border-[var(--color-line)] bg-[var(--bg)] px-3 text-[15px] text-[var(--fg)] placeholder:text-[var(--color-neutral-600)]"
 							/>
@@ -111,15 +119,41 @@
 							<span class="text-[36px] leading-none font-semibold tracking-tight text-[var(--fg)]">${PRICE}</span>
 							<span class="text-[15px] text-[var(--color-neutral-400)]">per site, AUD, one-off</span>
 						</div>
-						<Button type="submit" disabled={busy} variant="teal" size="lg" class="mt-6 w-full">
-							{busy ? 'Opening checkout' : 'Continue to Payment'}
-						</Button>
-						{#if err}
-							<p class="mt-3 text-[13.5px] text-red-400" role="alert">{err}</p>
+						{#if COMING_SOON}
+							<Button
+								type="button"
+								disabled
+								variant="outline"
+								size="lg"
+								class="mt-6 w-full cursor-not-allowed border-[var(--color-line)] bg-[var(--color-neutral-600)]/10 text-[var(--color-neutral-500)]"
+							>
+								Coming Soon
+							</Button>
+							<p class="mt-4 text-[12.5px] leading-relaxed text-[var(--color-neutral-500)]">
+								Online ordering is not open yet. To have a site run now, email
+								<a
+									href="mailto:info@urbanprospects.com.au"
+									class="text-[var(--color-neutral-400)] underline underline-offset-4"
+									>info@urbanprospects.com.au</a
+								>
+								or call
+								<a
+									href="tel:+61280714591"
+									class="text-[var(--color-neutral-400)] underline underline-offset-4">02 8071 4591</a
+								>.
+							</p>
+						{:else}
+							<Button type="submit" disabled={busy} variant="teal" size="lg" class="mt-6 w-full">
+								{busy ? 'Opening checkout' : 'Continue to Payment'}
+							</Button>
+							{#if err}
+								<p class="mt-3 text-[13.5px] text-red-400" role="alert">{err}</p>
+							{/if}
+							<p class="mt-4 text-[12.5px] leading-relaxed text-[var(--color-neutral-500)]">
+								No account needed. Your report is emailed as a PDF once the planners have run the
+								site.
+							</p>
 						{/if}
-						<p class="mt-4 text-[12.5px] leading-relaxed text-[var(--color-neutral-500)]">
-							No account needed. Your report is emailed as a PDF once the planners have run the site.
-						</p>
 					</form>
 				</Reveal>
 			</div>

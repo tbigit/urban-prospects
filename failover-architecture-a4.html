@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Urban Prospects — hot-standby architecture (A4)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 portrait; margin: 10mm; }
+  html, body { margin: 0; background: #ffffff; }
+  body { display: flex; justify-content: center; }
+  .page { width: 190mm; }
+  svg { display: block; width: 100%; height: auto; }
+  @media screen { .page { margin: 24px auto; } }
+  @media print { body { background: #fff; } .page { margin: 0; } }
+  .name { font-family: 'Geist', 'Inter', system-ui, sans-serif; font-size: 16px; font-weight: 600; fill: #2d3142; }
+  .sub  { font-family: 'Geist', 'Inter', system-ui, sans-serif; font-size: 16px; font-weight: 400; fill: #4f5d75; }
+  .mono { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 16px; fill: #4f5d75; }
+  .plane { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 16px; font-weight: 600; fill: #2d3142; letter-spacing: 0.08em; }
+  .lbl { font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 16px; fill: #7a8399; letter-spacing: 0.04em; }
+  .note-t { font-family: 'Geist', system-ui, sans-serif; font-size: 16px; font-weight: 600; fill: #5c2687; letter-spacing: 0.04em; }
+  .note   { font-family: 'Geist', system-ui, sans-serif; font-size: 16px; fill: #5c2687; }
+  .purple .name { fill: #5c2687; }
+</style>
+</head>
+<body>
+<div class="page">
+<svg viewBox="0 0 760 1080" role="img" aria-labelledby="failover-a4-title failover-a4-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="failover-a4-title">Urban Prospects hot-standby architecture</title>
+  <desc id="failover-a4-desc">Architecture diagram across data, serving and edge planes: a weekly ETL loads production PostgreSQL, which syncs to a hot-standby database; Martin tile servers read each database; an Express API and nginx caches feed the SvelteKit frontend, and a password-protected admin console toggles the API and frontend to the standby paths.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto-start-reverse">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto-start-reverse">
+      <polygon points="0 0, 8 3, 0 6" fill="#5c2687"/>
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#ffffff"/>
+
+  <!-- ===== Header note ===== -->
+  <rect x="16" y="16" width="728" height="112" rx="8" fill="rgba(92,38,135,0.05)" stroke="#5c2687" stroke-width="1" stroke-dasharray="5,4"/>
+  <text class="note-t" x="32" y="42">NEW DEVELOPMENT (PURPLE)</text>
+  <text class="note" x="400" y="42" fill="#7a8399" style="fill:#7a8399">dashed lines = standby / failover paths</text>
+  <text class="note" x="32" y="70">• Hot-standby PostgreSQL, synced weekly</text>
+  <text class="note" x="32" y="94">• Hot-standby Martin tile server, replicated</text>
+  <text class="note" x="32" y="118">• Weekly sync / replication scripts</text>
+  <text class="note" x="400" y="70">• Password-protected admin console</text>
+  <text class="note" x="400" y="94">• Toggle: point API at standby database</text>
+  <text class="note" x="400" y="118">• Toggle: point frontend at standby tiles</text>
+
+  <!-- ===== Plane containers (painted first) ===== -->
+  <rect x="16" y="152" width="728" height="260" rx="8" fill="none" stroke="rgba(45,49,66,0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text class="plane" x="736" y="176" text-anchor="end">DATA PLANE</text>
+  <rect x="16" y="436" width="728" height="192" rx="8" fill="none" stroke="rgba(45,49,66,0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text class="plane" x="736" y="460" text-anchor="end">SERVING PLANE</text>
+  <rect x="16" y="652" width="728" height="192" rx="8" fill="none" stroke="rgba(45,49,66,0.18)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text class="plane" x="736" y="676" text-anchor="end">EDGE PLANE</text>
+
+  <!-- ===== Connectors (before boxes) ===== -->
+  <!-- ETL -> PG prod -->
+  <line x1="102" y1="240" x2="102" y2="280" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="36" y="248" width="58" height="20" rx="2" fill="#ffffff"/>
+  <text class="lbl" x="90" y="263" text-anchor="end">loads</text>
+
+  <!-- PG prod <-> PG standby -->
+  <line x1="180" y1="322" x2="212" y2="322" stroke="#5c2687" stroke-width="1.2" marker-start="url(#arrow-purple)" marker-end="url(#arrow-purple)"/>
+  <text class="lbl" x="196" y="388" text-anchor="middle">weekly sync</text><text class="lbl" x="196" y="406" text-anchor="middle">+ backup</text>
+  <!-- Martin prod <-> Martin standby -->
+  <line x1="548" y1="322" x2="580" y2="322" stroke="#5c2687" stroke-width="1.2" marker-start="url(#arrow-purple)" marker-end="url(#arrow-purple)"/>
+  <text class="lbl" x="564" y="392" text-anchor="middle">replication</text>
+
+  <!-- PG prod -> Express API -->
+  <line x1="102" y1="364" x2="102" y2="476" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- PG standby -> Express API (failover, dashed) -->
+  <path d="M290 364 V420 a8 8 0 0 1 -8 8 H172 a8 8 0 0 0 -8 8 V476" fill="none" stroke="#5c2687" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow-purple)"/>
+  
+  <rect x="172" y="442" width="124" height="20" rx="2" fill="#ffffff"/><text class="lbl" x="176" y="457" style="fill:#5c2687">failover path</text>
+
+  <!-- Martin prod -> nginx tile cache -->
+  <line x1="470" y1="364" x2="470" y2="728" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Martin standby -> nginx standby cache -->
+  <line x1="658" y1="364" x2="658" y2="728" stroke="#5c2687" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow-purple)"/>
+
+  <!-- Admin -> Express API (toggle DB) -->
+  <line x1="236" y1="518" x2="196" y2="518" stroke="#5c2687" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow-purple)"/>
+  <!-- Admin -> Frontend (toggle tiles) -->
+  <line x1="336" y1="560" x2="336" y2="892" stroke="#5c2687" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow-purple)"/>
+
+  <!-- Express API -> nginx cache proxy -->
+  <line x1="110" y1="560" x2="110" y2="728" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- nginx cache proxy -> Frontend -->
+  <path d="M110 812 V860 a8 8 0 0 0 8 8 H272 a8 8 0 0 1 8 8 V892" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- nginx tile cache -> Frontend -->
+  <path d="M470 812 V852 a8 8 0 0 1 -8 8 H400 a8 8 0 0 0 -8 8 V892" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- nginx standby cache -> Frontend -->
+  <path d="M658 812 V868 a8 8 0 0 1 -8 8 H456 a8 8 0 0 0 -8 8 V892" fill="none" stroke="#5c2687" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow-purple)"/>
+
+  <!-- Frontend -> Users -->
+  <line x1="364" y1="972" x2="364" y2="1012" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="372" y="982" width="60" height="20" rx="2" fill="#ffffff"/>
+  <text class="lbl" x="376" y="997">HTTPS</text>
+
+  <!-- ===== Data plane boxes ===== -->
+  <!-- Python / Sedona (input) -->
+  <rect x="24" y="184" width="156" height="56" rx="6" fill="#ffffff"/>
+  <rect x="24" y="184" width="156" height="56" rx="6" fill="rgba(79,93,117,0.10)" stroke="#7a8399" stroke-width="1"/>
+  <text class="name" x="102" y="208" text-anchor="middle">Python / Sedona</text>
+  <text class="sub" x="102" y="230" text-anchor="middle">weekly ETL script</text>
+
+  <!-- PostgreSQL production (store) -->
+  <rect x="24" y="280" width="156" height="84" rx="6" fill="#ffffff"/>
+  <rect x="24" y="280" width="156" height="84" rx="6" fill="rgba(45,49,66,0.05)" stroke="#2d3142" stroke-width="1"/>
+  <text class="name" x="102" y="310" text-anchor="middle">PostgreSQL</text>
+  <text class="sub" x="102" y="332" text-anchor="middle">production</text>
+  <text class="sub" x="102" y="352" text-anchor="middle">UP_Property + geom</text>
+
+  <!-- PostgreSQL hot standby (new) -->
+  <g class="purple">
+  <rect x="212" y="280" width="156" height="84" rx="6" fill="#ffffff"/>
+  <rect x="212" y="280" width="156" height="84" rx="6" fill="rgba(92,38,135,0.06)" stroke="#5c2687" stroke-width="1" stroke-dasharray="5,4"/>
+  <text class="name" x="290" y="310" text-anchor="middle">PostgreSQL</text>
+  <text class="sub" x="290" y="332" text-anchor="middle">hot standby</text>
+  <text class="sub" x="290" y="352" text-anchor="middle">≤ 1 week behind</text>
+  </g>
+
+  <!-- Martin production -->
+  <rect x="392" y="280" width="156" height="84" rx="6" fill="#ffffff"/>
+  <rect x="392" y="280" width="156" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+  <text class="name" x="470" y="310" text-anchor="middle">Martin</text>
+  <text class="sub" x="470" y="332" text-anchor="middle">prod tile server</text>
+  <text class="sub" x="470" y="352" text-anchor="middle">reads prod DB</text>
+
+  <!-- Martin hot standby (new) -->
+  <g class="purple">
+  <rect x="580" y="280" width="156" height="84" rx="6" fill="#ffffff"/>
+  <rect x="580" y="280" width="156" height="84" rx="6" fill="rgba(92,38,135,0.06)" stroke="#5c2687" stroke-width="1" stroke-dasharray="5,4"/>
+  <text class="name" x="658" y="310" text-anchor="middle">Martin</text>
+  <text class="sub" x="658" y="332" text-anchor="middle">standby tile server</text>
+  <text class="sub" x="658" y="352" text-anchor="middle">reads standby DB</text>
+  </g>
+
+  <!-- ===== Serving plane boxes ===== -->
+  <!-- Express API -->
+  <rect x="24" y="476" width="172" height="84" rx="6" fill="#ffffff"/>
+  <rect x="24" y="476" width="172" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+  <text class="name" x="110" y="512" text-anchor="middle">Express API</text>
+  <text class="sub" x="110" y="536" text-anchor="middle">reads active DB</text>
+
+  <!-- Admin console (new, focal) -->
+  <g class="purple">
+  <rect x="236" y="476" width="200" height="84" rx="6" fill="#ffffff"/>
+  <rect x="236" y="476" width="200" height="84" rx="6" fill="rgba(92,38,135,0.06)" stroke="#5c2687" stroke-width="1.2"/>
+  <text class="name" x="336" y="506" text-anchor="middle">Admin console</text>
+  <text class="sub" x="336" y="528" text-anchor="middle">password-protected</text>
+  <text class="sub" x="336" y="548" text-anchor="middle">toggles DB + tiles</text>
+  </g>
+
+  <!-- ===== Edge plane boxes ===== -->
+  <!-- nginx cache proxy -->
+  <rect x="24" y="728" width="172" height="84" rx="6" fill="#ffffff"/>
+  <rect x="24" y="728" width="172" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+  <text class="name" x="110" y="758" text-anchor="middle">nginx</text>
+  <text class="sub" x="110" y="780" text-anchor="middle">cache proxy</text>
+  <text class="mono" x="110" y="800" text-anchor="middle">/api/*</text>
+
+  <!-- nginx tile cache -->
+  <rect x="392" y="728" width="156" height="84" rx="6" fill="#ffffff"/>
+  <rect x="392" y="728" width="156" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+  <text class="name" x="470" y="758" text-anchor="middle">nginx</text>
+  <text class="sub" x="470" y="780" text-anchor="middle">tile cache</text>
+  <text class="mono" x="470" y="800" text-anchor="middle">/p/{z}/{x}/{y}</text>
+
+  <!-- nginx tile cache standby (new) -->
+  <g class="purple">
+  <rect x="580" y="728" width="156" height="84" rx="6" fill="#ffffff"/>
+  <rect x="580" y="728" width="156" height="84" rx="6" fill="rgba(92,38,135,0.06)" stroke="#5c2687" stroke-width="1" stroke-dasharray="5,4"/>
+  <text class="name" x="658" y="758" text-anchor="middle">nginx</text>
+  <text class="sub" x="658" y="780" text-anchor="middle">tile cache (standby)</text>
+  <text class="mono" x="658" y="800" text-anchor="middle">/p2/{z}/{x}/{y}</text>
+  </g>
+
+  <!-- ===== Frontend ===== -->
+  <rect x="224" y="892" width="280" height="80" rx="6" fill="#ffffff"/>
+  <rect x="224" y="892" width="280" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1.2"/>
+  <text class="name" x="364" y="920" text-anchor="middle">SvelteKit frontend</text>
+  <text class="sub" x="364" y="942" text-anchor="middle">list view + map view</text>
+  <text class="mono" x="364" y="962" text-anchor="middle">urbanprospects.com.au</text>
+
+  <!-- ===== Users ===== -->
+  <rect x="284" y="1012" width="160" height="52" rx="6" fill="#ffffff"/>
+  <rect x="284" y="1012" width="160" height="52" rx="6" fill="rgba(79,93,117,0.10)" stroke="#7a8399" stroke-width="1"/>
+  <text class="name" x="364" y="1044" text-anchor="middle">Users (browser)</text>
+</svg>
+</div>
+</body>
+</html>

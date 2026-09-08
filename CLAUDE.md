@@ -668,8 +668,17 @@ record proxied:
   `*.conf.bak-2026-09-08-pre-v1` (WP vhost), `wp-config.php.bak-2026-09-08-pre-v1`,
   `.env.bak-2026-09-08-pre-golive`.
 
-Still open: `/contact`, `/faq` and `/privacy-policy` were indexed WordPress pages with no
-equivalent on the new site and now 404 — they need pages or 301s. The origin TLS cert on
+`/contact/`, `/faq/` and `/privacy-policy/` were rebuilt on 2026-09-08 from the WordPress
+originals (still readable on v1, and via `v1.urbanprospects.com.au/wp-json/wp/v2/pages?slug=…`).
+The FAQ's 16 Q&As came out of an Elementor accordion, so only the copy survived; it renders as
+native `<details>` plus `FAQPage` JSON-LD. The privacy policy text is carried over verbatim —
+it is the client's legal copy, last reviewed 1 August 2024, so reword nothing without them.
+Ordering a Property Intelligence Report is held behind `COMING_SOON` in
+`web/src/routes/report/+page.svelte` (greyed button, inert form, email/phone fallback), the same
+holding pattern as the app's `PURCHASES_PAUSED`; flip that one constant to re-enable Stripe
+Checkout. WordPress also had a `/terms-of-use` page that has no equivalent here yet.
+
+Still open: the origin TLS cert on
 `143.42.46.116` is self-signed and expired (20 Aug 2026); it works only because Cloudflare is
 not in Full (strict) mode. `STRIPE_PUBLISHABLE_KEY` is still unset, so /account/'s "Update card"
 stays disabled.

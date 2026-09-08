@@ -19,7 +19,8 @@
 		{ href: `${base}/pricing/`, label: 'Pricing' },
 		{ href: `${base}/data-apis/`, label: 'Planning Data APIs' },
 		{ href: `${base}/demo/`, label: 'Book a Demo' },
-		{ href: `${base}/about/`, label: 'About' }
+		{ href: `${base}/about/`, label: 'About' },
+		{ href: `${base}/faq/`, label: 'FAQ' }
 	];
 	// Region paths are the live WordPress ones, unchanged — these are indexed.
 	const explore = [
@@ -97,7 +98,8 @@
 			<div>
 				<div class="spec text-[var(--accent-teal-text)]">Contact</div>
 				<ul class="mt-3 space-y-2 text-[13px] text-[var(--color-neutral-400)]">
-					<li>88 Foveaux St, Surry Hills NSW 2000</li>
+					<li>603/88 Foveaux St, Surry Hills NSW 2010</li>
+					<li><a href="{base}/contact/" class="transition-colors hover:text-[var(--fg)]">Contact us</a></li>
 					<li><a href="mailto:info@urbanprospects.com.au" class="transition-colors hover:text-[var(--fg)]">info@urbanprospects.com.au</a></li>
 					<li><a href="tel:+61280714591" class="transition-colors hover:text-[var(--fg)]">02 8071 4591</a></li>
 					<li><a href="https://www.linkedin.com" target="_blank" rel="noopener" class="transition-colors hover:text-[var(--fg)]">LinkedIn</a></li>
@@ -109,7 +111,10 @@
 			class="mt-10 flex flex-col-reverse items-center justify-between gap-4 border-t border-[var(--color-line)] pt-6 sm:flex-row"
 		>
 			<span class="text-[12px] text-[var(--color-neutral-500)]"
-				>&copy; {new Date().getFullYear()} Urban Prospects. All rights reserved.</span
+				>&copy; {new Date().getFullYear()} Urban Prospects. All rights reserved. <a
+					href="{base}/privacy-policy/"
+					class="transition-colors hover:text-[var(--fg)]">Privacy Policy</a
+				></span
 			>
 			<ThemeToggle />
 		</div>
