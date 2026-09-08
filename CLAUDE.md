@@ -596,6 +596,31 @@ clause (`patch_pattern_books_or.py`, `patch_cdc_or_and_farmstay.py`). The CDC li
 inner Sydney plus Hornsby. Worth knowing before treating its absence from `up_property_d_4`
 as a hard blocker.
 
+## Address autocomplete: `mv_address_lookup` (2026-09-08)
+
+`/address/search` touched **98,647 buffers (~770 MB)** per lookup — a 902 MB GiST trgm index
+plus random heap fetches over 308-column rows. Warm that is 735 ms; on a 15 GB box it is
+rarely warm, and cold runs measured **6-36 s** through the API. Rebuilding the GIN twin that
+the index cleanup had dropped changed nothing: the planner keeps choosing the GiST on that
+table, which is why the GIN sat at `idx_scan = 0` to begin with.
+
+`mv_address_lookup` (`web/deploy/sql/mv_address_lookup.sql`) is the same 5.4M rows with **no
+dedup** — unit and part-lot addresses ("40/13 ARTILLERY CRESCENT") survive here, which they
+do **not** in `mv_property_search`, so autocomplete must use this view and not that one.
+5,387,745 rows, 636 MB heap + 732 MB indexes. Same query: **4,843 buffers, 192 ms**, and the
+planner picks GIN. End to end the endpoint went from 6-36 s to 0.4-1.3 s.
+`patch_address_search_use_mv.py` changes only the `FROM`.
+
+`id` (a `row_number()`) exists solely to give `REFRESH ... CONCURRENTLY` its unique index; it
+is not stable across rebuilds, so nothing may reference it.
+
+Dropped afterwards, once nothing read them: `idx_d3_address_trgm_gin` (369 MB, never chosen),
+`idx_d3_address_search_idx` (353 MB) and `idx_d3_normalized_address` (40 MB). **Keep
+`idx_d3_address_trgm_gist`** — `queryPropertyData`/`queryCDCProperties` do `WHERE address = ?`
+and the planner serves that equality from the trgm GiST; dropping it would seq-scan 41 GB.
+
+Index totals after the day's work: `up_property_d_3` 51 -> 13 indexes, 6,435 -> 1,825 MB.
+
 ## Property table cutovers (`up_property_d_3` -> `up_property_d_4` -> ...)
 
 Each data load lands as a **new table**, so `db_propery_table_name` in `api.js` has to move —
