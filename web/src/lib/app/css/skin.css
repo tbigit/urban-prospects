@@ -585,6 +585,11 @@
 .up-app .search-form .collapsible-content h6:not(.uppercase):not(.info-type) { font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; }
 
 /* ---- cluster picker: the units stacked on one strata lot ------------------------------ */
+/* Safari: mapbox-gl's only `will-change: transform` is on .mapboxgl-popup. The moment a
+   popup exists it forces a composited layer inside the map, WebKit re-roots the backdrop,
+   and the property panel's ::before backdrop-filter stops sampling the map (blur vanishes).
+   The popup is positioned by transform anyway, so the hint buys nothing here. */
+.up-app .mapboxgl-popup { will-change: auto !important; }
 .up-app .cluster-picker-popup .mapboxgl-popup-content { padding: 0 !important; border-radius: .6rem !important; background: var(--bg) !important; color: var(--fg) !important; box-shadow: 0 12px 40px rgba(0,0,0,.25) !important; font-family: var(--font-sans); overflow: hidden; }
 .up-app .cluster-picker-popup .mapboxgl-popup-tip { border-top-color: var(--bg) !important; border-bottom-color: var(--bg) !important; }
 .up-app .cluster-picker-popup .mapboxgl-popup-close-button { color: var(--color-neutral-400) !important; font-size: 18px; padding: .1rem .5rem; }
@@ -602,3 +607,58 @@
 
 /* Total Results / Search within Radius match the uppercase CLEAR ALL / PDF / SAVE beside them */
 .up-app #btn-calculate-total, .up-app label[for="searchradius_checkbox"] { text-transform: uppercase; }
+
+/* ---- property detail as the same slide-in panel as the list ----------------------
+   The list panel and the detail panel occupy the same edge and are mutually exclusive
+   (`.show-list` slides out under `.viewing-property`), but the detail panel was a
+   docked, square, flush-to-the-viewport drawer while the list is an inset floating
+   frosted column — two different languages for one surface. Same inset, radius, frost,
+   border, shadow and easing here; wider, because the overview grid needs the room. */
+.up-app .app.mapview.viewing-property .map-view-detail {
+  position: fixed; top: 1em; right: 1em; bottom: 1em; height: auto !important;
+  width: 42rem; min-width: 0; max-width: calc(100vw - 2em);
+  border-radius: .75rem; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+  background: color-mix(in srgb, var(--bg) 78%, transparent) !important;
+  backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .22);
+  opacity: 1 !important;
+  transform: translateX(calc(100% + 1.5em)); visibility: hidden; pointer-events: none;
+  transition: transform .35s cubic-bezier(.22, .61, .36, 1), visibility 0s linear .35s;
+}
+.up-app .app.mapview.viewing-property .map-view-detail.visible {
+  transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s;
+}
+/* correction: the panel root's frost alone lost the denser sheet the details/sections
+   region used to sit on (bg 82% + blur over the root's 78%), so the accordion rows read
+   as floating on bare panel. Keep the inner ::before — it is the surface, the root frost
+   is only the panel's own ground — but drop its second backdrop-filter, which sampled an
+   already-blurred layer for no visible gain and cost Safari another backdrop root. */
+.up-app .app.mapview.viewing-property .map-view-detail .property-details-container::before {
+  display: block !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  background: color-mix(in srgb, var(--bg) 55%, transparent) !important;
+}
+:root[data-theme='light'] .up-app .app.mapview.viewing-property .map-view-detail .property-details-container::before { background: rgba(255, 255, 255, .45) !important; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .up-app .app.mapview.viewing-property .map-view-detail .property-details-container::before { background: rgba(255, 255, 255, .45) !important; }
+}
+/* the app sizes the scroll region off the full viewport; the panel is 2em shorter now */
+.up-app .app.mapview.viewing-property .map-view-detail .property-other-container { max-height: calc(100vh - 450px - 2em) !important; }
+/* close chip: photo backgrounds are unpredictable, so it carries its own dark ground
+   rather than the panel's translucent one, and clears the rounded corner */
+.up-app .app.mapview.viewing-property .map-view-detail .banner-container .btn-close {
+  top: 10px !important; right: 10px !important;
+  background: rgba(20, 13, 31, .55) !important; color: #fff !important;
+  border-color: rgba(255, 255, 255, .28) !important;
+}
+.up-app .app.mapview.viewing-property .map-view-detail .banner-container .btn-close:hover {
+  background: rgba(20, 13, 31, .78) !important; color: #fff !important; filter: none;
+}
+@media (max-width: 60em) {
+  .up-app .app.mapview.viewing-property .map-view-detail {
+    top: .5em; left: .5em; right: .5em; bottom: .5em; width: auto; max-width: none;
+    transform: translateX(calc(100% + 1em));
+  }
+  .up-app .app.mapview.viewing-property .map-view-detail .property-other-container { max-height: calc(100vh - 450px - 1em) !important; }
+}
