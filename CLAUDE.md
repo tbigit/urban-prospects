@@ -678,7 +678,20 @@ Ordering a Property Intelligence Report is held behind `COMING_SOON` in
 holding pattern as the app's `PURCHASES_PAUSED`; flip that one constant to re-enable Stripe
 Checkout. WordPress also had a `/terms-of-use` page that has no equivalent here yet.
 
-Still open: the origin TLS cert on
-`143.42.46.116` is self-signed and expired (20 Aug 2026); it works only because Cloudflare is
-not in Full (strict) mode. `STRIPE_PUBLISHABLE_KEY` is still unset, so /account/'s "Update card"
-stays disabled.
+### Origin TLS
+
+Replaced 2026-09-08. The origin used to present a self-signed, expired cert for
+`preview.urbanprospects.com.au`, which only survived because Cloudflare's SSL mode is Full and
+does not validate the origin. It now serves a real Let's Encrypt ECDSA cert covering
+`urbanprospects.com.au` + `*.urbanprospects.com.au`, issued by the `acme.sh` already on the box
+over **DNS-01 against Cloudflare** (`--dns dns_cf`) — HTTP-01 is not an option for the wildcard.
+`CF_Token`/`CF_Zone_ID` are saved in `/root/.acme.sh/urbanprospects.com.au_ecc/urbanprospects.com.au.conf`,
+so the existing `acme.sh --cron` renews it unattended and `--reloadcmd` reloads nginx. If that
+token is ever revoked, renewal fails silently — reissue with a fresh DNS:Edit token. The vhost
+points at `/opt/www/ssl/urbanprospects.com.au.{cer,key}`; the old `preview.*` pair is dead.
+
+Because the origin cert is now publicly valid for every name on the box, the zone can be moved
+to **Full (strict)**. That is a dashboard change (SSL/TLS → Overview) — a DNS-scoped API token
+cannot set it.
+
+Still open: `STRIPE_PUBLISHABLE_KEY` is unset, so /account/'s "Update card" stays disabled.
