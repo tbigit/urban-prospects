@@ -705,3 +705,26 @@
     --progress-bg: #F1E9F7 !important;
   }
 }
+
+/* ---- one fill for every field in the search panel ----
+   The text inputs and the svelte-selects were each given their own copy of
+   `--bg 60%`, and the inputs additionally kept the UA's opaque white in light
+   mode, so the two rows read as different controls: flat white boxes above
+   see-through ones. Both now take the same token, a shade more transparent
+   than the old input fill so the frosted panel still shows through. */
+.up-app { --up-field-bg: color-mix(in srgb, var(--bg) 45%, transparent); }
+.up-app .search-form input[type='text'],
+.up-app .search-form input[type='number'],
+.up-app .search-form input[type='search'],
+.up-app .search-form textarea,
+.up-app .search-form .address-input,
+.up-app .filter-container input[type='text'],
+.up-app .filter-container input[type='number'] {
+  background: var(--up-field-bg) !important;
+}
+.up-app .themed .svelte-select, .up-app .svelte-select {
+  --background: var(--up-field-bg) !important;
+}
+/* the search box inside a select stays a bare text field, not a nested one */
+.up-app .svelte-select input,
+.up-app .search-form .svelte-select input[type='text'] { background: transparent !important; }
