@@ -1,6 +1,7 @@
 <script>
   // @ts-nocheck
   import { processChartVariables } from '$lib/app/helperFunctions.js';
+  import { streetViewUrl, streetViewLocation, resolveStreetViewUrl } from '$lib/app/streetview.js';
   import EthnicityChartWrapper from '$lib/app/EthnicityChartWrapper.svelte';
   import CrimeCountChartWrapper from '$lib/app/CrimeCountChartWrapper.svelte';
   import RankChartWrapper from '$lib/app/RankChartWrapper.svelte';
@@ -17,7 +18,7 @@
   import Signup from '$lib/app/Signup.svelte';
 
 	import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
+  import { fade, slide } from 'svelte/transition';
 
   import Tags from "svelte-tags-input";
 
@@ -591,16 +592,25 @@
   // banner_location only changes when the address/postcode actually change, so
   // banner_src is recomputed at most once per property and then stays put
   // (including on the placeholder after an error).
-  $: banner_location = property?.address
-    ? `${property.address.toLowerCase().replace(/\s/g, '-')}-${property?.postcode || ''}`
-    : '';
+  //
+  // The locator is resolved through the metadata endpoint (free and
+  // quota-exempt) rather than by rendering the image and waiting for a 404:
+  // that tells us up front whether the lot centroid, or failing that the
+  // address, has any imagery at all, so the banner settles on one answer.
+  $: banner_location = streetViewLocation(property);
   let banner_src = '';
   let _banner_location_seen = null;
+  let _banner_token = 0;
   $: if (banner_location !== _banner_location_seen) {
     _banner_location_seen = banner_location;
-    banner_src = banner_location
-      ? `https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location=${banner_location}&key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q`
-      : img_placeholder;
+    const token = ++_banner_token;
+    banner_src = img_placeholder;
+    if (banner_location) {
+      resolveStreetViewUrl(property).then((src) => {
+        // Ignore a probe the user has already navigated away from.
+        if (token === _banner_token && src) banner_src = src;
+      });
+    }
   }
 
   function handleBannerImageError() {
@@ -1049,11 +1059,13 @@
 
   let suburb_profile = null;
 
-  // Title search, plan dealings and image search checked out through the WordPress
-  // WooCommerce cart. That cart is gone once the site moves off WordPress, so these
-  // stay paused (holding notice below) until the Stripe checkout lands. Flip to
-  // false — and restore the /title/check probe — when that ships.
-  const PURCHASES_PAUSED = true;
+  // Title search and plan (image) search used to check out through the WordPress
+  // WooCommerce cart (items 920 / 5057) and an n8n workflow that called Hazlett.
+  // They now post to this site's /api/title-search (src/routes/api/title-search),
+  // which orders from Hazlett and emails the PDF via Postmark. TEST MODE for now:
+  // no payment is captured, a confirmation slides down, and the PDF goes to the
+  // test recipient configured on the server (TITLE_SEARCH_RECIPIENT).
+  const PURCHASES_PAUSED = false;
   const PURCHASES_PAUSED_NOTICE = 'Title search, plan dealings and image search purchases are temporarily unavailable while we move to our new billing system. They will be back within the next few weeks.';
   let disable_title_search = PURCHASES_PAUSED;
 
@@ -1336,6 +1348,60 @@
 
   let show_plan_dealing_popup = false;
 
+  // Purchase confirmation slide-down (title or image search).
+  let purchase_confirm = null; // { product: 'title'|'image', identifiers: [] }
+  let purchase_busy = false;
+  let purchase_result = null;  // response of a successful order
+  let purchase_error = null;
+  const PURCHASE_PRICE_AUD = 25;
+
+  function _open_purchase_confirm(product, identifiers) {
+    purchase_result = null;
+    purchase_error = null;
+    purchase_confirm = { product, identifiers: [...new Set(identifiers.map(s => String(s).trim()).filter(Boolean))] };
+  }
+
+  function _handle_title_search(event) {
+    event.preventDefault();
+    if (disable_title_search) return;
+    if (purchase_confirm && purchase_confirm.product === 'title') { purchase_confirm = null; return; }
+    show_plan_dealing_popup = false;
+    _open_purchase_confirm('title', folio_ids);
+  }
+
+  function _close_purchase_confirm() {
+    purchase_confirm = null;
+    purchase_error = null;
+  }
+
+  async function _confirm_purchase() {
+    if (!purchase_confirm || purchase_busy) return;
+    purchase_busy = true;
+    purchase_error = null;
+    try {
+      const res = await fetch('/api/title-search', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: purchase_confirm.product,
+          identifiers: purchase_confirm.identifiers,
+          address: property?.address,
+          propid: property?.propid
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`);
+      purchase_result = data;
+      if (purchase_confirm.product === 'image') { image_search_selected = []; show_plan_dealing_popup = false; }
+      purchase_confirm = null;
+    } catch (e) {
+      purchase_error = e.message || 'Something went wrong';
+    } finally {
+      purchase_busy = false;
+    }
+  }
+
   function _handle_enter_dealings(event) {
     if (PURCHASES_PAUSED) { event.preventDefault(); return; }
     event.preventDefault();
@@ -1351,11 +1417,7 @@
       return false;
     }
     
-    let image_search_folio_identifier = image_search_selected.join(',');
-
-    let cart_url = `${website_domain_with_http}/cart/?item-to-cart=5057&quantity=1&address=${encodeURIComponent(property.address)}&image_search_folio_identifier=${encodeURIComponent(image_search_folio_identifier)}`;
-
-    window.parent.location = cart_url;
+    _open_purchase_confirm('image', image_search_selected);
     return false;
   }
 
@@ -2253,6 +2315,21 @@
     position: relative; /* for positioning the triangle */
   }
 
+  .purchase-confirm-container {
+    background-color: var(--up-c-ffffff-a70);
+    border-radius: 8px;
+    box-shadow: 0 0 12px 4px var(--up-c-010101-a10);
+    padding: 1em;
+    width: 100%;
+  }
+  .purchase-address { opacity: .75; margin: 0 0 .6em; }
+  .purchase-lines { list-style: none; margin: 0 0 .8em; padding: 0; }
+  .purchase-lines li { display: flex; justify-content: space-between; padding: .3em 0; border-bottom: 1px solid var(--up-c-010101-a10); }
+  .purchase-lines li.purchase-total { border-bottom: 0; font-weight: 600; }
+  .purchase-note { font-size: .85em; opacity: .8; margin: 0; }
+  .purchase-error { color: #c0392b; margin: .5em 0 0; }
+  .purchase-success p { margin: 0 0 .6em; }
+
   .title-search-disable-container {
     margin-top: 1em;
     background-color: var(--up-c-ffffff-a70);
@@ -2769,7 +2846,7 @@
         {#if pdf_property}
           <div class="one-third aspect-ratio-16x9 dark-overlay-lightest border-rounder relative">
             <!-- svelte-ignore a11y-missing-attribute -->
-            <img on:error={handleImageError} class="border-round" src="https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location={property.address.toLowerCase().replace(/\s/g, '-')}-{property?.postcode || ""}&key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q"/>
+            <img on:error={handleImageError} class="border-round" src={streetViewUrl(property)}/>
           </div>
         {/if}
         
@@ -2804,7 +2881,7 @@
         <div class="{mapview_viewing_property ? 'padding-top': ''} two-fifth">
           <div class="row {mapview_viewing_property ? '': 'right'}">
             <div class="flex flex-gap">
-              <a style="width: 100%;" class:unclickable={disable_title_search} class:full={mapview_viewing_property} target="_parent" href="{website_domain_with_http}/cart/?item-to-cart=920&quantity=1&address={encodeURIComponent(property.address)}&folio_identifier={encodeURIComponent(folio_querystring)}" class="btn center"><i class=" icon-file-text"></i> TITLE SEARCH</a>
+              <a style="width: 100%;" class:unclickable={disable_title_search} class:full={mapview_viewing_property} class:active={purchase_confirm?.product === 'title'} href="?" on:click={_handle_title_search} class="btn center"><i class=" {purchase_confirm?.product === 'title' ? 'icon-x' : 'icon-file-text'}"></i> TITLE SEARCH</a>
               <a style="width: 100%;"class:unclickable={disable_title_search} class:full={mapview_viewing_property} target="_parent" href="?" class="btn center" on:click={_handle_enter_dealings}><i class=" icon-building"></i> PLAN DEALINGS {#if show_plan_dealing_popup}<i class=" icon-x"></i>{/if}</a>
             </div>
 
@@ -2870,6 +2947,39 @@
                   <a href="?" class="btn" class:unclickable={! image_search_selected.length} on:click={_handle_purchase_plan_dealings}>CONTINUE TO PAYMENT</a>
                 </div>
                 <div class="popup-triangle"></div>
+              </div>
+            </div>
+            {/if}
+
+            {#if purchase_confirm}
+            <div class="padding-top row" transition:slide={{ duration: 220 }}>
+              <div class="purchase-confirm-container">
+                <h6 class="padding-bottom"><strong>CONFIRM {purchase_confirm.product === 'title' ? 'TITLE SEARCH' : 'PLAN / IMAGE SEARCH'}</strong></h6>
+                <p class="purchase-address">{property.address}</p>
+                <ul class="purchase-lines">
+                  {#each purchase_confirm.identifiers as ident}
+                    <li><span>{purchase_confirm.product === 'title' ? 'Folio' : 'Dealing / plan'} {ident}</span><span>${PURCHASE_PRICE_AUD.toFixed(2)}</span></li>
+                  {/each}
+                  <li class="purchase-total"><span>Total</span><span>${(PURCHASE_PRICE_AUD * purchase_confirm.identifiers.length).toFixed(2)} AUD</span></li>
+                </ul>
+                <p class="purchase-note"><i class=" icon-info"></i> Test mode: no payment is taken. The PDF is emailed to the test address as soon as Hazlett returns it.</p>
+                {#if purchase_error}<p class="purchase-error"><i class=" icon-triangle-alert"></i> {purchase_error}</p>{/if}
+                <div class="flex flex-gap padding-top-thin">
+                  <a href="?" class="btn" style="flex:1" on:click|preventDefault={_close_purchase_confirm}>CANCEL</a>
+                  <a href="?" class="btn btn-search" style="flex:1" class:unclickable={purchase_busy || !purchase_confirm.identifiers.length} on:click|preventDefault={_confirm_purchase}>{purchase_busy ? 'ORDERING…' : 'CONFIRM PURCHASE'}</a>
+                </div>
+              </div>
+            </div>
+            {/if}
+
+            {#if purchase_result}
+            <div class="padding-top row" transition:slide={{ duration: 220 }}>
+              <div class="purchase-confirm-container purchase-success">
+                <p><i class=" icon-check"></i> <strong>Order placed.</strong>
+                  {#if purchase_result.emailed_to}The PDF has been emailed to {purchase_result.emailed_to}.{:else}The document will be emailed once it is ready.{/if}
+                  {#if purchase_result.mode === 'mock'}<br/><small>Sample document — Hazlett live ordering is not switched on yet.</small>{/if}
+                </p>
+                <div class="row right"><a href="?" class="btn" on:click|preventDefault={() => purchase_result = null}>CLOSE</a></div>
               </div>
             </div>
             {/if}

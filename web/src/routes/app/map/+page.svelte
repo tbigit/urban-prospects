@@ -1,6 +1,7 @@
 <script>
   // @ts-nocheck
 	import { onMount } from 'svelte';
+	import { streetViewUrl } from '$lib/app/streetview.js';
 
   let is_ready = false;
   let use_debug = false;
@@ -293,8 +294,6 @@
 
         let address = property.address;
 
-        let property_img_location = address.toLowerCase().replace(/\s/g, '-') + '-' + property.postcode;
-
         let property_link =  website_domain_with_http + '/join';
         if (is_logged_in) {
           property_link = website_domain_with_http + `/property?pid=${property.gurasid}`;
@@ -303,7 +302,7 @@
         const marker = new mapboxgl.Marker(el)
         .setLngLat(property.geom.coordinates)
         .setPopup(new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`<div class="mapbox-info-container"><div class="aspect-ratio-16x9 dark-overlay-lightest border-rounder relative"><img class="border-round" loading="lazy" src="https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location=${property_img_location}&key=AIzaSyDtcpZMaC13xHQEux1qzwv1g3GGGxkrKyc" onerror="this.onerror=null;this.src='${img_placeholder}';"/></div><div class="padding-top"><h5 class="item-title">${property.address} ${property.postcode}</h5><div class="item-details row right padding-top-thin padding-right-thin"><a target="_parent" class="btn" href="${property_link}">VIEW</a></div></div></div>`))
+            .setHTML(`<div class="mapbox-info-container"><div class="aspect-ratio-16x9 dark-overlay-lightest border-rounder relative"><img class="border-round" loading="lazy" src="${streetViewUrl(property)}" onerror="this.onerror=null;this.src='${img_placeholder}';"/></div><div class="padding-top"><h5 class="item-title">${property.address} ${property.postcode}</h5><div class="item-details row right padding-top-thin padding-right-thin"><a target="_parent" class="btn" href="${property_link}">VIEW</a></div></div></div>`))
         .addTo(map);
 
         // Store the marker in the array

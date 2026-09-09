@@ -2,6 +2,7 @@
   // @ts-nocheck
 	import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment'; // For SvelteKit
+  import { streetViewUrl } from '$lib/app/streetview.js';
   // import moment from 'moment';
   // import { fade } from 'svelte/transition';
   // import { slide } from 'svelte/transition';
@@ -8045,7 +8046,7 @@ async function _send_mail_property(property_selected) {
           {#if feasibility_property && user_fav}
             <div class="aspect-ratio-16x9 dark-overlay-lightest border-rounder relative">
               <!-- svelte-ignore a11y-missing-attribute -->
-              <img on:error={handleImageError} class="aspect-ratio-16x9 border-round" loading="lazy" src="https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location={feasibility_property.address.toLowerCase().replace(/\s/g, '-')}-{feasibility_property?.postcode || ""}&key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q"/>
+              <img on:error={handleImageError} class="aspect-ratio-16x9 border-round" loading="lazy" src={streetViewUrl(feasibility_property)}/>
             </div>
           
           <Residual property={feasibility_property} bind:user_fav {user_id} {api_domain} {user_email} {user_plan} {user_first_name} {user_last_name} {regions_selected} scrollHeight="37vh" />
@@ -9251,7 +9252,7 @@ async function _send_mail_property(property_selected) {
                   <div class="flex wrap container-thin property-container">
                     <div class="one-third aspect-ratio-16x9 dark-overlay-lightest border-rounder relative">
                       <!-- svelte-ignore a11y-missing-attribute -->
-                      <img alt="" on:error={handleImageError} data-index="{index}" class="aspect-ratio-16x9 border-round cover width-100" loading="lazy" src="https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location={property.address.toLowerCase().replace(/\s/g, '-')}-{property?.postcode || ""}&key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q"/>
+                      <img alt="" on:error={handleImageError} data-index="{index}" class="aspect-ratio-16x9 border-round cover width-100" loading="lazy" src={streetViewUrl(property)}/>
                     </div>
                     <div class="two-third padding-left padding-right padding-desktop">
                       <div class="flex wrap">
@@ -9281,7 +9282,7 @@ async function _send_mail_property(property_selected) {
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <div class="one-third aspect-ratio-16x9 dark-overlay-lightest border-rounder relative">
                       <a href="?" on:click={(event) => _handle_view_property(property.gurasid)} data-property-id="{property.gurasid}" class="link-property">
-                      <img on:error={handleImageError} data-index="{index}" class="aspect-ratio-16x9 border-round cover width-100" loading="lazy" src="https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location={property.address.toLowerCase().replace(/\s/g, '-')}-{property?.postcode || ""}&key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q"/>
+                      <img on:error={handleImageError} data-index="{index}" class="aspect-ratio-16x9 border-round cover width-100" loading="lazy" src={streetViewUrl(property)}/>
                       </a>
                     </div>
                     <div class="two-third padding-left padding-right">

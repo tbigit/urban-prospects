@@ -7,6 +7,7 @@ import CrimeCountChartWrapper from '$lib/app/CrimeCountChartWrapper.svelte';
 import RankChartWrapper from '$lib/app/RankChartWrapper.svelte';
 import AgeChartWrapper from '$lib/app/AgeChartWrapper.svelte';
 import AgePyramidChartWrapper from '$lib/app/AgePyramidChartWrapper.svelte';
+import { streetViewUrl as buildStreetViewUrl } from '$lib/app/streetview.js';
 
 export async function initPdfMe() {
     // Load schemas DYNAMICALLY - THESE ARE READY PLUGINS, NOT FACTORIES
@@ -2105,7 +2106,7 @@ export async function createPdf(gurasid_or_obj, api_domain, pdf_config, custom_l
       
       let streetViewBase64 = null;
       if (property.address) {
-        const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=640x360&radius=15&return_error_code=true&source=outdoor&location=${property.address.toLowerCase().replace(/\s/g, '-')}-${property?.postcode || ""}&key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q`;
+        const streetViewUrl = buildStreetViewUrl(property);
         streetViewBase64 = await urlToBase64(streetViewUrl);
       }
       
