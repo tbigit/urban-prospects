@@ -85,10 +85,27 @@ speed check only fires above 2 s absolute for that reason.
 - `idx_d4_rule_ids` cannot be built until the column comes back — `CREATE INDEX` fails with
   `column "rule_ids" does not exist`, which the script now reports and steps past rather than
   abandoning the rest of the run.
-- **`rule_ids` was dropped.** `api.js` reads it for the planning-rules panel
-  (`up_property_d_3.rule_ids` → `up_planning_code_full.rule_id`). Either the new load must
-  carry it or that feature has to move to another source — this is a blocker.
+- **`rule_ids` was dropped — and on 2026-09-11 the code stopped reading it.**
+  `patch_remove_planning_rules.py` removed the planning-rules lookup from `GET /property/<id>`
+  (applied live, backup `api.js.bak-2026-09-11-pre-rules`), the PLANNING RULES panel came out
+  of `Property.svelte`, and `rule_ids` left `CORE_COLUMNS` here. No longer a blocker; the
+  `idx_d3_rule_ids` index is reported as never-used and can be ignored.
 - 20 new columns (`addctrl_*`, `esa_*`, `apu_*`) that nothing reads yet.
 - All three matviews still point at `d_3`.
 - `api.js` has 4 hardcoded `up_property_d_3` literals in real code (the `expectedSchema` key
   at :3128, `queryCDCProperties` at :3807/:3814, and a query at :3645).
+
+## Re-checked 2026-09-11
+
+`check` is RED with 9 failures, none of them columns any more: all five matviews
+(`mv_address_lookup`, `mv_d3_zone_lookup`, `mv_property_search`, `suburb_centroid`,
+`mv_region_lga_suburb`) still read `d_3`, and the 4 hardcoded literals remain (now :3150,
+:3667, :3829, :3836). Indexes pass (only the ignorable `rule_ids` one missing).
+
+**Do not run `matviews --apply` or `cutover` yet:** `up_property_d_4` is still being loaded.
+At check time a `UPDATE up_property_d_4 SET primary_frontage_road, primary_frontage_length_m,
+propertyfrontagecount …` from the up-geo box (172.105.184.178) was running, autovacuum had been
+on the table for 28 min, a `up_property_d_4_frontage_prev` copy (5.41M rows) exists, and the
+table has grown to 66 GB (update bloat — expect a `VACUUM FULL`/re-load before cutover). Row
+count is 5,365,076 (−0.4% vs d_3). Re-run `check` once that load has finished, then
+`matviews --apply`, `sanity --full-hard`, `cutover`.

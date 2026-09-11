@@ -46,7 +46,7 @@ DB_HOST = os.environ.get("QA_DB_HOST", "192.168.146.115")
 CORE_COLUMNS = [
     "gurasid", "propid", "address", "normalized_address", "suburbname", "postcode",
     "region_name", "lga_name", "lot_section_plan", "lotnumber", "planlabel",
-    "lzn_label", "lzn_lay_class", "geom", "rule_ids",
+    "lzn_label", "lzn_lay_class", "geom",
 ]
 
 # Widening / spelling differences that are safe for the queries we run.
