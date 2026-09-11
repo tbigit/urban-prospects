@@ -249,7 +249,10 @@ rsync -avz --delete build/ root@143.42.46.116:/opt/www/upweb/
 The new platform's Postgres (`UrbanPortalDBP`) is the target store for users and
 subscriptions (UP-021, UP-026, UP-027). The `user_subscriptions` table lives here. Stripe
 Billing is the source of truth for subscription state (decided 2026-09-06); this table mirrors
-it from Stripe webhooks. Reach it in two hops — the DB host is on a private network:
+it from Stripe webhooks. **Postgres runs on the `updb` host itself** (`172.105.183.89`,
+hostname `urban-db-primary`); `192.168.146.115` is a second private IP on its `eth0`, not
+another machine, so `ssh root@192.168.146.115` from that box fails and everything service-level
+(`systemctl`, `/var/log/postgresql`, `/mnt/data`) is done directly on `updb`:
 
 ```sh
 updb                                                   # shell alias in ~/.zprofile: ssh root@172.105.183.89

@@ -134,4 +134,6 @@ Verified after restart: `GET /property/1645912` 200 in 1.3 s, response carries t
 Also learned: `/mnt/data` on the DB host carries a 165 GB `pg-migration/UrbanPortalDBP.dump`
 from the 29 March 2026 move plus a root-only `backups/` (~103 GB). `up_property_d_3` (42 GB)
 is now unreferenced by code or views and is the next candidate to drop once d_4 has run for
-a while. Neither is done; both need root on 192.168.146.115.
+a while. **Deleted 2026-09-12 on Danny's instruction:** the 165 GB dump and two 52 GB April
+backup sets under `/mnt/data/backups` (stale, no job produces them); `/mnt/data` went from
+88% to 52% used. The DB box is the `updb` host itself, no separate root needed.
