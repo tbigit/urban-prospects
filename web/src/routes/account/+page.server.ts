@@ -4,6 +4,8 @@ import { changePassword, passwordProblem } from '$lib/server/auth';
 import { renewalDue } from '$lib/server/renewal';
 import { createApiKey, deleteApiKey, listApiKeys } from '$lib/server/api-keys';
 import { query } from '$lib/server/db';
+import { listOrders, downloadUntil, downloadClosed } from '$lib/server/title-orders';
+import { lotLabel } from '$lib/server/title-email';
 import { createBillingPortalSession, setDefaultPaymentMethod, stripeConfigured, stripePublishableKey, REGION_NAMES, DISPLAY_PRICES } from '$lib/server/stripe';
 import { env } from '$env/dynamic/private';
 import { MAX_SEATS, addChild, cancelMemberSub, changeMemberPlan, intervalOfSub, isLive, listChildren, memberSub, onStripe, parsePlanForm, regionsOfSub, removeChild, resendChildInvite, resumeMemberSub, seatsNeeded, syncSeats } from '$lib/server/billing';
@@ -30,12 +32,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	// `id`); accounts with no WordPress past are keyed by email.
 	const favId = appUserId(locals.user);
 	const isChild = locals.user.parent_user_id != null;
-	const [[fav], sub, [tpl], children, seatsUsed] = await Promise.all([
+	const [[fav], sub, [tpl], children, seatsUsed, orders] = await Promise.all([
 		query<{ n: number }>(`SELECT count(*)::int AS n FROM user_fav WHERE user_id = $1`, [favId]),
 		memberSub(locals.user.billing_email),
 		query<TemplateRow>(`SELECT template, ${TEMPLATE_FIELDS.join(', ')} FROM user_template WHERE user_id = $1`, [favId]),
 		isChild ? Promise.resolve([]) : listChildren(locals.user.id),
-		isChild ? Promise.resolve(1) : seatsNeeded(locals.user.id)
+		isChild ? Promise.resolve(1) : seatsNeeded(locals.user.id),
+		listOrders(locals.user.id)
 	]);
 	const parent = isChild
 		? (await query<{ email: string; first_name: string | null; last_name: string | null }>(`SELECT email, first_name, last_name FROM users WHERE id=$1`, [locals.user.parent_user_id]))[0] ?? null
@@ -61,7 +64,15 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		billing: { stripe: stripeConfigured(), publishableKey: stripePublishableKey(), onStripe: Boolean(sub?.payment_customer_id || locals.user.stripe_customer_id) },
 		plan: { regions: [...REGION_NAMES], current: regionsOfSub(sub), interval: intervalOfSub(sub), prices: DISPLAY_PRICES, maxSeats: MAX_SEATS, seats: sub?.seats ?? 1, seatsUsed },
 		children: children.map((c) => ({ ...c, last_login_at: c.last_login_at?.toISOString() ?? null, created_at: c.created_at.toISOString() })),
-		parent
+		parent,
+		// Title / plan / dealing searches bought in the app (title_orders). Documents are
+		// served by /account/documents/<id>/ once the collector has fetched them from Hazlett.
+		documents: orders.map((o) => ({
+			id: o.id, product: o.product, identifier: o.identifier, lot: lotLabel(o), address: o.property_address,
+			status: o.hazlett_status, payment: o.payment_status, paid_cents: o.amount_paid_cents, size: o.document_size, ready_at: o.ready_at?.toISOString() ?? null,
+			download_until: downloadUntil(o)?.toISOString() ?? null, download_closed: downloadClosed(o),
+			emailed_to: o.emailed_to, created_at: o.created_at.toISOString(), error: o.error
+		}))
 	};
 };
 

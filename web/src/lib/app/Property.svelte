@@ -1279,36 +1279,6 @@
     return Math.round(number * 10) / 10;
   }
 
-  // "4.3:height" / "base_standard" -> "4.3: Height" / "Base Standard"
-  function formatRuleKey(key) {
-    if (!key) return '—';
-    return String(key)
-      .split(':')
-      .map(part => part.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
-      .join(': ');
-  }
-
-  // Summarise a rule's requirement, e.g. "FSR max 0.55:1". Effects are per-rule; clause_numeric
-  // is clause-level (shared by every rule in the clause) so it's only a fallback.
-  function formatRuleRequirement(rule) {
-    const comparators = { min: 'min', max: 'max', eq: '=', no_more_than: '≤', no_less_than: '≥' };
-    const fmt = (topic, comparator, value, unit) => {
-      const cmp = comparators[comparator] || comparator || '';
-      const u = unit && unit !== 'map' && unit !== 'ratio' ? ' ' + unit : '';
-      return `${formatRuleKey(topic)} ${cmp} ${value}${u}`.trim();
-    };
-    const effects = Array.isArray(rule.effects) ? rule.effects : [];
-    if (effects.length) {
-      return effects.map(e => e.value ? fmt(e.topic, e.comparator, e.value, e.unit) : formatRuleKey(e.topic)).join('; ');
-    }
-    const nums = Array.isArray(rule.clause_numeric) ? rule.clause_numeric : [];
-    if (nums.length) {
-      return nums.map(n => fmt(n.metric, n.comparator, n.value, n.unit)).join('; ');
-    }
-    return '—';
-  }
-
-
   let hiddenMapsVisible = false;
   
   function _handle_window_keydown(event) {
@@ -1392,6 +1362,12 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`);
+      if (data.checkout_url) {
+        // Paid account: Stripe Checkout takes over; its success URL orders from Hazlett
+        // and lands on My Account → Documents.
+        window.location.href = data.checkout_url;
+        return;
+      }
       purchase_result = data;
       if (purchase_confirm.product === 'image') { image_search_selected = []; show_plan_dealing_popup = false; }
       purchase_confirm = null;
@@ -1549,35 +1525,6 @@
   .subscribe-gate-btn { display: inline-block; margin-top: 1.25rem; background: var(--up-c-5c2687); color: var(--up-c-ffffff); border-radius: 999px; padding: .8rem 1.5rem; font-weight: 600; text-decoration: none; }
   .subscribe-gate-btn:hover { filter: brightness(1.1); }
   .subscribe-gate-note { margin-top: .9rem; font-size: 12px; color: var(--up-c-888888); }
-
-  .planning-rules-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-  }
-
-  .planning-rules-table th {
-    text-align: left;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 2px solid var(--up-c-dddddd);
-    white-space: nowrap;
-  }
-
-  .planning-rules-table td {
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--up-c-eeeeee);
-    vertical-align: top;
-  }
-
-  .planning-rules-epi {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--up-c-888888);
-  }
-
 
   a {
     text-decoration: none;
@@ -2962,11 +2909,11 @@
                   {/each}
                   <li class="purchase-total"><span>Total</span><span>${(PURCHASE_PRICE_AUD * purchase_confirm.identifiers.length).toFixed(2)} AUD</span></li>
                 </ul>
-                <p class="purchase-note"><i class=" icon-info"></i> Test mode: no payment is taken. The PDF is emailed to the test address as soon as Hazlett returns it.</p>
+                <p class="purchase-note"><i class=" icon-info"></i> {purchase_confirm.product === 'title' ? 'Titles usually arrive within seconds.' : 'Plan and dealing images are produced by NSW LRS and can take several hours.'} The PDF is emailed to you and kept under <a href="/account/#documents" target="_parent">My Account → Documents</a>. Payment is by card through Stripe.</p>
                 {#if purchase_error}<p class="purchase-error"><i class=" icon-triangle-alert"></i> {purchase_error}</p>{/if}
                 <div class="flex flex-gap padding-top-thin">
                   <a href="?" class="btn" style="flex:1" on:click|preventDefault={_close_purchase_confirm}>CANCEL</a>
-                  <a href="?" class="btn btn-search" style="flex:1" class:unclickable={purchase_busy || !purchase_confirm.identifiers.length} on:click|preventDefault={_confirm_purchase}>{purchase_busy ? 'ORDERING…' : 'CONFIRM PURCHASE'}</a>
+                  <a href="?" class="btn btn-search" style="flex:1" class:unclickable={purchase_busy || !purchase_confirm.identifiers.length} on:click|preventDefault={_confirm_purchase}>{purchase_busy ? 'ONE MOMENT…' : 'CONFIRM & PAY'}</a>
                 </div>
               </div>
             </div>
@@ -2976,7 +2923,10 @@
             <div class="padding-top row" transition:slide={{ duration: 220 }}>
               <div class="purchase-confirm-container purchase-success">
                 <p><i class=" icon-check"></i> <strong>Order placed.</strong>
-                  {#if purchase_result.emailed_to}The PDF has been emailed to {purchase_result.emailed_to}.{:else}The document will be emailed once it is ready.{/if}
+                  {#if purchase_result.results?.every(r => r.status === 'ready')}The PDF{purchase_result.results.length > 1 ? 's have' : ' has'} been emailed to {purchase_result.recipient} and saved under <a href="/account/#documents" target="_parent">My Account → Documents</a>.
+                  {:else if purchase_result.results?.some(r => r.status === 'ready')}Some documents are ready and emailed; the rest will follow by email once NSW LRS releases them.
+                  {:else}NSW LRS is preparing the document{purchase_result.results?.length > 1 ? 's' : ''}. We keep checking and will email {purchase_result.recipient} the moment {purchase_result.results?.length > 1 ? 'they are' : 'it is'} ready — usually within a few hours. You can also watch progress under <a href="/account/#documents" target="_parent">My Account → Documents</a>.{/if}
+                  {#if purchase_result.results?.some(r => r.status === 'error')}<br/><small class="purchase-error">{purchase_result.results.filter(r => r.status === 'error').map(r => `${r.identifier}: ${r.error}`).join(' · ')}</small>{/if}
                   {#if purchase_result.mode === 'mock'}<br/><small>Sample document — Hazlett live ordering is not switched on yet.</small>{/if}
                 </p>
                 <div class="row right"><a href="?" class="btn" on:click|preventDefault={() => purchase_result = null}>CLOSE</a></div>
@@ -3260,46 +3210,6 @@
                 </div>
               {/if}
             {/each}
-          </div>
-        </div>
-        {/if}
-
-        {#if property && property.planning_rules && property.planning_rules.length}
-
-        <hr/>
-
-        <div class="padding-top-wider padding-bottom-wider collapsible-container">
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <div class="collapsible-title" on:click={toggleCollapsibleContent}>
-            <h6><strong>PLANNING RULES</strong></h6>
-          </div>
-          <div class="padding-top-wider collapsible-content {pdf_property ? '': 'animate-fade-out'}">
-            <table class="planning-rules-table">
-              <thead>
-                <tr>
-                  <th>Clause</th>
-                  <th>Rule</th>
-                  <th>Type</th>
-                  <th>Requirement</th>
-                  <th>Conditions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {#each property.planning_rules as rule}
-                  <tr>
-                    <td>
-                      {rule.provision_ref || ('cl ' + rule.clause)}
-                      <span class="planning-rules-epi">{rule.epi_name}</span>
-                    </td>
-                    <td>{formatRuleKey(rule.rule_key)}</td>
-                    <td>{formatRuleKey(rule.role)}</td>
-                    <td>{formatRuleRequirement(rule)}</td>
-                    <td>{rule.condition_summary ? rule.condition_summary.replace(/^\[ai\]\s*/, '') : '—'}</td>
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
           </div>
         </div>
         {/if}

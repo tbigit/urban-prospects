@@ -1,5 +1,10 @@
 import type { Handle } from '@sveltejs/kit';
 import { loadSession } from '$lib/server/session';
+import { startCollector } from '$lib/server/title-orders';
+
+// Title / image search PDFs are collected from Hazlett by an in-process queue
+// (lib/server/title-orders.ts). Start it once per server process.
+startCollector();
 
 // Resolve the session cookie once per request. Prerendered pages never reach
 // here at runtime (adapter-node serves them as static files), so this only

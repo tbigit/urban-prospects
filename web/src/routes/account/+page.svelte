@@ -5,9 +5,10 @@
 	let { data, form } = $props();
 	const u = $derived(data.user);
 
-	type Section = 'overview' | 'keys' | 'billing' | 'users' | 'template' | 'password';
+	type Section = 'overview' | 'documents' | 'keys' | 'billing' | 'users' | 'template' | 'password';
 	const SECTIONS: { key: Section; label: string; hash: string; title: string }[] = [
 		{ key: 'overview', label: 'Overview', hash: 'overview', title: 'Overview' },
+		{ key: 'documents', label: 'Documents', hash: 'documents', title: 'Title & plan searches' },
 		{ key: 'keys', label: 'API keys', hash: 'api-keys', title: 'API keys' },
 		{ key: 'billing', label: 'Billing', hash: 'billing', title: 'Billing' },
 		...(data.parent ? [] : [{ key: 'users' as Section, label: 'Users', hash: 'users', title: 'Additional users' }]),
@@ -15,6 +16,7 @@
 		{ key: 'password', label: 'Password', hash: 'password', title: 'Change password' }
 	];
 	let open = $state<Section>('overview');
+	let purchaseFlag = $state<string | null>(null);
 	function show(s: Section) {
 		open = s;
 		history.replaceState(history.state, '', `#${SECTIONS.find((x) => x.key === s)!.hash}`);
@@ -22,6 +24,7 @@
 	onMount(() => {
 		const hit = SECTIONS.find((s) => `#${s.hash}` === location.hash);
 		if (hit) open = hit.key;
+		purchaseFlag = new URLSearchParams(location.search).get('purchase');
 	});
 	// A form result lands on the section it belongs to (matters for the
 	// no-JS fallback submit, which reloads the page without a hash).
@@ -217,6 +220,7 @@
 					<span class="lbl">{s.label}</span>
 					<span class="val">
 						{#if s.key === 'overview'}{u.plan ?? 'No plan'}
+						{:else if s.key === 'documents'}{data.documents.filter((d) => d.status === 'pending').length ? `${data.documents.filter((d) => d.status === 'ready').length} · ${data.documents.filter((d) => d.status === 'pending').length} pending` : data.documents.length}
 						{:else if s.key === 'keys'}{data.apiKeys.length}
 						{:else if s.key === 'billing'}{cycle ?? '—'}
 						{:else if s.key === 'users'}{data.children.length}
@@ -307,6 +311,47 @@
 					</table>
 				{:else}
 					<p class="acct-value"><small>You have no API keys yet.</small></p>
+				{/if}
+
+			{:else if open === 'documents'}
+				{#if purchaseFlag === 'paid'}<div class="acct-note ok">Payment received. Your documents are listed below — titles arrive within seconds, plan and dealing images are emailed when NSW LRS releases them.</div>
+				{:else if purchaseFlag === 'unpaid'}<div class="acct-note bad">The card payment was not completed, so nothing was ordered.</div>
+				{:else if purchaseFlag === 'error'}<div class="acct-note bad">We could not confirm the payment with Stripe just now. If you were charged, the order will be placed automatically within a few minutes; otherwise email info@urbanprospects.com.au.</div>{/if}
+				<div class="acct-tiles three">
+					<div class="acct-tile"><p class="spec">Title searches</p><p class="v">{data.documents.filter((d) => d.product === 'title').length}</p><p class="n">ordered from the app</p></div>
+					<div class="acct-tile"><p class="spec">Plan / dealing images</p><p class="v">{data.documents.filter((d) => d.product === 'image').length}</p><p class="n">ordered from the app</p></div>
+					<div class="acct-tile"><p class="spec">Awaiting LRS</p><p class="v">{data.documents.filter((d) => d.status === 'pending').length}</p><p class="n">emailed when ready</p></div>
+				</div>
+				<p class="acct-value" style="margin-top:1rem"><small>Every title, plan and dealing you buy in the app is kept here. Titles arrive within seconds; plan and dealing images are produced by NSW Land Registry Services and can take several hours — we keep checking and email you the PDF the moment it is ready. A title search records the Register as at the search time printed on it and has no fixed validity period — conveyancers order a fresh one before exchange and again immediately before settlement. Documents can be re-downloaded here for 3 months.</small></p>
+				{#if data.documents.length}
+					<table class="acct-table" style="margin-top:1rem">
+						<thead><tr><th>Ordered</th><th>Document</th><th>Property</th><th>Status</th><th></th></tr></thead>
+						<tbody>
+							{#each data.documents as d (d.id)}
+								<tr>
+									<td class="muted" style="white-space:nowrap">{fmtDay(d.created_at)}</td>
+									<td style="white-space:nowrap"><span class="acct-value">{d.lot}<small>{d.product === 'title' ? `Title search · folio ${d.identifier}` : 'Plan / dealing image'} · UP{d.id}</small></span></td>
+									<td class="muted">{d.address ?? '—'}</td>
+									<td class="muted" style="white-space:normal;min-width:12rem">
+										{#if d.status === 'ready' && d.download_closed}Download closed {fmtDay(d.download_until ?? d.created_at)} · order a fresh search
+										{:else if d.status === 'ready'}{d.product === 'title' && d.ready_at ? `Searched ${fmtDay(d.ready_at)}` : 'Ready'}{d.size ? ` · ${(d.size / 1024 >= 1024 ? (d.size / 1048576).toFixed(1) + ' MB' : Math.round(d.size / 1024) + ' KB')}` : ''} · download until {fmtDay(d.download_until ?? d.created_at)}
+										{:else if d.status === 'pending'}Awaiting LRS
+										{:else if d.status === 'unpaid'}{d.payment === 'abandoned' ? 'Payment not completed' : 'Awaiting payment'}
+										{:else if d.status === 'stale'}Not supplied — contact us
+										{:else}Failed{/if}
+									</td>
+									<td class="acts">
+										{#if d.status === 'ready' && !d.download_closed}
+											<a class="acct-mini" href="{base}/account/documents/{d.id}/" target="_blank" rel="noopener">View</a>
+											<a class="acct-mini muted" href="{base}/account/documents/{d.id}/?dl=1">Download</a>
+										{/if}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{:else}
+					<p class="acct-value" style="margin-top:1rem"><small>No searches yet. Open a property in the app and use Title Search or Plan Dealings.</small></p>
 				{/if}
 
 			{:else if open === 'billing'}

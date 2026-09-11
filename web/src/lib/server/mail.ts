@@ -10,7 +10,23 @@ import { env } from '$env/dynamic/private';
 
 const POSTMARK_URL = 'https://api.postmarkapp.com/email';
 
-export async function sendMail(to: string, subject: string, text: string) {
+export interface MailAttachment {
+	filename: string;
+	content: Buffer;
+	contentType?: string;
+}
+
+/**
+ * Postmark only — no SMTP or stdout fallback. For mail that must really leave
+ * (title search PDFs); throws when POSTMARK_TOKEN is unset.
+ */
+export async function sendPostmark(to: string, subject: string, text: string, attachments: MailAttachment[] = [], html?: string, bcc?: string) {
+	if (!env.POSTMARK_TOKEN) throw new Error('POSTMARK_TOKEN is not set');
+	return sendMail(to, subject, text, attachments, html, bcc);
+}
+
+/** `html`, when given, is sent alongside the plain-text body (multipart alternative). */
+export async function sendMail(to: string, subject: string, text: string, attachments: MailAttachment[] = [], html?: string, bcc?: string) {
 	// The From domain must be a verified Postmark sender signature. Only
 	// app.urbanprospects.com.au is DKIM-verified on the account, so replies are
 	// pointed at the real inbox on the root domain instead.
@@ -30,8 +46,16 @@ export async function sendMail(to: string, subject: string, text: string) {
 				To: to,
 				Subject: subject,
 				TextBody: text,
+				...(html ? { HtmlBody: html } : {}),
+				...(bcc ? { Bcc: bcc } : {}),
 				ReplyTo: replyTo,
-				MessageStream: env.POSTMARK_STREAM || 'outbound'
+				MessageStream: env.POSTMARK_STREAM || 'outbound',
+				// Postmark caps a message at 10MB including attachments.
+				Attachments: attachments.map((a) => ({
+					Name: a.filename,
+					Content: a.content.toString('base64'),
+					ContentType: a.contentType || 'application/pdf'
+				}))
 			})
 		});
 		const json = (await res.json().catch(() => ({}))) as { ErrorCode?: number; Message?: string; MessageID?: string };
@@ -44,7 +68,8 @@ export async function sendMail(to: string, subject: string, text: string) {
 	}
 
 	if (!env.SMTP_HOST) {
-		console.log(`[mail:stdout] to=${to} subject=${JSON.stringify(subject)}\n${text}\n`);
+		const att = attachments.map((a) => `${a.filename} (${a.content.length} bytes)`).join(', ');
+		console.log(`[mail:stdout] to=${to} subject=${JSON.stringify(subject)}${att ? ` attachments=[${att}]` : ''}\n${text}\n`);
 		return;
 	}
 	const transport = nodemailer.createTransport({
@@ -53,5 +78,8 @@ export async function sendMail(to: string, subject: string, text: string) {
 		secure: Number(env.SMTP_PORT) === 465,
 		auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined
 	});
-	await transport.sendMail({ from, to, subject, text, replyTo });
+	await transport.sendMail({
+		from, to, subject, text, html, replyTo, bcc,
+		attachments: attachments.map((a) => ({ filename: a.filename, content: a.content, contentType: a.contentType }))
+	});
 }

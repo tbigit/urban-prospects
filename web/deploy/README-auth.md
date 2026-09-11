@@ -46,3 +46,16 @@ ssh root@143.42.46.116 'cd /opt/www/upweb-node && npm ci --omit=dev && systemctl
   the app's `+layout.server.ts` checks the session). `/auth/me` hands the app its
   profile in the shape the WordPress embed used to pass in the query string, with
   `id` = the WordPress user id, which keys favourites, saved searches and templates.
+
+## Title / plan search PDFs (2026-09-11)
+
+Purchased PDFs live outside the deploy tree so a deploy cannot wipe them:
+
+```sh
+ssh root@143.42.46.116 'mkdir -p /opt/www/upweb-data/title-docs && chown -R nginx:nginx /opt/www/upweb-data && chmod 750 /opt/www/upweb-data'
+```
+
+Set `TITLE_DOCS_DIR=/opt/www/upweb-data/title-docs` plus the `HAZLETT_*` and
+`TITLE_SEARCH_RECIPIENT` values from `.env.example` in `/opt/www/upweb-node/.env`, apply
+`deploy/sql/010_title_orders.sql` and `011_title_orders_queue.sql`, then restart `upweb`.
+The collector logs `[title-orders] collector started` at boot (`journalctl -u upweb`).

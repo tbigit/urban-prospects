@@ -592,9 +592,11 @@ ticking two designs asked for a lot eligible for both at once — they now group
 clause (`patch_pattern_books_or.py`, `patch_cdc_or_and_farmstay.py`). The CDC list also said
 `cdc_farmsta`; the column is `cdc_farmstay`, so that tickbox had never matched anything.
 
-`rule_ids` (the planning-rules panel) covers **27,101 of 5.39M properties** across 8 LEPs —
-inner Sydney plus Hornsby. Worth knowing before treating its absence from `up_property_d_4`
-as a hard blocker.
+`rule_ids` (the planning-rules panel) covered only **27,101 of 5.39M properties** across 8
+LEPs, and `up_property_d_4` dropped the column, so on 2026-09-11 the feature was removed
+rather than carried: `patch_remove_planning_rules.py` took the lookup out of api.js (live),
+the PLANNING RULES panel and its helpers came out of `Property.svelte`, and the QA script no
+longer expects the column. `up_planning_code_full` is untouched should it ever come back.
 
 ## Address autocomplete: `mv_address_lookup` (2026-09-08)
 
@@ -638,7 +640,12 @@ hardcoded `up_property_d_3` literals (`expectedSchema` key, `queryCDCProperties`
 move with the constant.
 
 As found 2026-09-08, `up_property_d_4` is **not ready**: 24 indexes missing, `rule_ids`
-dropped (the planning-rules panel reads it), all three matviews still on `d_3`.
+dropped (the planning-rules panel reads it), all three matviews still on `d_3`. Re-checked
+2026-09-11: columns and indexes now pass; the blockers are the five matviews on `d_3`, the
+four hardcoded literals, and the fact that `d_4` is **still being loaded** (a frontage UPDATE
+from the up-geo box was running, table at 66 GB) — see the README's "Re-checked" section.
+The API host's non-interactive shell has no `node` on PATH: use
+`/srv/users/upapi/.nvm/versions/node/v20.9.0/bin/node` and run `pm2` as `upapi`.
 
 ## Dev server note
 
@@ -853,3 +860,44 @@ cancelling early throws away the paid term the member already holds.
   urbanprospects-test-db mariadb -u$WORDPRESS_DB_USER -p$WORDPRESS_DB_PASSWORD $WORDPRESS_DB_NAME`
   — the client is `mariadb`, not `mysql`. Check for overdue payment actions before triggering
   wp-cron by hand; a catch-up run charges real cards.
+
+## Title search / plan image search via Hazlett (2026-09-08)
+
+The WooCommerce cart (items 920 / 5057) + n8n (`flow.imtg.com.au`, Railway, IMTG's account,
+webhook now disabled) + Hazlett flow is replaced by `web/src/routes/api/title-search/+server.ts`
+and `web/src/lib/server/hazlett.ts`. **Read `docs/hazlett-api.md` first** — it holds the
+protocol (Bearer `<access_token>.<client_id>`, `POST /req/lrs`, poll the document URL), the
+Feb–Jun 2025 debugging history with Hazlett, and the open questions. Facts that bite:
+
+- `HAZLETT_MODE=mock` (default) never contacts Hazlett and attaches a sample PDF. `live` mints
+  its own 28-day token: OAuth is on the **separate host `oauth.hazlett.com.au`**
+  (`/auth?client_id` → code, `/oauth/token` Basic client_id:secret + username `URBAN`), not on
+  `api.hazlett.com.au` (which 404s `/auth`). Client id + secret are in `credentials.md`; they
+  came from IMTG's n8n export (2026-09-11), verified live. `HAZLETT_TOKEN` is only a static
+  override. The old "token rejected, ask Mark" conclusion was wrong — tokens just expire.
+- Every live order is charged by LRS and `orderId` (`UP<title_orders.id>`) can never repeat.
+- Title searches were proven end to end on the old pipeline (`LRSTLS`, one order per Woo
+  order); **DP/SP purchases were never automated** — n8n just emailed Stuart to fulfil by hand.
+  `LRSIMR` image orders were verified live 2026-09-11 (accepted, `subType` mandatory even for
+  dealings) but are **very slow**: still `In Progress` after an hour, so plan/dealing PDFs must
+  be collected by a background job and emailed later, never awaited in the request. Titles
+  are synchronous (<3 s). The n8n webhook died 12 Feb 2026
+  under ~52 daily $0 VIP-trial renewal orders; the Feb/Apr 2026 titles were filled manually by
+  Hazlett (doc §6, §7).
+- **Queue (2026-09-11)**: `lib/server/title-orders.ts` owns the order log, the PDF store and
+  the collector. Every purchase is a `title_orders` row (migrations 010 + 011, applied);
+  the PDF is saved under `TITLE_DOCS_DIR` (production `/opt/www/upweb-data/title-docs`,
+  **outside** the deploy dir, must exist and be writable by the `nginx` service user) and
+  served by `/account/documents/<id>/`; `/account/#documents` lists them. The collector
+  starts from `hooks.server.ts`, polls due rows every 60 s with backoff plus a `kick()`
+  after each purchase, and emails through Postmark only (`sendPostmark`, no fallback) with
+  the PDF attached under 9 MB. Titles are collected inline (20 s wait); images by the loop.
+- **Payment (2026-09-11)**: $25 per item via Stripe Checkout `mode=payment` (inline
+  `price_data`, migration 012). Rows sit `awaiting_payment`/`unpaid` until the success URL
+  (`/api/title-search/success`) or the collector's reconcile sees the session paid; only
+  then is Hazlett called. `TITLE_SEARCH_FREE_EMAILS` (default Stuart) bypasses Checkout.
+  No Stripe webhook and no automatic refund on a Hazlett failure — doc §10.
+- **Mail goes to the buyer**, bcc `TITLE_SEARCH_BCC` (danny@moble.com.au, interim, per Danny
+  2026-09-11). `TITLE_SEARCH_RECIPIENT` overrides the recipient entirely; leave it empty.
+  Members re-download for `TITLE_DOWNLOAD_DAYS` (90); files stay on disk. No expiry is shown —
+  the law sets none (doc "Title validity — what the law says").
