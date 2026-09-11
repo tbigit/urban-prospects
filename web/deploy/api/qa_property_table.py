@@ -685,7 +685,7 @@ def do_cutover(rep, old, new, api_js_path, api_js):
     print("Next, on the API host (upapi / 45.79.118.32):")
     print("  node --check /srv/users/upapi/apps/api/api.js")
     print("  pm2 restart api && pm2 logs api --lines 50")
-    print("  curl -s https://upapi.imtg.com.au/api/schema/validate | head")
+    print("  curl -s https://api.urbanprospects.com.au/api/schema/validate | head")
     print("Then flush and re-warm the lookup cache:")
     print("  /usr/local/bin/refresh-lookups.sh")
     return 0
