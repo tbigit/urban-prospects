@@ -413,13 +413,27 @@ export async function getOrder(id: number): Promise<TitleOrderRow | null> {
 
 export async function readDocument(row: TitleOrderRow): Promise<{ bytes: Buffer; filename: string } | null> {
 	if (!row.document_path) return null;
+	const filename = `${PRODUCT_LABELS[row.product]} ${row.identifier}.pdf`.replace(/[\/\\]/g, '-');
 	const full = path.join(docsDir(), path.basename(row.document_path));
 	try {
 		await stat(full);
+		return { bytes: await readFile(full), filename };
 	} catch {
-		return null;
+		// File missing on this host (collected elsewhere, disk restored from an older backup):
+		// Hazlett keeps the document at the original URL, so re-fetch and re-save it.
+		if (!row.document_url || hazlettMode() === 'mock') return null;
+		try {
+			const doc = await fetchDocument({ orderId: `UP${row.id}`, productDetails: [{ productCode: '', status: 'Closed', document: row.document_url }] }, 0);
+			if (!doc) return null;
+			await mkdir(docsDir(), { recursive: true });
+			await writeFile(full, doc.bytes);
+			console.warn('[title-orders] re-fetched missing document', row.id, full);
+			return { bytes: doc.bytes, filename };
+		} catch (e) {
+			console.error('[title-orders] re-fetch failed', row.id, e);
+			return null;
+		}
 	}
-	return { bytes: await readFile(full), filename: `${PRODUCT_LABELS[row.product]} ${row.identifier}.pdf`.replace(/[\/\\]/g, '-') };
 }
 
 // keep `db` referenced for a future advisory-lock variant without an unused-import warning
