@@ -646,6 +646,10 @@ four hardcoded literals, and the fact that `d_4` is **still being loaded** (a fr
 from the up-geo box was running, table at 66 GB) — see the README's "Re-checked" section.
 The API host's non-interactive shell has no `node` on PATH: use
 `/srv/users/upapi/.nvm/versions/node/v20.9.0/bin/node` and run `pm2` as `upapi`.
+**Cut over 2026-09-12: api.js and all five matviews are on `up_property_d_4`** (49 GB after a
+3.7 h `VACUUM FULL`). `up_property_d_3` is unreferenced and can be dropped once d_4 has
+bedded in; the 165 GB March dump in `/mnt/data/pg-migration` on the DB host is also dead
+weight. Details in `web/deploy/api/README-property-table.md`.
 
 ## Dev server note
 

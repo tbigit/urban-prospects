@@ -109,3 +109,29 @@ on the table for 28 min, a `up_property_d_4_frontage_prev` copy (5.41M rows) exi
 table has grown to 66 GB (update bloat — expect a `VACUUM FULL`/re-load before cutover). Row
 count is 5,365,076 (−0.4% vs d_3). Re-run `check` once that load has finished, then
 `matviews --apply`, `sanity --full-hard`, `cutover`.
+
+## Cut over 2026-09-12: the API is on `up_property_d_4`
+
+Sequence as run (the frontage load on d_4 finished late on 2026-09-11 UTC):
+
+1. `matviews --apply` — 4,182 s. All five views rebuilt on d_4, rows within +0.4%.
+2. `VACUUM (FULL, ANALYZE) up_property_d_4` — 13,304 s (3.7 h). The load had bloated the table
+   to 66 GB; it came back at 49 GB total (44 GB heap). Needed ~56 GB of headroom on
+   `/mnt/data` (787 GB volume, 81 GB free at the time — tight).
+3. `sanity --full-hard` — parity green. Hard queries: pattern book, CDC, address prefix and
+   suburb aggregate at parity (0.9–1.4x); the three pure seq-scan shapes (bounded map, LGA+zone,
+   statewide slider) 1.5–2.2x slower, consistent with 23 extra columns per row and a cold
+   cache after the rewrite. Accepted: the app searches `mv_property_search`, which is on d_4
+   and unaffected; nothing in production runs those shapes on the base table any more.
+4. `cutover` — needed a script fix first (7ae17ea): `check` FAILed on the literals cutover
+   rewrites, so cutover could never run. Now WARNs in cutover mode.
+5. api.js copied to the API host (backup `api.js.bak-2026-09-11-pre-d4`), `node --check`,
+   `pm2 restart api` as `upapi`, then `/usr/local/bin/refresh-lookups.sh`.
+
+Verified after restart: `GET /property/1645912` 200 in 1.3 s, response carries the new
+`addctrl_*` columns, zero `up_property_d_3` references left in api.js.
+
+Also learned: `/mnt/data` on the DB host carries a 165 GB `pg-migration/UrbanPortalDBP.dump`
+from the 29 March 2026 move plus a root-only `backups/` (~103 GB). `up_property_d_3` (42 GB)
+is now unreferenced by code or views and is the next candidate to drop once d_4 has run for
+a while. Neither is done; both need root on 192.168.146.115.
