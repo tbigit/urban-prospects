@@ -476,7 +476,10 @@ def check_matviews(rep, old, new, rebuild=False):
                                     f"and re-warm the API cache")
 
 
-def check_code_refs(rep, old, api_js_path, api_js):
+def check_code_refs(rep, old, api_js_path, api_js, will_rewrite=False):
+    """`will_rewrite` is set by `cutover`, which replaces every literal itself — so a
+    hardcoded reference is a WARN there, not a FAIL, otherwise cutover could never run
+    while there was anything for it to do."""
     if not api_js:
         rep.add("WARN", "code", "no --api-js given; hardcoded table references not checked")
         return
@@ -485,7 +488,10 @@ def check_code_refs(rep, old, api_js_path, api_js):
     hits = api_hardcoded_refs(api_js, old)
     code_hits = [h for h in hits if h[1] == "CODE"]
     for line_no, _, text in code_hits:
-        rep.add("FAIL", "code", f"hardcoded '{old}' at api.js:{line_no} — {text}")
+        if will_rewrite:
+            rep.add("WARN", "code", f"hardcoded '{old}' at api.js:{line_no} — {text} (cutover rewrites it)")
+        else:
+            rep.add("FAIL", "code", f"hardcoded '{old}' at api.js:{line_no} — {text}")
     if not code_hits:
         rep.add("PASS", "code", f"no hardcoded '{old}' outside the constant and comments")
     comments = len(hits) - len(code_hits)
@@ -668,8 +674,8 @@ def do_cutover(rep, old, new, api_js_path, api_js):
     updated = re.sub(
         r"""(let\s+db_propery_table_name\s*=\s*['"])[^'"]+(['"])""",
         rf"\g<1>{new}\g<2>", api_js, count=1)
-    # Hardcoded literals in real code (queryCDCProperties and friends) must move too;
-    # `check` fails when any exist, so this only ever rewrites comments in a green run.
+    # Hardcoded literals in real code (queryCDCProperties, the expectedSchema key) and in
+    # comments all move with the constant.
     updated = re.sub(rf"\b{re.escape(old)}\b", new, updated)
 
     with open(api_js_path, "w") as fh:
@@ -741,7 +747,7 @@ def main():
         check_columns(rep, old, new, api_js)
         check_indexes(rep, old, new, apply=False, min_scans=args.min_scans)
         check_matviews(rep, old, new, rebuild=False)
-        check_code_refs(rep, old, args.api_js, api_js)
+        check_code_refs(rep, old, args.api_js, api_js, will_rewrite=args.command == "cutover")
     elif args.command == "indexes":
         check_indexes(rep, old, new, apply=args.apply,
                       concurrently=not args.no_concurrently, min_scans=args.min_scans)
