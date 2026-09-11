@@ -501,7 +501,13 @@ Uncached `/q/{lga_name,suburbname,zone}/search` calls used to scan the 47GB
   suspected stale). Cache keys are sorted/trimmed lists.
 - Nightly refresh + memcache flush/warm: `/usr/local/bin/refresh-lookups.sh` on the DB hop
   host (`updb`, cron 03:30 UTC, log `/var/log/refresh-lookups.log`). Run it by hand after any
-  property-data load.
+  property-data load. **It had been failing every night** until 2026-09-12: the only unique
+  indexes on `mv_d3_zone_lookup` / `mv_region_lga_suburb` were on `COALESCE(...)` expressions,
+  which `REFRESH ... CONCURRENTLY` rejects, and `set -e` then skipped the cache flush too.
+  Plain-column unique indexes (`*_uq_cols`) were added; keep them when rebuilding the views
+  (the QA script copies existing index definitions, so it carries them automatically).
+  The script still warms the cache via `upapi.imtg.com.au`; that moves with the domain
+  migration (separate session).
 - `sequelize.js` / `sequelize-standby.js` on the API host now set
   `pool: { max: 20, acquire: 120000 }` and `statement_timeout: 180000` (the old top-level
   `max: 10` was ignored by Sequelize). Backups of both plus `api.js.bak-2026-09-07-pre-mv`
