@@ -607,6 +607,19 @@ rather than carried: `patch_remove_planning_rules.py` took the lookup out of api
 the PLANNING RULES panel and its helpers came out of `Property.svelte`, and the QA script no
 longer expects the column. `up_planning_code_full` is untouched should it ever come back.
 
+## Property detail: `GET /property/<id>` (2026-09-12)
+
+`patch_property_detail_parallel.py` runs the six follow-up queries (contribution plans,
+DCPs, SEPP intersection, LEPs, DA applications, vg_data sold history) with `Promise.all`
+instead of sequential awaits, and drops the `console.log` of the full row that went to the
+pm2 log on every request. Response bodies are byte-identical (checked on 1645912 and strata
+unit 63766041). **The "1.3 s" was not the route**: server-side it was already 41-54 ms and
+is now 39-51 ms; direct to the origin IP from Sydney it is 0.10 s, and through the
+Cloudflare-proxied `upapi.imtg.com.au` / `api.urbanprospects.com.au` hostname it is
+0.45-0.8 s. The remaining latency is the proxy hop (edge to origin), so the next lever is
+Cloudflare routing (Argo/unproxied API record or edge caching of `/property/<id>`), not SQL.
+Backup: `api.js.bak-2026-09-12-pre-detail-parallel`.
+
 ## Address autocomplete: `mv_address_lookup` (2026-09-08)
 
 `/address/search` touched **98,647 buffers (~770 MB)** per lookup — a 902 MB GiST trgm index
