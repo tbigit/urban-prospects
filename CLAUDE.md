@@ -626,8 +626,20 @@ Cloudflare-proxied API hostname, so an app click went Cloudflare -> site nginx -
 `proxy_ssl_name` still `api.urbanprospects.com.au` (cert stays valid, still TLS).
 `www…/q/property/1645912` went from 0.80-0.96 s to 0.11-0.19 s. Backup
 `*.conf.bak-2026-09-12-pre-direct-origin`; `deploy/nginx-site.conf` updated to match.
-Still open: a Cloudflare cache rule for `/q/property/` (data changes weekly) with a purge
-call from the load step.
+A Cloudflare cache rule was considered next but is now moot: the route is authenticated.
+
+**Property detail is gated (2026-09-12).** `patch_property_detail_auth.py` turned the v1
+handler into `_property_detail`, registered `GET /v2/app/property/:id` behind
+`requireSession` (same middleware as `/v2/app/properties`) and made `GET /property/:id`
+answer 410. No nginx change was needed: `/q/v2/` already forwards the cookie. The app's
+three fetches (`routes/app/+page.svelte` x2, `lib/app/pdfFunctions.js`) use the v2 path.
+Access logs showed no caller other than the app and curls. Verified via www with a
+temporary session: 200 in 0.12-0.17 s; unauthenticated 401; old path 410; public
+`/v2/properties` untouched. requireSession caches a verified session for 60 s, so a
+deleted session keeps working for up to a minute. There are now **no** unauthenticated
+property routes; the gate is still "any active session", not `has_access` — a cancelled
+member can fetch details via the API even though the UI hides the panel. Backup
+`api.js.bak-2026-09-12-pre-detail-auth`. Never edge-cache `/q/v2/`.
 
 ## Address autocomplete: `mv_address_lookup` (2026-09-08)
 

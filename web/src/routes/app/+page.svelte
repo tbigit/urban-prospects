@@ -5698,7 +5698,7 @@ async function _send_mail_property(property_selected) {
       // of redirecting to /login. Fetch the basic property so the banner shows the
       // correct street-view image (it needs the address), but skip the heavier,
       // auth-gated enrichment calls below.
-      const basic_url = `${api_domain}/property/` + gurasid + (is_lot ? '?type=1' : '');
+      const basic_url = `${api_domain}${API_V2}/property/` + gurasid + (is_lot ? '?type=1' : '');
       const basic_response = await fetch(basic_url, {
         method: 'GET',
         cache: "no-cache",
@@ -5722,9 +5722,9 @@ async function _send_mail_property(property_selected) {
       return;
     }
 
-    let get_property_api_url = `${api_domain}/property/` + gurasid;
+    let get_property_api_url = `${api_domain}${API_V2}/property/` + gurasid;
     if (is_lot) {
-      get_property_api_url = `${api_domain}/property/` + gurasid + '?type=1';
+      get_property_api_url = `${api_domain}${API_V2}/property/` + gurasid + '?type=1';
       console.log(get_property_api_url);
     }
 
