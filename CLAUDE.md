@@ -540,9 +540,9 @@ click. Now:
 - `routes/app/+page.svelte`: `_api_post()` tries the v2 path and falls back to v1 on 404, so the
   app works before and after the API patch. **Superseded 2026-09-08:** v1 `POST /properties`
   now answers **410 Gone** and the client fallback is removed — everything the app searches
-  goes through `/v2/app/*`. The last unauthenticated property route is `GET /property/<id>`;
-  gating it needs a `/v2/app/property/<id>` twin *and* an nginx change, since the Cookie
-  header is stripped on `/q/` and forwarded only on `/q/v2/`. The per-search `count(*)` and the "unbounded
+  goes through `/v2/app/*`. `GET /property/<id>` was the last
+  unauthenticated property route until 2026-09-12; it is now `/v2/app/property/<id>` (see
+  "Property detail" below). The per-search `count(*)` and the "unbounded
   count" on empty bounded results are gone; the total is the sum of the aggregate's `n`
   (`suburb_total`), which also answers the Total Results button instantly. The aggregate
   is fetched on fresh searches only (reset 1/0), never on bounded map re-searches.
