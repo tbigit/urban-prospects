@@ -620,6 +620,15 @@ Cloudflare-proxied `upapi.imtg.com.au` / `api.urbanprospects.com.au` hostname it
 Cloudflare routing (Argo/unproxied API record or edge caching of `/property/<id>`), not SQL.
 Backup: `api.js.bak-2026-09-12-pre-detail-parallel`.
 
+Then the bigger win, same day: the live site vhost proxied `/q/` and `/q/v2/` to the
+Cloudflare-proxied API hostname, so an app click went Cloudflare -> site nginx -> Cloudflare
+-> origin. Both `proxy_pass` lines now go to the origin IP `45.79.118.32` with Host and
+`proxy_ssl_name` still `api.urbanprospects.com.au` (cert stays valid, still TLS).
+`www…/q/property/1645912` went from 0.80-0.96 s to 0.11-0.19 s. Backup
+`*.conf.bak-2026-09-12-pre-direct-origin`; `deploy/nginx-site.conf` updated to match.
+Still open: a Cloudflare cache rule for `/q/property/` (data changes weekly) with a purge
+call from the load step.
+
 ## Address autocomplete: `mv_address_lookup` (2026-09-08)
 
 `/address/search` touched **98,647 buffers (~770 MB)** per lookup — a 902 MB GiST trgm index
