@@ -137,3 +137,35 @@ is now unreferenced by code or views and is the next candidate to drop once d_4 
 a while. **Deleted 2026-09-12 on Danny's instruction:** the 165 GB dump and two 52 GB April
 backup sets under `/mnt/data/backups` (stale, no job produces them); `/mnt/data` went from
 88% to 52% used. The DB box is the `updb` host itself, no separate root needed.
+
+## How a load should land (baked in after the 2026-09-12 cutover)
+
+The d_4 load was created and then enriched in place with large `UPDATE`s (frontage,
+lot-size, POI passes, each leaving a `_*_done` flag and a `*_todo` partial index). Every
+UPDATE leaves the old row version behind, so the table arrived at 66 GB for 49 GB of data
+and needed a 3.7-hour `VACUUM FULL` under an exclusive lock before the cutover was
+sensible. Three rules for the next one:
+
+1. **Land the finished table in one write.** Do the enrichment in staging tables keyed by
+   `gurasid`, then `CREATE TABLE up_property_d_5 AS SELECT … FROM base JOIN stg_frontage
+   USING (gurasid) JOIN …`. One pass, no dead tuples, no `_done` flags to drop afterwards.
+   If in-place UPDATEs are unavoidable, finish with `VACUUM (FULL, ANALYZE)` **before**
+   anyone runs `check` — the script now measures bytes/row against the old table and fails
+   above 1.3x (`check_bloat`).
+2. **Narrow it at build time.** `docs/d4-column-audit.md` lists the 216 columns nothing
+   reads (21 GB of the table's 30 GB). Once the data team has marked them, leave them out
+   of the `CREATE TABLE AS` select list, or move them to a side table.
+3. **Then the usual gate:** `check` → `indexes --apply` → `matviews --apply` →
+   `sanity --full-hard` → `cutover`, then `refresh-lookups.sh`. Budget: matviews ~70 min,
+   sanity ~40 min, plus the vacuum if rule 1 was skipped.
+
+## Column audit
+
+`docs/d4-column-audit.md` is generated from: the table's column list and `pg_stats`;
+`sum(pg_column_size(col))` over a 2% `TABLESAMPLE` for real (TOAST-inclusive) bytes; and a
+whole-word grep of every consumer — the app source, every JS file on the API host, all
+matview/view/function definitions mentioning `up_property`, the d_4 indexes, the Martin
+config on up-geo, this repo's deploy tooling, and the Handlebars placeholders in
+`user_template`. Raw inputs are kept in `docs/d4-column-audit/`. Re-run it after the app
+or api.js gains a new `property.<field>` read; a column that is read but missing from the
+table shows up as `undefined` in the panel, not as an error.

@@ -1,0 +1,4626 @@
+[
+ {
+  "name": "closest_hospital",
+  "type": "character varying",
+  "hits": {
+   "app": 2,
+   "api": 4,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 6
+ },
+ {
+  "name": "closest_hospital_distance",
+  "type": "double precision",
+  "hits": {
+   "app": 8,
+   "api": 9,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 7,
+   "static_dead": 0
+  },
+  "live": 20
+ },
+ {
+  "name": "closest_school",
+  "type": "character varying",
+  "hits": {
+   "app": 2,
+   "api": 4,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 6
+ },
+ {
+  "name": "closest_school_distance",
+  "type": "double precision",
+  "hits": {
+   "app": 8,
+   "api": 9,
+   "db_views": 1,
+   "tooling": 3,
+   "templates": 0,
+   "api_backup": 7,
+   "static_dead": 0
+  },
+  "live": 21
+ },
+ {
+  "name": "closest_railway_station",
+  "type": "character varying",
+  "hits": {
+   "app": 2,
+   "api": 4,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 6
+ },
+ {
+  "name": "closest_railway_station_distance",
+  "type": "double precision",
+  "hits": {
+   "app": 12,
+   "api": 9,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 7,
+   "static_dead": 0
+  },
+  "live": 24
+ },
+ {
+  "name": "area_h",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "objectid",
+  "type": "integer",
+  "hits": {
+   "app": 2,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "planlabel",
+  "type": "text",
+  "hits": {
+   "app": 21,
+   "api": 10,
+   "db_views": 2,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 9,
+   "static_dead": 0
+  },
+  "live": 37
+ },
+ {
+  "name": "lotnumber",
+  "type": "text",
+  "hits": {
+   "app": 20,
+   "api": 9,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 8,
+   "static_dead": 0
+  },
+  "live": 32
+ },
+ {
+  "name": "sectionnumber",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 6,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 6,
+   "static_dead": 0
+  },
+  "live": 16
+ },
+ {
+  "name": "centroid_geom",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "geom_1",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "postcode",
+  "type": "integer",
+  "hits": {
+   "app": 41,
+   "api": 15,
+   "db_views": 3,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 14,
+   "static_dead": 0
+  },
+  "live": 63
+ },
+ {
+  "name": "propid",
+  "type": "integer",
+  "hits": {
+   "app": 12,
+   "api": 9,
+   "db_views": 6,
+   "tooling": 30,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0,
+   "martin": 1
+  },
+  "live": 58
+ },
+ {
+  "name": "address",
+  "type": "text",
+  "hits": {
+   "app": 136,
+   "api": 166,
+   "db_views": 13,
+   "tooling": 82,
+   "templates": 1,
+   "api_backup": 111,
+   "static_dead": 0,
+   "martin": 1
+  },
+  "live": 399
+ },
+ {
+  "name": "gurasid",
+  "type": "integer",
+  "hits": {
+   "app": 443,
+   "api": 40,
+   "db_views": 10,
+   "tooling": 33,
+   "templates": 0,
+   "api_backup": 34,
+   "static_dead": 0,
+   "martin": 1
+  },
+  "live": 527
+ },
+ {
+  "name": "propid_count",
+  "type": "bigint",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lot_section_plan",
+  "type": "text",
+  "hits": {
+   "app": 1,
+   "api": 0,
+   "db_views": 4,
+   "tooling": 5,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 10
+ },
+ {
+  "name": "geom",
+  "type": "USER-DEFINED",
+  "hits": {
+   "app": 50,
+   "api": 45,
+   "db_views": 10,
+   "tooling": 36,
+   "templates": 0,
+   "api_backup": 26,
+   "static_dead": 0
+  },
+  "live": 141
+ },
+ {
+  "name": "buffered_geom",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "property_description",
+  "type": "text",
+  "hits": {
+   "app": 10,
+   "api": 5,
+   "db_views": 2,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 5,
+   "static_dead": 0
+  },
+  "live": 19
+ },
+ {
+  "name": "land_value_1",
+  "type": "bigint",
+  "hits": {
+   "app": 1,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 5
+ },
+ {
+  "name": "area",
+  "type": "text",
+  "hits": {
+   "app": 87,
+   "api": 19,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 5,
+   "static_dead": 0
+  },
+  "live": 108
+ },
+ {
+  "name": "area_type",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "lzn_sym_code_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lzn_lay_class_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lzn_epi_name_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "suburbname",
+  "type": "text",
+  "hits": {
+   "app": 27,
+   "api": 62,
+   "db_views": 16,
+   "tooling": 30,
+   "templates": 0,
+   "api_backup": 45,
+   "static_dead": 0,
+   "martin": 1
+  },
+  "live": 136
+ },
+ {
+  "name": "ass_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "activestreetfrontage",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "australian_noise_exposure_forecast",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "biodiversity",
+  "type": "text",
+  "hits": {
+   "app": 20,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 25
+ },
+ {
+  "name": "bushfireproneland",
+  "type": "text",
+  "hits": {
+   "app": 10,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 15
+ },
+ {
+  "name": "coastalmanagement",
+  "type": "text",
+  "hits": {
+   "app": 22,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 27
+ },
+ {
+  "name": "contaminationactivitytype",
+  "type": "text",
+  "hits": {
+   "app": 3,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "h_name",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 4,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 14
+ },
+ {
+  "name": "h_id",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "floodmapping",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 4,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 14
+ },
+ {
+  "name": "fsr_sym_code_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fsr_fsr_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fsr_label_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fsr_lay_class_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "groundwatervulnerability",
+  "type": "text",
+  "hits": {
+   "app": 22,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 27
+ },
+ {
+  "name": "hob_sym_code",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "hob_max_b_h",
+  "type": "double precision",
+  "hits": {
+   "app": 6,
+   "api": 7,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 6,
+   "static_dead": 0
+  },
+  "live": 15
+ },
+ {
+  "name": "hob_units",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "hob_max_b_h_m",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "landslidrisk",
+  "type": "text",
+  "hits": {
+   "app": 4,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 9
+ },
+ {
+  "name": "epi_name_p",
+  "type": "text",
+  "hits": {
+   "app": 3,
+   "api": 2,
+   "db_views": 8,
+   "tooling": 8,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 21
+ },
+ {
+  "name": "lga_name",
+  "type": "text",
+  "hits": {
+   "app": 12,
+   "api": 66,
+   "db_views": 9,
+   "tooling": 10,
+   "templates": 0,
+   "api_backup": 54,
+   "static_dead": 0
+  },
+  "live": 97
+ },
+ {
+  "name": "lsz_lay_class_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lsz_sym_code_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lsz_lay_size_p",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lot_size_units",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "mineralresoureland",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "region_name",
+  "type": "text",
+  "hits": {
+   "app": 7,
+   "api": 26,
+   "db_views": 15,
+   "tooling": 22,
+   "templates": 0,
+   "api_backup": 27,
+   "static_dead": 0
+  },
+  "live": 70
+ },
+ {
+  "name": "riparianlandwatercouse",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "salinity",
+  "type": "text",
+  "hits": {
+   "app": 32,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 37
+ },
+ {
+  "name": "scenicprotectionland",
+  "type": "text",
+  "hits": {
+   "app": 23,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 28
+ },
+ {
+  "name": "wetland",
+  "type": "text",
+  "hits": {
+   "app": 8,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "mine_subsidence_district",
+  "type": "text",
+  "hits": {
+   "app": 14,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 16
+ },
+ {
+  "name": "drinking_water_catchment",
+  "type": "text",
+  "hits": {
+   "app": 14,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 14
+ },
+ {
+  "name": "ols_minimum_height",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 5
+ },
+ {
+  "name": "ols_maximum_height",
+  "type": "double precision",
+  "hits": {
+   "app": 2,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 7
+ },
+ {
+  "name": "walkable_score",
+  "type": "double precision",
+  "hits": {
+   "app": 7,
+   "api": 14,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 12,
+   "static_dead": 0
+  },
+  "live": 23
+ },
+ {
+  "name": "no_of_beds",
+  "type": "text",
+  "hits": {
+   "app": 5,
+   "api": 33,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 1,
+   "static_dead": 0
+  },
+  "live": 40
+ },
+ {
+  "name": "estimated_price",
+  "type": "text",
+  "hits": {
+   "app": 17,
+   "api": 21,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 11,
+   "static_dead": 0
+  },
+  "live": 40
+ },
+ {
+  "name": "no_of_baths",
+  "type": "text",
+  "hits": {
+   "app": 5,
+   "api": 6,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "no_of_cars",
+  "type": "text",
+  "hits": {
+   "app": 5,
+   "api": 6,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "width",
+  "type": "double precision",
+  "hits": {
+   "app": 1145,
+   "api": 11,
+   "db_views": 1,
+   "tooling": 14,
+   "templates": 0,
+   "api_backup": 8,
+   "static_dead": 1
+  },
+  "live": 1171
+ },
+ {
+  "name": "depth",
+  "type": "double precision",
+  "hits": {
+   "app": 14,
+   "api": 9,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 4,
+   "static_dead": 0
+  },
+  "live": 25
+ },
+ {
+  "name": "propertyfrontagecount",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 5,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 5,
+   "static_dead": 0
+  },
+  "live": 7
+ },
+ {
+  "name": "dualoccupancy",
+  "type": "text",
+  "hits": {
+   "app": 2,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "area_sqm",
+  "type": "double precision",
+  "hits": {
+   "app": 6,
+   "api": 0,
+   "db_views": 2,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 8,
+   "static_dead": 0
+  },
+  "live": 10
+ },
+ {
+  "name": "epi_name",
+  "type": "text",
+  "hits": {
+   "app": 6,
+   "api": 9,
+   "db_views": 8,
+   "tooling": 8,
+   "templates": 0,
+   "api_backup": 7,
+   "static_dead": 0
+  },
+  "live": 31
+ },
+ {
+  "name": "lzn_label",
+  "type": "text",
+  "hits": {
+   "app": 10,
+   "api": 38,
+   "db_views": 9,
+   "tooling": 7,
+   "templates": 0,
+   "api_backup": 78,
+   "static_dead": 0
+  },
+  "live": 64
+ },
+ {
+  "name": "lzn_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 2,
+   "api": 24,
+   "db_views": 6,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 42,
+   "static_dead": 0
+  },
+  "live": 36
+ },
+ {
+  "name": "lsz_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lsz_sym_code",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lot_size",
+  "type": "double precision",
+  "hits": {
+   "app": 12,
+   "api": 12,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 10,
+   "static_dead": 0
+  },
+  "live": 26
+ },
+ {
+  "name": "fsr_sym_code",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "fsr_fsr",
+  "type": "double precision",
+  "hits": {
+   "app": 10,
+   "api": 20,
+   "db_views": 2,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 15,
+   "static_dead": 0
+  },
+  "live": 34
+ },
+ {
+  "name": "fsr_label",
+  "type": "text",
+  "hits": {
+   "app": 2,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 4
+ },
+ {
+  "name": "fsr_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "property_id",
+  "type": "integer",
+  "hits": {
+   "app": 14,
+   "api": 51,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 51,
+   "static_dead": 1
+  },
+  "live": 65
+ },
+ {
+  "name": "average_slope",
+  "type": "double precision",
+  "hits": {
+   "app": 1,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 1
+ },
+ {
+  "name": "historic_zone",
+  "type": "character varying",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "historic_amendment",
+  "type": "character varying",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "historic_commenced_date",
+  "type": "character varying",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_general",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "cdc_dual_occupancy",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 3,
+   "tooling": 6,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 19
+ },
+ {
+  "name": "cdc_multi_dwelling_terraces",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 3,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 17
+ },
+ {
+  "name": "cdc_secondary_dwellings",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 3,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 17
+ },
+ {
+  "name": "cdc_dwelling_houses",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 3,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 17
+ },
+ {
+  "name": "cdc_manor_homes",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "cdc_rural_housing",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 2,
+   "tooling": 3,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 15
+ },
+ {
+  "name": "cdc_inland_dwelling_houses",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "cdc_inland_farm_buildings",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "cdc_greenfield_housing",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "cdc_agritourism",
+  "type": "boolean",
+  "hits": {
+   "app": 7,
+   "api": 3,
+   "db_views": 1,
+   "tooling": 4,
+   "templates": 0,
+   "api_backup": 3,
+   "static_dead": 0
+  },
+  "live": 15
+ },
+ {
+  "name": "cdc_farmstay",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 4,
+   "db_views": 1,
+   "tooling": 7,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 12
+ },
+ {
+  "name": "total_cdc_eligible",
+  "type": "integer",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "normalized_address",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 11,
+   "db_views": 4,
+   "tooling": 8,
+   "templates": 0,
+   "api_backup": 11,
+   "static_dead": 0
+  },
+  "live": 23
+ },
+ {
+  "name": "cdc_general_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_dual_occupancy_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_multi_dwelling_terraces_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_secondary_dwellings_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_dwelling_houses_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_manor_homes_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_rural_housing_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_dwelling_houses_ru1246",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_dwelling_houses_ru1246_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_dwelling_houses_ru5_r1_r2_r3_r4",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_dwelling_houses_ru5_r1_r2_r3_r4_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_dwelling_houses_r5",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_dwelling_houses_r5_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_inland_farm_buildings_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_greenfield_housing_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_agritourism_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cdc_farmstay_exclusions",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "coastalmanagement_env",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "coastalmanagement_use",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "do_depth",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "ada_class_description",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "ada_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "ada_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_fsr_clause",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_fsr_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_fsr_value",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_hob_clause",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_hob_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_hob_max_height_m",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_hob_value",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_ls_clause",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_ls_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_ls_precinct",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_ls_sym_code",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_ls_value",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_lzn_area",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_lzn_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_stmarys_area",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "addctrl_stmarys_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "all_edges_measurements",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "all_frontage_road_ids",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "all_frontages",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "apu_clause",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "apu_code",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "asb_class_description",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "asb_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "asb_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "asb_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "asf_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "asf_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "bct_controllin",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "biomap_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "biomap_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "biomap_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "biomap_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "biovalue_boset_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "biovalue_category",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "buffer",
+  "type": "text",
+  "hits": {
+   "app": 6,
+   "api": 2,
+   "db_views": 0,
+   "tooling": 10,
+   "templates": 0,
+   "api_backup": 2,
+   "static_dead": 0
+  },
+  "live": 18
+ },
+ {
+  "name": "cdc_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "centroid_lat",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "centroid_lon",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cenv_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cenv_map_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "chaz_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "chaz_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "chaz_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "circular_compactness",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "convexity",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "corner_lot_apt_01_4_6storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "corner_lot_apt_01_4_6storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "corner_lot_apt_02_4_6storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "corner_lot_apt_02_4_6storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "corners_count",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "council_name",
+  "type": "text",
+  "hits": {
+   "app": 2,
+   "api": 7,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 5,
+   "static_dead": 0
+  },
+  "live": 9
+ },
+ {
+  "name": "crown_reserve_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cuse_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cuse_map_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cwet_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "cwet_map_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "dcp_council_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "dcp_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "dcp_plan_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "dcp_plan_type",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "do_width",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "dwc_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "dwc_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "effective_diameter_m",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "elongation",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "envsensi_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "envsensi_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "envsensi_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "equivalent_rectangular_index",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "esa_coverage_type",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "esa_ref",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fbl_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fbl_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fbl_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "floodsdf_ogc_fid",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fractal_dimension",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "frontage_area_ratio",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "fsr_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "ghc_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "hawkesbury_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "hawkesbury_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "hawkesbury_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "heritage_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "historic_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "historic_published_date",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "hob_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "in_lmr_housing_area",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "in_tod_area",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "is_battleaxe",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "is_corner_lot",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "kcorr_area_ha",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "kcorr_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "kcorr_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "kcorr_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "koala_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "koala_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "landres_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "landres_lra_type",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "large_lot_apt_01_4storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "large_lot_apt_01_4storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "large_lot_apt_01_6storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "large_lot_apt_01_6storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "large_lot_apt_02_3_4storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "large_lot_apt_02_3_4storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "large_lot_apt_02_5_6storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "large_lot_apt_02_5_6storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "large_lot_apt_03_4_6storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 1,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "large_lot_apt_03_4_6storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lep_currency_date",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lep_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lep_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lfb_class_description",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lfb_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lfb_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lfb_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_fsr",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_hob",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_landuse",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_lot_width",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_lotsize",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_sym_code",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lmr_train_stations",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "localcomplying_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "localprov_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "localprov_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "longest_axis_m",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "lot_depth_m",
+  "type": "double precision",
+  "hits": {
+   "app": 2,
+   "api": 6,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 10
+ },
+ {
+  "name": "manor_homes_01_studio_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "manor_homes_01_studio_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "mineral_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "mineral_epi_type",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "mls_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "neck_ratio",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "npws_ogc_fid",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrbio_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrbio_epi_type",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrbio_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrsensi_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrsensi_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrsensi_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrwater_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrwater_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "nrwater_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "orientation_degrees",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "perimeter_m",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "permissible_uses",
+  "type": "text",
+  "hits": {
+   "app": 9,
+   "api": 6,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 15
+ },
+ {
+  "name": "pnf_controllin",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "postcode_1",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "primary_frontage_length_m",
+  "type": "double precision",
+  "hits": {
+   "app": 5,
+   "api": 6,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 13
+ },
+ {
+  "name": "primary_frontage_road",
+  "type": "text",
+  "hits": {
+   "app": 1,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 1
+ },
+ {
+  "name": "ramsar_refcode",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "ramsar_source",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "rectangularity",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "rfa_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "rfa_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "rfa_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "rip_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "rip_lay_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "row_homes_01_saha_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "row_homes_01_saha_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "salinity_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "sca_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "sca_label",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "sca_legislation",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "scenic_epi_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "scenic_lga_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "semis_01_anthony_gill_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "semis_01_anthony_gill_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "semis_02_sibling_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "semis_02_sibling_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "sepp_landuses",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "sepps",
+  "type": "text",
+  "hits": {
+   "app": 2,
+   "api": 10,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 6,
+   "static_dead": 0
+  },
+  "live": 12
+ },
+ {
+  "name": "shape_index",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_01_3storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 9
+ },
+ {
+  "name": "small_lot_apt_01_3storeys_min_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "small_lot_apt_01_3storeys_min_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_01_3storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_01_4storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "small_lot_apt_01_4storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_02_3storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 9
+ },
+ {
+  "name": "small_lot_apt_02_3storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_02_4storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "small_lot_apt_02_4storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_03_4_6storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 9
+ },
+ {
+  "name": "small_lot_apt_03_4_6storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "small_lot_apt_04_4_5storeys_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 2,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 9
+ },
+ {
+  "name": "small_lot_apt_04_4_5storeys_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "square_compactness",
+  "type": "double precision",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "terraces_01_carter_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 3,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 10
+ },
+ {
+  "name": "terraces_01_carter_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "terraces_02_sam_crawford_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "terraces_02_sam_crawford_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "terraces_03_officer_woods_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "terraces_03_officer_woods_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "terraces_04_other_eligible",
+  "type": "boolean",
+  "hits": {
+   "app": 4,
+   "api": 2,
+   "db_views": 1,
+   "tooling": 1,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 8
+ },
+ {
+  "name": "terraces_04_other_reasons",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "tod_lay_class",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "tod_map_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "wilderness_name",
+  "type": "text",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ },
+ {
+  "name": "_poi_done",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 2,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "_lotsize_done",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 2,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 2
+ },
+ {
+  "name": "_restore_done",
+  "type": "boolean",
+  "hits": {
+   "app": 0,
+   "api": 0,
+   "db_views": 0,
+   "tooling": 0,
+   "templates": 0,
+   "api_backup": 0,
+   "static_dead": 0
+  },
+  "live": 0
+ }
+]

@@ -1,0 +1,330 @@
+closest_hospital,character varying
+closest_hospital_distance,double precision
+closest_school,character varying
+closest_school_distance,double precision
+closest_railway_station,character varying
+closest_railway_station_distance,double precision
+area_h,double precision
+objectid,integer
+planlabel,text
+lotnumber,text
+sectionnumber,text
+centroid_geom,text
+geom_1,text
+postcode,integer
+propid,integer
+address,text
+gurasid,integer
+propid_count,bigint
+lot_section_plan,text
+geom,USER-DEFINED
+buffered_geom,text
+property_description,text
+land_value_1,bigint
+area,text
+area_type,text
+lzn_sym_code_p,text
+lzn_lay_class_p,text
+lzn_epi_name_p,text
+suburbname,text
+ass_lay_class,text
+activestreetfrontage,text
+australian_noise_exposure_forecast,text
+biodiversity,text
+bushfireproneland,text
+coastalmanagement,text
+contaminationactivitytype,text
+h_name,text
+h_id,text
+floodmapping,text
+fsr_sym_code_p,text
+fsr_fsr_p,text
+fsr_label_p,text
+fsr_lay_class_p,text
+groundwatervulnerability,text
+hob_sym_code,double precision
+hob_max_b_h,double precision
+hob_units,text
+hob_max_b_h_m,text
+landslidrisk,text
+epi_name_p,text
+lga_name,text
+lsz_lay_class_p,text
+lsz_sym_code_p,text
+lsz_lay_size_p,text
+lot_size_units,text
+mineralresoureland,text
+region_name,text
+riparianlandwatercouse,text
+salinity,text
+scenicprotectionland,text
+wetland,text
+mine_subsidence_district,text
+drinking_water_catchment,text
+ols_minimum_height,double precision
+ols_maximum_height,double precision
+walkable_score,double precision
+no_of_beds,text
+estimated_price,text
+no_of_baths,text
+no_of_cars,text
+width,double precision
+depth,double precision
+propertyfrontagecount,text
+dualoccupancy,text
+area_sqm,double precision
+epi_name,text
+lzn_label,text
+lzn_lay_class,text
+lsz_lay_class,text
+lsz_sym_code,text
+lot_size,double precision
+fsr_sym_code,text
+fsr_fsr,double precision
+fsr_label,text
+fsr_lay_class,text
+property_id,integer
+average_slope,double precision
+historic_zone,character varying
+historic_amendment,character varying
+historic_commenced_date,character varying
+cdc_general,boolean
+cdc_dual_occupancy,boolean
+cdc_multi_dwelling_terraces,boolean
+cdc_secondary_dwellings,boolean
+cdc_dwelling_houses,boolean
+cdc_manor_homes,boolean
+cdc_rural_housing,boolean
+cdc_inland_dwelling_houses,boolean
+cdc_inland_farm_buildings,boolean
+cdc_greenfield_housing,boolean
+cdc_agritourism,boolean
+cdc_farmstay,boolean
+total_cdc_eligible,integer
+cdc_eligible,boolean
+normalized_address,text
+cdc_general_exclusions,text
+cdc_dual_occupancy_exclusions,text
+cdc_multi_dwelling_terraces_exclusions,text
+cdc_secondary_dwellings_exclusions,text
+cdc_dwelling_houses_exclusions,text
+cdc_manor_homes_exclusions,text
+cdc_rural_housing_exclusions,text
+cdc_inland_dwelling_houses_ru1246,boolean
+cdc_inland_dwelling_houses_ru1246_exclusions,text
+cdc_inland_dwelling_houses_ru5_r1_r2_r3_r4,boolean
+cdc_inland_dwelling_houses_ru5_r1_r2_r3_r4_exclusions,text
+cdc_inland_dwelling_houses_r5,boolean
+cdc_inland_dwelling_houses_r5_exclusions,text
+cdc_inland_farm_buildings_exclusions,text
+cdc_greenfield_housing_exclusions,text
+cdc_agritourism_exclusions,text
+cdc_farmstay_exclusions,text
+coastalmanagement_env,text
+coastalmanagement_use,text
+do_depth,double precision
+ada_class_description,text
+ada_lay_class,text
+ada_lay_name,text
+addctrl_fsr_clause,text
+addctrl_fsr_label,text
+addctrl_fsr_value,text
+addctrl_hob_clause,text
+addctrl_hob_label,text
+addctrl_hob_max_height_m,text
+addctrl_hob_value,text
+addctrl_ls_clause,text
+addctrl_ls_label,text
+addctrl_ls_precinct,text
+addctrl_ls_sym_code,text
+addctrl_ls_value,text
+addctrl_lzn_area,text
+addctrl_lzn_label,text
+addctrl_stmarys_area,text
+addctrl_stmarys_epi_name,text
+all_edges_measurements,text
+all_frontage_road_ids,text
+all_frontages,text
+apu_clause,text
+apu_code,text
+asb_class_description,text
+asb_label,text
+asb_lay_class,text
+asb_lay_name,text
+asf_epi_name,text
+asf_lga_name,text
+bct_controllin,text
+biomap_epi_name,text
+biomap_label,text
+biomap_lay_class,text
+biomap_lay_name,text
+biovalue_boset_class,text
+biovalue_category,text
+buffer,text
+cdc_reasons,text
+centroid_lat,double precision
+centroid_lon,double precision
+cenv_epi_name,text
+cenv_map_name,text
+chaz_label,text
+chaz_lay_class,text
+chaz_lay_name,text
+circular_compactness,double precision
+convexity,double precision
+corner_lot_apt_01_4_6storeys_eligible,boolean
+corner_lot_apt_01_4_6storeys_reasons,text
+corner_lot_apt_02_4_6storeys_eligible,boolean
+corner_lot_apt_02_4_6storeys_reasons,text
+corners_count,double precision
+council_name,text
+crown_reserve_name,text
+cuse_epi_name,text
+cuse_map_name,text
+cwet_epi_name,text
+cwet_map_name,text
+dcp_council_name,text
+dcp_lga_name,text
+dcp_plan_name,text
+dcp_plan_type,text
+do_width,double precision
+dwc_epi_name,text
+dwc_lga_name,text
+effective_diameter_m,double precision
+elongation,double precision
+envsensi_epi_name,text
+envsensi_lay_class,text
+envsensi_lga_name,text
+equivalent_rectangular_index,double precision
+esa_coverage_type,text
+esa_ref,text
+fbl_epi_name,text
+fbl_lay_class,text
+fbl_lga_name,text
+floodsdf_ogc_fid,text
+fractal_dimension,double precision
+frontage_area_ratio,double precision
+fsr_epi_name,text
+ghc_lay_class,text
+hawkesbury_label,text
+hawkesbury_lay_class,text
+hawkesbury_lay_name,text
+heritage_class,text
+historic_lay_class,text
+historic_published_date,text
+hob_epi_name,text
+in_lmr_housing_area,boolean
+in_tod_area,boolean
+is_battleaxe,boolean
+is_corner_lot,boolean
+kcorr_area_ha,text
+kcorr_label,text
+kcorr_lay_class,text
+kcorr_lay_name,text
+koala_lay_class,text
+koala_lay_name,text
+landres_lay_class,text
+landres_lra_type,text
+large_lot_apt_01_4storeys_eligible,boolean
+large_lot_apt_01_4storeys_reasons,text
+large_lot_apt_01_6storeys_eligible,boolean
+large_lot_apt_01_6storeys_reasons,text
+large_lot_apt_02_3_4storeys_eligible,boolean
+large_lot_apt_02_3_4storeys_reasons,text
+large_lot_apt_02_5_6storeys_eligible,boolean
+large_lot_apt_02_5_6storeys_reasons,text
+large_lot_apt_03_4_6storeys_eligible,boolean
+large_lot_apt_03_4_6storeys_reasons,text
+lep_currency_date,text
+lep_lay_class,text
+lep_lga_name,text
+lfb_class_description,text
+lfb_label,text
+lfb_lay_class,text
+lfb_lay_name,text
+lmr_fsr,text
+lmr_hob,text
+lmr_landuse,text
+lmr_lot_width,text
+lmr_lotsize,text
+lmr_sym_code,text
+lmr_train_stations,text
+localcomplying_lay_class,text
+localprov_lay_class,text
+localprov_lay_name,text
+longest_axis_m,double precision
+lot_depth_m,double precision
+manor_homes_01_studio_eligible,boolean
+manor_homes_01_studio_reasons,text
+mineral_epi_name,text
+mineral_epi_type,text
+mls_epi_name,text
+neck_ratio,double precision
+npws_ogc_fid,text
+nrbio_epi_name,text
+nrbio_epi_type,text
+nrbio_lay_class,text
+nrsensi_epi_name,text
+nrsensi_lay_class,text
+nrsensi_lay_name,text
+nrwater_epi_name,text
+nrwater_lay_class,text
+nrwater_lay_name,text
+orientation_degrees,double precision
+perimeter_m,double precision
+permissible_uses,text
+pnf_controllin,text
+postcode_1,text
+primary_frontage_length_m,double precision
+primary_frontage_road,text
+ramsar_refcode,text
+ramsar_source,text
+rectangularity,double precision
+rfa_label,text
+rfa_lay_class,text
+rfa_lay_name,text
+rip_epi_name,text
+rip_lay_name,text
+row_homes_01_saha_eligible,boolean
+row_homes_01_saha_reasons,text
+salinity_epi_name,text
+sca_class,text
+sca_label,text
+sca_legislation,text
+scenic_epi_name,text
+scenic_lga_name,text
+semis_01_anthony_gill_eligible,boolean
+semis_01_anthony_gill_reasons,text
+semis_02_sibling_eligible,boolean
+semis_02_sibling_reasons,text
+sepp_landuses,text
+sepps,text
+shape_index,double precision
+small_lot_apt_01_3storeys_eligible,boolean
+small_lot_apt_01_3storeys_min_eligible,boolean
+small_lot_apt_01_3storeys_min_reasons,text
+small_lot_apt_01_3storeys_reasons,text
+small_lot_apt_01_4storeys_eligible,boolean
+small_lot_apt_01_4storeys_reasons,text
+small_lot_apt_02_3storeys_eligible,boolean
+small_lot_apt_02_3storeys_reasons,text
+small_lot_apt_02_4storeys_eligible,boolean
+small_lot_apt_02_4storeys_reasons,text
+small_lot_apt_03_4_6storeys_eligible,boolean
+small_lot_apt_03_4_6storeys_reasons,text
+small_lot_apt_04_4_5storeys_eligible,boolean
+small_lot_apt_04_4_5storeys_reasons,text
+square_compactness,double precision
+terraces_01_carter_eligible,boolean
+terraces_01_carter_reasons,text
+terraces_02_sam_crawford_eligible,boolean
+terraces_02_sam_crawford_reasons,text
+terraces_03_officer_woods_eligible,boolean
+terraces_03_officer_woods_reasons,text
+terraces_04_other_eligible,boolean
+terraces_04_other_reasons,text
+tod_lay_class,text
+tod_map_name,text
+wilderness_name,text
+_poi_done,boolean
+_lotsize_done,boolean
+_restore_done,boolean

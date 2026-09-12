@@ -499,6 +499,37 @@ def check_code_refs(rep, old, api_js_path, api_js, will_rewrite=False):
         rep.add("INFO", "code", f"{comments} mention(s) in comments (harmless, worth updating)")
 
 
+# --------------------------------------------------------------------------- bloat
+
+def check_bloat(rep, old, new):
+    """A load that UPDATEs the new table after creating it leaves the old row versions
+    behind: d_4 arrived at 66 GB and came back at 49 GB after a 3.7 h VACUUM FULL
+    (2026-09-12). Every seq scan pays for that dead space, so flag it before cutover.
+    Compares bytes per live row on the two tables; > 1.3x is a FAIL with the fix spelled
+    out, dead tuples still pending autovacuum are a WARN."""
+    rows = {}
+    for r in psql(f"""select c.relname, pg_table_size(c.oid), c.reltuples::bigint,
+                             coalesce(s.n_dead_tup, 0), coalesce(s.n_live_tup, 0)
+                      from pg_class c left join pg_stat_user_tables s on s.relid = c.oid
+                      where c.relname in ('{old}', '{new}') and c.relkind = 'r'"""):
+        rows[r[0]] = (r[0], int(r[1]), int(r[2]), int(r[3]), int(r[4]))
+    if old not in rows or new not in rows:
+        return
+    def per_row(r):
+        return r[1] / r[2] if r[2] else 0
+    bo, bn = per_row(rows[old]), per_row(rows[new])
+    dead = rows[new][3]
+    if bo and bn > 1.3 * bo:
+        rep.add("FAIL", "bloat",
+                f"{new} stores {bn:,.0f} bytes/row vs {bo:,.0f} on {old} ({bn / bo:.1f}x): "
+                f"the load left dead space behind. Run VACUUM (FULL, ANALYZE) {new} "
+                f"(needs ~1.2x the compacted size free on the data volume, hours) before cutover.")
+    else:
+        rep.add("PASS", "bloat", f"{new}: {bn:,.0f} bytes/row vs {bo:,.0f} on {old}")
+    if dead and rows[new][4] and dead > 0.05 * rows[new][4]:
+        rep.add("WARN", "bloat", f"{new} has {dead:,} dead tuples pending vacuum")
+
+
 # --------------------------------------------------------------------------- sanity
 
 SANITY = [
@@ -744,6 +775,7 @@ def main():
         return 1
 
     if args.command in ("check", "cutover"):
+        check_bloat(rep, old, new)
         check_columns(rep, old, new, api_js)
         check_indexes(rep, old, new, apply=False, min_scans=args.min_scans)
         check_matviews(rep, old, new, rebuild=False)
