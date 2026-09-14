@@ -76,9 +76,7 @@ Answered `"status":"Closed"`, `"message":"Document is ready to download"`, and t
 ## 5. Questions
 
 1. Are LRSIMR requests R804775, R804811, R805092 and R805093 queued at LRS, failed, or
-   awaiting something on Hazlett's side? Your 4 June 2025 example (SP103272, R371251) was
-   delivered the same day. If they have failed, the API should say so rather than answer
-   "not ready" indefinitely — please return a terminal error status so we can refund the buyer.
+   awaiting something on Hazlett's side?
 2. What is the expected turnaround for plan and dealing images ordered through the API, and
    is there a webhook callback so we do not have to poll for hours?
 3. Please confirm `subType` is required for DL (dealing) image orders, and which value is
