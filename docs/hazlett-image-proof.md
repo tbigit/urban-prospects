@@ -1,8 +1,11 @@
 # Hazlett image orders not being fulfilled — reproduction for Hazlett's developers
 
 Client id `9fysIFgDj2zO8Ad1Qt1u3BEN` (Urban Prospects, customer `URBA`). All times AEST.
-Title searches through the same API return in under 3 seconds; **plan and dealing image
-orders are accepted, answer "In Progress", and are still not downloadable 14 hours later.**
+Title searches through the same API return in under 3 seconds (e.g. order UP8, folio
+501/793867, 12 Sep 21:40, PDF in 2 s). **The four plan and dealing image orders below were
+accepted on 11 Sep, answered "In Progress", and are still not downloadable on 14 Sep — more
+than 70 hours and two business days later.** Our server has polled each one every 30
+minutes throughout (277 attempts each) and received the same 400 every time.
 
 ## 1. Token (works)
 
@@ -39,21 +42,26 @@ curl -s -X POST https://api.hazlett.com.au/req/lrs -H 'Content-Type: application
 (Dealing orders had to carry `subType` — without it the API rejects them with
 `{'subType': ['Missing data for required field.']}`, which contradicts the spec.)
 
-## 3. Polling the document — still not ready 14 hours later
+## 3. Polling the document — still not ready after 70 hours
 
 ```bash
 for O in UPIMTWLCQER UPIMTWLK52Z UPIMTWNOXXP UPIMTWNPDVB; do
   curl -s -w '\nHTTP %{http_code}\n' "https://api.hazlett.com.au/req/lrs/HAZURBA$O.pdf" -H "Authorization: Bearer $TOKEN.$CID"
 done
 ```
-Captured 12 Sep 2026 06:57 AEST (20:57 UTC 11 Sep), identical for all four:
+Captured 14 Sep 2026 15:05 AEST, identical for all four (and identical at every check since
+11 Sep 16:47):
 ```json
 {"status": "Error", "errorCode": "400", "errorReason": "Document is not ready to download"}
 HTTP 400
 ```
 
-Our server has polled each order every 30 minutes since ordering (53 attempts each at the time
-of writing) with the same answer every time.
+| orderId | Hazlett requestId | Ordered | Hours pending at 14 Sep 15:05 | Polls |
+|---|---|---|---|---|
+| UPIMTWLCQER | R804775 | 11 Sep 16:47 | 70.3 | 277 |
+| UPIMTWLK52Z | R804811 | 11 Sep 16:55 | 70.2 | 277 |
+| UPIMTWNOXXP | R805092 | 11 Sep 17:48 | 69.3 | 277 |
+| UPIMTWNPDVB | R805093 | 11 Sep 17:48 | 69.3 | 277 |
 
 ## 4. Comparison: titles work instantly on the same token
 
@@ -69,7 +77,8 @@ Answered `"status":"Closed"`, `"message":"Document is ready to download"`, and t
 
 1. Are LRSIMR requests R804775, R804811, R805092 and R805093 queued at LRS, failed, or
    awaiting something on Hazlett's side? Your 4 June 2025 example (SP103272, R371251) was
-   delivered the same day.
+   delivered the same day. If they have failed, the API should say so rather than answer
+   "not ready" indefinitely — please return a terminal error status so we can refund the buyer.
 2. What is the expected turnaround for plan and dealing images ordered through the API, and
    is there a webhook callback so we do not have to poll for hours?
 3. Please confirm `subType` is required for DL (dealing) image orders, and which value is
