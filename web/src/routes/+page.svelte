@@ -15,7 +15,7 @@
 
 	const heroStats = [
 		{ n: '4.9 mil', l: 'Viable Sites' },
-		{ n: '1 min', l: 'To Shortlist' },
+		{ n: '10 min', l: 'To Shortlist' },
 		{ n: '34+', l: 'Filters Applied' }
 	];
 
