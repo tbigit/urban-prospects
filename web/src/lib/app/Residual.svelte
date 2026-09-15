@@ -557,7 +557,7 @@
       {#each user_fav[property.gurasid].feasibility.prices as price, price_index}
       <div class="flex" style="gap:0.5em;padding-bottom:0.25em;">
         <div class="one-quarter" style="min-width: 120px"><div class="padding-bottom-thinner vertical-center"><div class="select-container relative">
-          <select on:change={() => updateConstructionCost(price_index)} bind:value={user_fav[property.gurasid].feasibility.prices[price_index].price_type}>
+          <select on:change={() => updateConstructionCost(price_index)} bind:value={price.price_type}>
             <option value="">Select:</option>
             {#each getBuildingTypeGroups(region) as name}
               <option value="{name}">{name}</option>
@@ -567,11 +567,11 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="#5C2587" d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
           </div>
         </div></div></div>
-        <div class="one-sixth"><div class="padding-bottom-thinner"><input bind:value={user_fav[property.gurasid].feasibility.prices[price_index].price_sqm} placeholder="" type="text"></div></div>
-        <div class="one-quarter"><div class="padding-bottom-thinner"><input bind:value={user_fav[property.gurasid].feasibility.prices[price_index].price} placeholder="" type="text"></div></div>
+        <div class="one-sixth"><div class="padding-bottom-thinner"><input bind:value={price.price_sqm} placeholder="" type="text"></div></div>
+        <div class="one-quarter"><div class="padding-bottom-thinner"><input bind:value={price.price} placeholder="" type="text"></div></div>
 
         <div class="one-sixth"  style="min-width: 55px"><div class="padding-bottom-thinner vertical-center"><div class="select-container relative">
-          <select on:change={() => updateConstructionCost(price_index)} bind:value={user_fav[property.gurasid].feasibility.prices[price_index].build_quality}>
+          <select on:change={() => updateConstructionCost(price_index)} bind:value={price.build_quality}>
             <option value="">Select:</option>
             {#each build_quality_options as option}
               <option>{option}</option>
@@ -582,12 +582,12 @@
           </div>
         </div></div></div>
 
-        <div class="one-quarter"><div class="padding-bottom-thinner"><input bind:value={user_fav[property.gurasid].feasibility.prices[price_index].cost} placeholder="" type="text"></div></div>
+        <div class="one-quarter"><div class="padding-bottom-thinner"><input bind:value={price.cost} placeholder="" type="text"></div></div>
 
         <div class="one-quarter">
           <div class="padding-bottom-thinner vertical-center">
             <div class="flex">
-              <div class="full right"><h6 class="h6-f">${formatCurrency(user_fav[property.gurasid].feasibility.prices[price_index].price_subtotal || 0)}</h6></div>
+              <div class="full right"><h6 class="h6-f">${formatCurrency(price.price_subtotal || 0)}</h6></div>
             </div>
           </div>
         </div>
