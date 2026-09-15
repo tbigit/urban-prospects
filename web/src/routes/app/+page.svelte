@@ -4346,10 +4346,10 @@ async function _send_mail_property(property_selected) {
       }
       
     }
-    // Plan covers all five regions: start with all of them selected (and "All" lit)
+    // Start with every region the plan covers selected (one, some or all five),
     // rather than an empty selection that only implicitly means "everything".
-    if (Array.isArray(user_regions) && user_regions.length >= 5 && regions_selected.length === 0 && !querystring.get('search_bak')) {
-      regions_selected = [...user_regions];
+    if (Array.isArray(user_regions) && user_regions.length && regions_selected.length === 0 && !querystring.get('search_bak')) {
+      regions_selected = user_regions.filter((r) => regions.includes(r));
     }
 
     if (is_print) {
