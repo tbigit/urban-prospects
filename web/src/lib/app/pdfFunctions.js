@@ -1981,7 +1981,7 @@ export async function getPropertyData(api_domain, pdf_property_or_obj, pdf_confi
         censusData = viewing_property.census; 
       } else {
         // 1. Get main property data
-        const property_response = await fetch(`${api_domain}/property/` + pdf_property_or_obj, {
+        const property_response = await fetch(`${api_domain}/v2/app/property/` + pdf_property_or_obj, {
           method: 'GET',
           cache: "no-cache",
           headers: {"Content-Type": "application/json"},
