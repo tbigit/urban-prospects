@@ -66,10 +66,12 @@ export async function getCheckoutSession(id: string): Promise<StripeSession> {
 
 export interface StripeSession {
 	id: string;
+	mode?: 'payment' | 'subscription' | 'setup';
+	created?: number;
 	status: 'open' | 'complete' | 'expired';
 	payment_status: 'paid' | 'unpaid' | 'no_payment_required';
 	customer: string | null;
-	customer_details?: { email?: string | null } | null;
+	customer_details?: { email?: string | null; name?: string | null } | null;
 	metadata?: Record<string, string>;
 	subscription: null | {
 		id: string;

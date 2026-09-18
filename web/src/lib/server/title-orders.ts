@@ -146,7 +146,9 @@ export async function startCheckout(inputs: PlaceInput[], origin: string): Promi
 		mode: 'payment',
 		customer_email: user.email,
 		customer_creation: 'always',
-		line_items: rows.map((r) => ({
+		// STRIPE_PRICE_TITLE_SEARCH ($25 one-off) covers titles and images alike; without
+		// it the item is priced inline from price_aud.
+		line_items: rows.map((r) => env.STRIPE_PRICE_TITLE_SEARCH ? { quantity: 1, price: env.STRIPE_PRICE_TITLE_SEARCH } : ({
 			quantity: 1,
 			price_data: {
 				currency: 'aud',

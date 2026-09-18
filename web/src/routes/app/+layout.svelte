@@ -19,7 +19,7 @@
 </script>
 
 <svelte:head>
-	<link rel="stylesheet" href="/app/css/lucide/lucide.css" />
+	<!-- lucide.css is injected server-side for /app (src/hooks.server.ts). -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 	<meta name="robots" content="noindex" />
 </svelte:head>

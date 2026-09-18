@@ -6,7 +6,7 @@
 // Pin stops billing them.
 import { env } from '$env/dynamic/private';
 import { query } from './db';
-import { REGION_NAMES, priceIdFor, createCheckoutSession, getCheckoutSession, type Interval, type Region } from './stripe';
+import { REGION_NAMES, priceIdFor, createCheckoutSession, getCheckoutSession, type StripeSession, type Interval, type Region } from './stripe';
 
 export const RENEW_WINDOW_DAYS = 7;
 
@@ -108,7 +108,13 @@ export async function completeRenewal(user: { id: number; email: string }, sessi
 	const s = await getCheckoutSession(sessionId);
 	if (String(s.metadata?.user_id ?? '') !== String(user.id)) throw new Error('This checkout belongs to a different account.');
 	if (s.status !== 'complete' || !s.subscription) return { pending: true as const };
-	const sub = s.subscription;
+	return { pending: false as const, ...(await recordCheckoutSubscription(user, s)) };
+}
+
+/** Mirror a completed subscription Checkout into user_subscriptions (idempotent on the
+ *  Stripe subscription id) and link the Stripe customer to the user. */
+export async function recordCheckoutSubscription(user: { id: number; email: string }, s: StripeSession) {
+	const sub = s.subscription!;
 	const item = sub.items.data[0];
 	const periodEndUnix = item?.current_period_end ?? sub.current_period_end ?? null;
 	const periodEnd = periodEndUnix ? new Date(periodEndUnix * 1000) : null;
@@ -141,7 +147,7 @@ export async function completeRenewal(user: { id: number; email: string }, sessi
 		await query(`UPDATE wp_import_subscriptions SET woo_cancel_due_at = now(), stripe_subscription_id = $2
 		              WHERE user_subscriptions_id = $1 AND woo_cancelled_at IS NULL`, [renewalOf, sub.id]);
 	}
-	return { pending: false as const, status, periodEnd, plan, regions: regions.split(','), interval };
+	return { status, periodEnd, plan, regions: regions.split(','), interval };
 }
 
 export const stripeConfigured = () => !!env.STRIPE_SECRET_KEY;

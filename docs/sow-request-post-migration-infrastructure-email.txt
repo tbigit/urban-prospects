@@ -1,0 +1,53 @@
+Subject: SOW request - post-migration infrastructure realignment (Urban Prospects)
+
+Hi [name],
+
+Between 6 and 12 September we migrated Urban Prospects off WordPress onto a single Node (SvelteKit) application serving the site, member accounts, admin console and property app from one origin. In the same window we cut the property table over to up_property_d_4, consolidated the primary DB host, renamed the API to api.urbanprospects.com.au and put the web origin behind Cloudflare with a Let's Encrypt wildcard.
+
+The application is now stable, but the surrounding infrastructure still reflects the old topology. We'd like a fixed-price quote, per work package, for the following.
+
+Recap of the current hosts
+- Web/Node app: 143.42.46.116, nginx -> Node :3010, proxied through Cloudflare
+- API (api.js): 45.79.118.32, api.urbanprospects.com.au, direct IP (not proxied); also hosts legacy WordPress at v1.urbanprospects.com.au (Pin/Woo billing still live)
+- Primary Postgres: 172.105.183.89 (urban-db-primary), second private IP 192.168.146.115
+- Standby Postgres: 172.105.174.70 (listed, currently unreachable)
+- GIS/tiles (/p, /p2 upstream): 172.105.184.178, Martin behind an nginx tile cache
+
+Work 1. Proxy servers and traffic routing
+The live vhost was hand-patched at cutover and has drifted from the repo template. /q and /q2 proxy to the API (/q/v2/ forwards the session cookie, /q/ strips it); /p and /p2 proxy to the GIS box with a dead standby as nginx backup. Old WordPress PHP proxies and dead app directories remain on the hosts.
+Work: reconcile live config and repo into one deployed source of truth; verify every route, header rule and timeout; remove dead proxies and directories; fix or drop the /p backup upstream; retire upapi.imtg.com.au once refresh-lookups.sh no longer calls it.
+Accept: nginx -t clean on both hosts; every route in a routing table returns the expected status from outside; nothing on disk differs from the repo.
+
+Work 2. Server monitoring and health checks
+Existing checks still target the standalone /app/ alias, the old auth_request gate, upapi.imtg.com.au and /p, /p2 as separate paths. All of these now live inside the one Node origin, so the checks pass on redirects or test paths that no longer exist.
+Work: new checks for web (/, /auth/check, /app/, /sitemap.xml), API via proxy and direct, one tile via /p and direct, DB connection, replication lag and disk, upweb.service and PM2 liveness. Add monitors for the nightly refresh-lookups.sh (it failed silently for weeks), the wp-cron billing job on the API host, cert expiry and Postgres OOM kills. Alerts to an agreed channel with escalation.
+Accept: stopping any service alerts within 5 minutes and clears on restore; a forced refresh-lookups failure alerts by next morning.
+
+Work 3. Custom server backup scripts
+Backups still cover WordPress files and MariaDB. Production is now /opt/www/upweb-node with state outside git: .env, title-search PDFs in /opt/www/upweb-data/title-docs, demo media. Member data (users, sessions, subscriptions, title orders, favourites, templates) is in Postgres next to a 49 GB property table that is reloaded from source.
+Work: back up the Node app runtime files, nginx/TLS/acme state, units and crontabs; nightly logical dump of member tables (30-day retention) plus weekly base backup or WAL archiving; separate, justified retention for the property tables; GIS box configs and container data; encrypted off-host storage; keep the WordPress backup until Pin billing ends (Jan 2027+); remove the dead 165 GB dump in /mnt/data/pg-migration once new backups have run.
+Accept: a clean-host restore from last night's backup, following only the runbook, reproduces the member tables and app runtime files.
+
+Work 4. Firewall and network security
+The web origin is behind Cloudflare but 80/443 are not restricted to Cloudflare ranges. The API stays on a direct IP by decision (Cloudflare added ~0.7 s to app API calls), so it is fully exposed. Postgres and the tile cache (:3000) are reachable more widely than needed; root SSH login is enabled everywhere.
+Work: web 80/443 limited to Cloudflare ranges with automated refresh plus a monitoring allowlist; API rate limiting on the public bearer-key API and GET /property/<id>, fail2ban, v1 wp-admin allowlisted; Postgres reachable only from API, GIS and standby, pg_hba to match; tile cache bound to the private interface; no root password login, SSH allowlist or bastion, unattended security updates, port inventory.
+Accept: external scans show only intended ports; app, admin, API and tiles work through their intended paths; API direct latency unchanged.
+
+Work 5. Standby DB rebuild, replication and hot-standby backup
+The primary was rebuilt and consolidated during the migration (Postgres on the host itself, d_4 at 49 GB, five matviews refreshed nightly at 03:00 Sydney). The standby was never re-established: SSH times out, yet sequelize-standby.js, the /standby/on|off switch and the nginx /p backup still point at it. There is no failover target.
+Work: provision or repair the standby (PG14, PostGIS, pg_trgm, disk sized for the Friday in-place reload of d_4); streaming physical replication with slot, pg_hba and TLS; replace the pre-rebuild replication scripts (state whether native streaming or scripts, and why); verify the API runs on the standby through search and detail flows; move base backups from Work 3 to the standby; document and rehearse failover and fail-back with timings.
+Accept: lag under 60 s through one Friday load; rehearsed failover within agreed RTO; backups from the standby do not affect primary query times.
+
+Parked for now: TLS endpoints (certificate inventory, renewal checks, Cloudflare zone cleanup). We will raise this separately.
+
+Out of scope: application code changes (beyond the standby target and the refresh-lookups hostname), retiring Pin/Woo billing or the v1 host, Cloudflare WAF design, the weekly data load process.
+
+Assumptions: root SSH and Cloudflare zone rights provided; all work is on live production with a rollback step per package, scheduled outside AEST business hours where members are affected; no test email to danny@moble.com.au (ask for a throwaway); no secrets in the repo or in deliverables; the API stays off Cloudflare and Woo subscriptions are not bulk-cancelled.
+
+Please reply with:
+1. Fixed price per work package and a total
+2. Sequencing and elapsed time (our preference: Work 5, Work 2, Work 3, Work 1, Work 4, as the missing standby is the largest risk)
+
+Thanks,
+Danny Liang
+Moble 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button.svelte';
 	import { base } from '$app/paths';
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -14,8 +15,12 @@
 		Your 7-day trial has started.
 	</h1>
 	<p class="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-[var(--color-neutral-400)]">
-		Stripe has emailed your receipt. Your account details follow shortly from
-		info@urbanprospects.com.au, and you can log in as soon as they arrive.
+		{#if data.pending}
+			Stripe is still confirming your checkout. Refresh this page in a moment to create your account.
+		{:else}
+			Your account for {data.email} is ready. Log in with your existing password, or use
+			“Forgot your password?” to set one.
+		{/if}
 	</p>
 	<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
 		<Button href="{base}/login/" size="lg" variant="teal">Log In</Button>

@@ -7978,19 +7978,10 @@ async function _send_mail_property(property_selected) {
 
 <svelte:head>
 	<title>Urban Prospects Property Search App</title>
-  <script src="https://kit.fontawesome.com/19fda93b05.js" crossorigin="anonymous"></script>
-
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.css" rel="stylesheet" />
-  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.0/mapbox-gl-draw.css' type='text/css' />
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.js"></script>
-  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.0/mapbox-gl-draw.js'></script>
-  <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
-
-  <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q&libraries=visualization"></script>
-
+	<!-- Mapbox GL (+ draw plugin), turf, pdf.js and the Google Maps loader are
+	     injected into the server-sent <head> for /app by src/hooks.server.ts, so
+	     they arrive before the first client render (this page has ssr = false and
+	     anything linked here is only appended after mount). -->
 </svelte:head>
 
 <svelte:window on:keydown={_handle_window_keydown}/>
