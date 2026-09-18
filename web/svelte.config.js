@@ -28,7 +28,13 @@ const config = {
 		// is what is indexed and linked. Emitting build/slug/index.html means the
 		// existing URLs resolve byte-identically, with no redirect hop.
 		prerender: {
-			origin: 'https://www.urbanprospects.com.au'
+			origin: 'https://www.urbanprospects.com.au',
+			// static/media/demo/ (the HLS demo film) is git-ignored and deployed on its
+			// own by deploy/deploy-media.sh, so a checkout without it must still build.
+			handleHttpError: ({ path, message }) => {
+				if (path.startsWith('/media/demo/')) return;
+				throw new Error(message);
+			}
 		}
 	}
 };
