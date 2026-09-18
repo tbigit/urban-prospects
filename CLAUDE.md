@@ -555,9 +555,9 @@ click. Now:
 - `routes/app/+page.svelte`: `_api_post()` tries the v2 path and falls back to v1 on 404, so the
   app works before and after the API patch. **Superseded 2026-09-08:** v1 `POST /properties`
   now answers **410 Gone** and the client fallback is removed — everything the app searches
-  goes through `/v2/app/*`. The last unauthenticated property route is `GET /property/<id>`;
-  gating it needs a `/v2/app/property/<id>` twin *and* an nginx change, since the Cookie
-  header is stripped on `/q/` and forwarded only on `/q/v2/`. The per-search `count(*)` and the "unbounded
+  goes through `/v2/app/*`. `GET /property/<id>` was the last
+  unauthenticated property route until 2026-09-12; it is now `/v2/app/property/<id>` (see
+  "Property detail" below). The per-search `count(*)` and the "unbounded
   count" on empty bounded results are gone; the total is the sum of the aggregate's `n`
   (`suburb_total`), which also answers the Total Results button instantly. The aggregate
   is fetched on fresh searches only (reset 1/0), never on bounded map re-searches.
@@ -621,6 +621,40 @@ LEPs, and `up_property_d_4` dropped the column, so on 2026-09-11 the feature was
 rather than carried: `patch_remove_planning_rules.py` took the lookup out of api.js (live),
 the PLANNING RULES panel and its helpers came out of `Property.svelte`, and the QA script no
 longer expects the column. `up_planning_code_full` is untouched should it ever come back.
+
+## Property detail: `GET /property/<id>` (2026-09-12)
+
+`patch_property_detail_parallel.py` runs the six follow-up queries (contribution plans,
+DCPs, SEPP intersection, LEPs, DA applications, vg_data sold history) with `Promise.all`
+instead of sequential awaits, and drops the `console.log` of the full row that went to the
+pm2 log on every request. Response bodies are byte-identical (checked on 1645912 and strata
+unit 63766041). **The "1.3 s" was not the route**: server-side it was already 41-54 ms and
+is now 39-51 ms; direct to the origin IP from Sydney it is 0.10 s, and through the
+Cloudflare-proxied `upapi.imtg.com.au` / `api.urbanprospects.com.au` hostname it is
+0.45-0.8 s. The remaining latency is the proxy hop (edge to origin), so the next lever is
+Cloudflare routing (Argo/unproxied API record or edge caching of `/property/<id>`), not SQL.
+Backup: `api.js.bak-2026-09-12-pre-detail-parallel`.
+
+Then the bigger win, same day: the live site vhost proxied `/q/` and `/q/v2/` to the
+Cloudflare-proxied API hostname, so an app click went Cloudflare -> site nginx -> Cloudflare
+-> origin. Both `proxy_pass` lines now go to the origin IP `45.79.118.32` with Host and
+`proxy_ssl_name` still `api.urbanprospects.com.au` (cert stays valid, still TLS).
+`www…/q/property/1645912` went from 0.80-0.96 s to 0.11-0.19 s. Backup
+`*.conf.bak-2026-09-12-pre-direct-origin`; `deploy/nginx-site.conf` updated to match.
+A Cloudflare cache rule was considered next but is now moot: the route is authenticated.
+
+**Property detail is gated (2026-09-12).** `patch_property_detail_auth.py` turned the v1
+handler into `_property_detail`, registered `GET /v2/app/property/:id` behind
+`requireSession` (same middleware as `/v2/app/properties`) and made `GET /property/:id`
+answer 410. No nginx change was needed: `/q/v2/` already forwards the cookie. The app's
+three fetches (`routes/app/+page.svelte` x2, `lib/app/pdfFunctions.js`) use the v2 path.
+Access logs showed no caller other than the app and curls. Verified via www with a
+temporary session: 200 in 0.12-0.17 s; unauthenticated 401; old path 410; public
+`/v2/properties` untouched. requireSession caches a verified session for 60 s, so a
+deleted session keeps working for up to a minute. There are now **no** unauthenticated
+property routes; the gate is still "any active session", not `has_access` — a cancelled
+member can fetch details via the API even though the UI hides the panel. Backup
+`api.js.bak-2026-09-12-pre-detail-auth`. Never edge-cache `/q/v2/`.
 
 ## Address autocomplete: `mv_address_lookup` (2026-09-08)
 

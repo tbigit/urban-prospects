@@ -4346,10 +4346,10 @@ async function _send_mail_property(property_selected) {
       }
       
     }
-    // Start with every region the plan covers selected (one, some or all five),
+    // Plan covers all five regions: start with all of them selected (and "All" lit)
     // rather than an empty selection that only implicitly means "everything".
-    if (Array.isArray(user_regions) && user_regions.length && regions_selected.length === 0 && !querystring.get('search_bak')) {
-      regions_selected = user_regions.filter((r) => regions.includes(r));
+    if (Array.isArray(user_regions) && user_regions.length >= 5 && regions_selected.length === 0 && !querystring.get('search_bak')) {
+      regions_selected = [...user_regions];
     }
 
     if (is_print) {
@@ -5698,7 +5698,7 @@ async function _send_mail_property(property_selected) {
       // of redirecting to /login. Fetch the basic property so the banner shows the
       // correct street-view image (it needs the address), but skip the heavier,
       // auth-gated enrichment calls below.
-      const basic_url = `${api_domain}/v2/app/property/` + gurasid + (is_lot ? '?type=1' : '');
+      const basic_url = `${api_domain}${API_V2}/property/` + gurasid + (is_lot ? '?type=1' : '');
       const basic_response = await fetch(basic_url, {
         method: 'GET',
         cache: "no-cache",
@@ -5722,9 +5722,9 @@ async function _send_mail_property(property_selected) {
       return;
     }
 
-    let get_property_api_url = `${api_domain}/v2/app/property/` + gurasid;
+    let get_property_api_url = `${api_domain}${API_V2}/property/` + gurasid;
     if (is_lot) {
-      get_property_api_url = `${api_domain}/v2/app/property/` + gurasid + '?type=1';
+      get_property_api_url = `${api_domain}${API_V2}/property/` + gurasid + '?type=1';
       console.log(get_property_api_url);
     }
 
@@ -7978,10 +7978,19 @@ async function _send_mail_property(property_selected) {
 
 <svelte:head>
 	<title>Urban Prospects Property Search App</title>
-	<!-- Mapbox GL (+ draw plugin), turf, pdf.js and the Google Maps loader are
-	     injected into the server-sent <head> for /app by src/hooks.server.ts, so
-	     they arrive before the first client render (this page has ssr = false and
-	     anything linked here is only appended after mount). -->
+  <script src="https://kit.fontawesome.com/19fda93b05.js" crossorigin="anonymous"></script>
+
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.css" rel="stylesheet" />
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.0/mapbox-gl-draw.css' type='text/css' />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.js"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.0/mapbox-gl-draw.js'></script>
+  <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
+  <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyC5I6s5Rym9KnniWrQX9pOhH6LaCi3sW9Q&libraries=visualization"></script>
+
 </svelte:head>
 
 <svelte:window on:keydown={_handle_window_keydown}/>
