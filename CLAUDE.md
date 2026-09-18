@@ -336,7 +336,7 @@ Password comes from the server-side `~/.pgpass` or is prompted; it is not stored
   `+page.svelte`; `TRIAL_LINKS_PAUSED` in `trial/+page.svelte`): title search (Woo item 920),
   plan dealings / image search (5057), due-diligence report (`add-to-cart=9926`), and the
   `/vipN/<email>` trial magic links. Each shows a holding notice. Flip the constants to re-enable.
-- `api_domain` is relative `/q`; nginx proxies it to `upapi.imtg.com.au` (done in the repo's
+- `api_domain` is relative `/q`; nginx proxies it to `api.urbanprospects.com.au` (done in the repo's
   `deploy/nginx-site.conf` and, since 2026-09-07, in the live preview vhost — see "Live server
   vhost" below). Still open: the `/pricing` and `/property?pid=` WordPress URLs the app links
   to need routes or redirects.
@@ -476,6 +476,21 @@ imported row as before). Only live Stripe rows are changed in place:
   clears the parent and ends sessions. Invites reuse `password_reset_tokens` (7-day link,
   `issueResetToken` in auth.ts). Children see a read-only Billing section and no Users
   section. `MAX_SEATS` = 20. Adding children needs a live Stripe row.
+## API hostname: `api.urbanprospects.com.au` (renamed 2026-09-12)
+
+The Express API (`api.js` on the ServerPilot host `45.79.118.32`, alias `upapi`) now answers
+on `api.urbanprospects.com.au`; the old `upapi.imtg.com.au` is being retired. Cloudflare A
+record `api` -> `45.79.118.32`, proxied. Because the zone is Full (strict) the origin holds
+its own Let's Encrypt cert (`/etc/letsencrypt/live/api.urbanprospects.com.au/`, certbot
+webroot `/var/www/letsencrypt`, renewed by `certbot.timer`). The vhost is the hand-written
+`/etc/nginx-sp/vhosts.d/api.urbanprospects.com.au.conf` — **not** ServerPilot's `upapi.conf`,
+which ServerPilot overwrites; the name must stay in that file's port-80 block for renewal.
+Test with `nginx-sp -t`, reload with `systemctl reload nginx-sp`. Callers repointed the same
+day: the live site vhost on 143.42.46.116 (backup `*.bak-2026-09-12-pre-apirename`),
+`deploy/nginx-site.conf`, `vite.config.ts` (`/q/v2` dev proxy), `Tiptap.svelte` (now the
+relative `/q/template`), `/usr/local/bin/refresh-lookups.sh` on the DB hop, and the API
+host's `/alert` cron line. The 453 WordPress posts on `v1.` still embed the old URL (legacy).
+
 ## Live server vhost (143.42.46.116) vs `deploy/nginx-site.conf`
 
 The nginx config actually serving `preview.urbanprospects.com.au` is
@@ -483,7 +498,7 @@ The nginx config actually serving `preview.urbanprospects.com.au` is
 drifts. Found 2026-09-07: it still aliased `/app/` to `/opt/www/upapp-gated/` (a stale standalone
 build behind `auth_request`) and proxied `/q/` to `127.0.0.1:3000`, which on that host is
 `/opt/api/api.js`, an unrelated OpenAI vector-store service, so every app API call 404'd. Both
-blocks were rewritten that day (`/app/` -> the Node site, `/q/` -> `upapi.imtg.com.au`, cookies
+blocks were rewritten that day (`/app/` -> the Node site, `/q/` -> `api.urbanprospects.com.au`, cookies
 stripped); backup `*.conf.bak-2026-09-07`. The Node site listens on **3010** there (`PORT` in
 `/opt/www/upweb-node/.env`) because 3000 is taken. `deploy/nginx-site.conf` is the intended
 config; when it and the live file disagree, check the live file first. `/opt/www/upapp`,
@@ -515,7 +530,7 @@ Uncached `/q/{lga_name,suburbname,zone}/search` calls used to scan the 47GB
   `pool: { max: 20, acquire: 120000 }` and `statement_timeout: 180000` (the old top-level
   `max: 10` was ignored by Sequelize). Backups of both plus `api.js.bak-2026-09-07-pre-mv`
   sit beside them.
-- `deploy/nginx-site.conf` proxies `/q`, `/q2` straight to `upapi.imtg.com.au` and `/p`, `/p2`
+- `deploy/nginx-site.conf` proxies `/q`, `/q2` straight to `api.urbanprospects.com.au` and `/p`, `/p2`
   to the GIS server with the standby as an nginx `backup`, replacing WordPress's PHP proxies
   (`/var/www/html/{q,q2,p,p2}`). The DB live/standby swap already lives in `api.js`
   (`standby` file, `/standby/on|off`).
@@ -535,7 +550,7 @@ click. Now:
   min per body). `/v2/properties` **without** `/app` is the public bearer-key Planning Data
   API; leave it alone. When every caller is on `/v2/app/*`, the unauthenticated v1 routes can go.
 - nginx: `location /q/v2/` forwards the Cookie header (v1 `/q/` still strips it). Vite dev
-  proxies `/q/v2` straight to `upapi.imtg.com.au` with the cookie; dev sessions live in the
+  proxies `/q/v2` straight to `api.urbanprospects.com.au` with the cookie; dev sessions live in the
   same DB so they verify.
 - `routes/app/+page.svelte`: `_api_post()` tries the v2 path and falls back to v1 on 404, so the
   app works before and after the API patch. **Superseded 2026-09-08:** v1 `POST /properties`

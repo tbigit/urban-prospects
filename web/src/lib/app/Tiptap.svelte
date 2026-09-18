@@ -28,7 +28,7 @@
     is_saving = true;
     event.target.innerText = 'SAVING...';
     if (user_id && user_template) {
-      const save_template_response = await fetch('https://upapi.imtg.com.au/template', {
+      const save_template_response = await fetch('/q/template', {
         method: 'POST',
         cache: "no-cache",
         headers: {"Content-Type": "application/json"},
